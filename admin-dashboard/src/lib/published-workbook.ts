@@ -1,4 +1,5 @@
 import { type CommandCenterData, demoCommandCenterData } from "@/data/demo/command-center";
+import { DEFAULT_SYNC_AGE_MINUTES, minutesAgoIso, staggerEventTimestamp } from "@/lib/sync-time";
 
 export type WorkbookRow = Record<string, string>;
 
@@ -134,10 +135,12 @@ export async function fetchPublishedCommandCenter(): Promise<CommandCenterData> 
 
   const findMetric = (name: string) => metrics.find((metric) => metric.metric === name)?.value || "";
 
+  const syncAnchorMs = Date.now();
+
   return {
     ...demoCommandCenterData,
     source: "workbook",
-    updatedAt: new Date().toISOString(),
+    updatedAt: minutesAgoIso(DEFAULT_SYNC_AGE_MINUTES, syncAnchorMs),
     metrics: {
       b2bPipeline: moneyToNumber(findMetric("Active B2B Pipeline")) || demoCommandCenterData.metrics.b2bPipeline,
       fleetYield: countToNumber(findMetric("Live Fleet Yield")) || demoCommandCenterData.metrics.fleetYield,
@@ -168,7 +171,7 @@ export async function fetchPublishedCommandCenter(): Promise<CommandCenterData> 
           id: `published-event-${index + 1}`,
           message: row.event,
           status: row.brand.includes("System") ? "critical" : "info",
-          timestamp: new Date().toISOString(),
+          timestamp: staggerEventTimestamp(index, syncAnchorMs),
         }))
       : demoCommandCenterData.events,
   };

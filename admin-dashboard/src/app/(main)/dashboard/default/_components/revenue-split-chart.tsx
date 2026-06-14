@@ -12,13 +12,14 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { RevenueSplitMonth } from "@/data/demo/revenue-split";
 import { revenueSplitData } from "@/data/demo/revenue-split";
 
 const chartConfig = {
-  solar2sk: { label: "Nova Retail Co. (Retail Volume)", color: "var(--chart-1)" },
-  solar3k: { label: "Summit C&I Group (C&I Consulting)", color: "var(--chart-2)" },
-  yellowStar: { label: "Cedar Grid Assets (Asset Portfolio)", color: "var(--chart-3)" },
+  solar2sk: { label: "Solar 2SK (Direct Hardware Margins)", color: "var(--chart-1)" },
+  solar3k: { label: "Solar 3SK (Commercial Consulting & Design Fees)", color: "var(--chart-2)" },
+  yellowStar: { label: "Yellow Star Power (Macro Grid Yield Dividends)", color: "var(--chart-3)" },
 } satisfies ChartConfig;
 
 function statusLabel(status: RevenueSplitMonth["status"]) {
@@ -29,8 +30,8 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
   const pendingCount = data.filter((row) => row.status === "pending_reconciliation").length;
 
   return (
-    <Card className="@container/card">
-      <CardHeader>
+    <Card className="@container/card border-l-4 border-indigo-500 [--card-spacing:--spacing(5)]">
+      <CardHeader className="p-5 pb-0">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
             <CardTitle className="leading-none">Combined Revenue Split Matrix</CardTitle>
@@ -52,46 +53,59 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
           )}
         </div>
         <div className="flex flex-wrap gap-2 pt-2">
+          <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+            Solar 2SK
+          </Badge>
+          <Badge variant="outline" className="border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300">
+            Solar 3SK
+          </Badge>
+          <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300">
+            Yellow Star Power
+          </Badge>
           {data.map((row) => (
-            <Badge
-              key={row.month}
-              variant={row.status === "finalized" ? "outline" : "secondary"}
-              className={
-                row.status === "pending_reconciliation"
-                  ? "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200"
-                  : undefined
-              }
-              title={row.statusNote}
-            >
-              {row.month}: {statusLabel(row.status)}
-            </Badge>
+            <Tooltip key={row.month}>
+              <TooltipTrigger asChild>
+                <Badge
+                  variant={row.status === "finalized" ? "outline" : "secondary"}
+                  className={
+                    row.status === "pending_reconciliation"
+                      ? "cursor-help border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200"
+                      : "cursor-help"
+                  }
+                >
+                  {row.month}: {statusLabel(row.status)}
+                </Badge>
+              </TooltipTrigger>
+              {row.statusNote ? (
+                <TooltipContent side="bottom" className="max-w-xs text-sm leading-relaxed">
+                  {row.statusNote}
+                </TooltipContent>
+              ) : null}
+            </Tooltip>
           ))}
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-5 pt-3">
         <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full">
           <BarChart data={data} margin={{ top: 8, right: 8, left: 8 }}>
             <CartesianGrid vertical={false} strokeOpacity={0.5} />
-            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
-            <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value) / 1000}k`} />
+            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} className="font-mono" />
+            <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value) / 1000}k`} className="font-mono" />
             <ChartTooltip
-              cursor={false}
+              cursor={{ fill: "hsl(var(--muted))", opacity: 0.35 }}
               content={
                 <ChartTooltipContent
+                  className="min-w-48 border bg-popover text-popover-foreground shadow-lg"
                   indicator="dot"
                   labelFormatter={(_, payload) => {
                     const row = payload?.[0]?.payload as RevenueSplitMonth | undefined;
                     if (!row) return "";
                     return `${row.month} - ${statusLabel(row.status)}`;
                   }}
-                  formatter={(value, name) => (
-                    <>
-                      <span className="text-muted-foreground">
-                        {chartConfig[name as keyof typeof chartConfig]?.label}
-                      </span>
-                      <span className="font-medium font-mono tabular-nums">${Number(value).toLocaleString()}</span>
-                    </>
-                  )}
+                  formatter={(value, name) => {
+                    const label = chartConfig[name as keyof typeof chartConfig]?.label ?? String(name);
+                    return [<span key="value" className="font-mono">${Number(value).toLocaleString()}</span>, label];
+                  }}
                 />
               }
             />

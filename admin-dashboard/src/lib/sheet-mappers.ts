@@ -13,6 +13,7 @@ import { softwareSubscriptionData, websiteHealthData } from "@/data/demo/systems
 import type { EntityBrand } from "@/data/demo/types";
 import { brandToDisplayCompany } from "@/data/demo/types";
 import { inferEntityBrand } from "@/lib/entity-brand";
+import { staggerEventTimestamp } from "@/lib/sync-time";
 import type { VendorRecord } from "@/data/demo/vendors";
 import { vendorCategoryLabel, vendorsData } from "@/data/demo/vendors";
 import type { DashboardSummary, SheetRecord } from "@/lib/google-sheets";
@@ -95,12 +96,14 @@ function mapWorkbookRevenueSplit(rows: DashboardSummary["revenueByCompany"]): Re
 function mapWorkbookEvents(summary: DashboardSummary): GlobalEvent[] {
   if (summary.alerts.length === 0) return demoCommandCenterData.events;
 
+  const syncAnchorMs = Date.parse(summary.syncedAt) || Date.now();
+
   return summary.alerts.map((alert, index) => ({
     id: `wb-evt-${index + 1}`,
     entityBrand: inferEntityBrand(`${alert.alert} ${alert.detail}`),
     message: `${alert.alert} - ${alert.detail} (Action: ${alert.action})`,
     status: alertToEventStatus(alert.priority),
-    timestamp: summary.syncedAt,
+    timestamp: staggerEventTimestamp(index, syncAnchorMs),
   }));
 }
 

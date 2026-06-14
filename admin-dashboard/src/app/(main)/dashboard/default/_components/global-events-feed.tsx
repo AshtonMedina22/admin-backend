@@ -1,14 +1,15 @@
 "use client";
 
-import { formatDistanceToNowStrict, parseISO } from "date-fns";
 import { Activity, AlertCircle, AlertTriangle, CheckCircle2, Info } from "lucide-react";
 
+import { RelativeTime } from "@/components/dashboard/relative-time";
 import { EntityBrandBadge } from "@/components/dashboard/entity-brand-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { GlobalEvent, GlobalEventStatus } from "@/data/demo/global-events";
 import { globalEventsData } from "@/data/demo/global-events";
+import { formatSyncRelativeTime } from "@/lib/sync-time";
 import { cn } from "@/lib/utils";
 
 const statusStyles: Record<GlobalEventStatus, string> = {
@@ -33,12 +34,7 @@ const statusBadgeVariant: Record<GlobalEventStatus, "destructive" | "secondary" 
 };
 
 function formatEventTime(timestamp: string) {
-  if (/ago|min|hr|sec/i.test(timestamp)) return timestamp;
-  try {
-    return formatDistanceToNowStrict(parseISO(timestamp), { addSuffix: true });
-  } catch {
-    return timestamp;
-  }
+  return formatSyncRelativeTime(timestamp);
 }
 
 type GlobalEventsFeedProps = {
@@ -70,10 +66,16 @@ export function GlobalEventsFeed({
         </div>
         <CardDescription>
           Workbook and API sync log - failures surface here for triage before they hit the operating dashboard.
-          {lastSyncedAt ? ` Last pull ${formatEventTime(lastSyncedAt)}.` : ""}
+          {lastSyncedAt ? (
+            <>
+              {" "}
+              Last pull{" "}
+              <RelativeTime value={lastSyncedAt} className="text-muted-foreground" />.
+            </>
+          ) : null}
         </CardDescription>
         {workbookConnected ? (
-          <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-emerald-800 text-xs dark:text-emerald-200">
+          <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-emerald-950 text-sm dark:text-emerald-100">
             Workbook synced automatically with CedarGrid_Operations
           </div>
         ) : null}
@@ -83,6 +85,8 @@ export function GlobalEventsFeed({
           <div className="grid gap-3">
             {events.map((event) => {
               const StatusIcon = statusIcons[event.status];
+              const isIsoTimestamp = !/ago|just now/i.test(event.timestamp);
+
               return (
                 <div key={event.id} className={cn("rounded-md border p-3", statusStyles[event.status])}>
                   <div className="mb-1 flex items-center justify-between gap-2">
@@ -101,9 +105,16 @@ export function GlobalEventsFeed({
                         {event.status}
                       </Badge>
                     </div>
-                    <span className="shrink-0 text-[10px] text-muted-foreground tabular-nums">
-                      {formatEventTime(event.timestamp)}
-                    </span>
+                    {isIsoTimestamp ? (
+                      <RelativeTime
+                        value={event.timestamp}
+                        className="shrink-0 text-[11px] text-muted-foreground tabular-nums"
+                      />
+                    ) : (
+                      <span className="shrink-0 text-[11px] text-muted-foreground tabular-nums">
+                        {formatEventTime(event.timestamp)}
+                      </span>
+                    )}
                   </div>
                   <p className="text-sm leading-relaxed">{event.message}</p>
                 </div>

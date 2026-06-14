@@ -2,10 +2,11 @@
 
 import { useTransition } from "react";
 
-import { formatDistanceToNowStrict, parseISO } from "date-fns";
 import { DatabaseZap, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
+import { RelativeTime } from "@/components/dashboard/relative-time";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { WorkbookSyncStatus } from "@/lib/workbook-sync-types";
@@ -18,41 +19,49 @@ export function WorkbookSyncStatusBar({ source, provider, updatedAt }: WorkbookS
   const router = useRouter();
   const [isRefreshing, startRefresh] = useTransition();
   const isLive = source === "workbook";
-  const updatedLabel = formatDistanceToNowStrict(parseISO(updatedAt), { addSuffix: true });
+
+  function handleRefresh() {
+    startRefresh(() => {
+      router.refresh();
+      toast.success("Workbook refreshed", {
+        description: isLive ? "Re-pulled the latest published sheet rows." : "Reloaded the local demo dataset.",
+      });
+    });
+  }
 
   return (
     <div
       className={cn(
-        "hidden items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs md:flex",
+        "hidden min-w-0 items-center gap-2 rounded-md border px-3 py-2 text-xs md:flex",
         isLive ? "border-emerald-500/30 bg-emerald-500/10" : "border-border bg-muted/35",
       )}
     >
-      <DatabaseZap className={cn("size-3.5", isLive ? "text-emerald-600" : "text-muted-foreground")} />
-      <div className="flex flex-col leading-tight">
-        <span className="font-medium">
-          Status: {isLive ? "Google Sheets Live Sync Active" : "Demo Preview Mode"}
+      <DatabaseZap className={cn("size-4 shrink-0", isLive ? "text-emerald-600" : "text-muted-foreground")} />
+      <div className="min-w-0 flex flex-col leading-snug">
+        <span className="truncate font-medium">
+          {isLive ? "Google Sheets live sync" : "Demo preview mode"}
         </span>
-        <span className="text-[10px] text-muted-foreground">
+        <span className="truncate text-muted-foreground">
           {isLive && provider ? `${workbookProviderLabel(provider)} · ` : "Local dataset · "}
-          Updated {updatedLabel}
+          <RelativeTime value={updatedAt} prefix="Updated " className="text-muted-foreground" />
         </span>
       </div>
       {isLive ? (
-        <span className="relative flex size-2">
+        <span className="relative flex size-2 shrink-0">
           <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-75" />
           <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
         </span>
       ) : (
-        <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
+        <Badge variant="outline" className="h-5 shrink-0 px-1.5 text-[10px]">
           Preview
         </Badge>
       )}
       <Button
         variant="ghost"
         size="icon"
-        className="size-7"
+        className="size-7 shrink-0"
         disabled={isRefreshing}
-        onClick={() => startRefresh(() => router.refresh())}
+        onClick={handleRefresh}
         aria-label="Refresh workbook sync"
       >
         <RefreshCw className={cn("size-3.5", isRefreshing && "animate-spin")} />
