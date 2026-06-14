@@ -17,14 +17,22 @@ type AIEscalationButtonProps = {
   brandEntity: string;
   daysStale: number;
   utilityAuthority: string;
+  permitNumber?: string;
 };
 
-function buildEscalationEmail({ projectName, brandEntity, daysStale, utilityAuthority }: AIEscalationButtonProps) {
+function buildEscalationEmail({
+  projectName,
+  brandEntity,
+  daysStale,
+  utilityAuthority,
+  permitNumber,
+}: AIEscalationButtonProps) {
   return `Subject: Escalation required - ${projectName}
 
 ${utilityAuthority} team,
 
 Please confirm the current status for ${projectName}. This ${brandEntity} workstream has been stale for ${daysStale} day${daysStale === 1 ? "" : "s"} and is now blocking the executive operations dashboard.
+${permitNumber ? `\nPermit / tracking reference: ${permitNumber}\n` : ""}
 
 Requested update:
 - Current interconnection or permitting status
