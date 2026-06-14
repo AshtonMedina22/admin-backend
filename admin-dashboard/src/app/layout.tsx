@@ -23,7 +23,9 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html
       lang="en"
-      data-theme-mode={theme_mode}
+      className="dark"
+      style={{ colorScheme: "dark" }}
+      data-theme-mode="dark"
       data-theme-preset={theme_preset}
       data-content-layout={content_layout}
       data-navbar-style={navbar_style}

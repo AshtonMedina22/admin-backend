@@ -1,20 +1,16 @@
 import type { ResolvedThemeMode, ThemeMode } from "./theme";
 
-export function resolveThemeMode(mode: ThemeMode): ResolvedThemeMode {
-  if (mode === "system") {
-    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
-    return prefersDark ? "dark" : "light";
-  }
-  return mode === "dark" ? "dark" : "light";
+export function resolveThemeMode(_mode: ThemeMode): ResolvedThemeMode {
+  return "dark";
 }
 
-export function applyThemeMode(mode: ThemeMode): ResolvedThemeMode {
-  const resolved = resolveThemeMode(mode);
+export function applyThemeMode(_mode: ThemeMode): ResolvedThemeMode {
+  const resolved: ResolvedThemeMode = "dark";
   const doc = document.documentElement;
-  doc.setAttribute("data-theme-mode", mode);
+  doc.setAttribute("data-theme-mode", "dark");
   doc.classList.add("disable-transitions");
-  doc.classList.toggle("dark", resolved === "dark");
-  doc.style.colorScheme = resolved;
+  doc.classList.add("dark");
+  doc.style.colorScheme = "dark";
   requestAnimationFrame(() => {
     doc.classList.remove("disable-transitions");
   });
