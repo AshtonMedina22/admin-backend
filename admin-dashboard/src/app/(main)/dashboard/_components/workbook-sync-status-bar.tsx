@@ -1,31 +1,48 @@
 "use client";
 
-import { useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+
+import { useRouter } from "next/navigation";
 
 import { DatabaseZap, RefreshCw } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { RelativeTime } from "@/components/dashboard/relative-time";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { WorkbookSyncStatus } from "@/lib/workbook-sync-types";
 import { workbookProviderLabel } from "@/lib/workbook-sync-types";
-import { cn } from "@/lib/utils";
 
 type WorkbookSyncStatusBarProps = WorkbookSyncStatus;
 
 export function WorkbookSyncStatusBar({ source, provider, updatedAt }: WorkbookSyncStatusBarProps) {
   const router = useRouter();
   const [isRefreshing, startRefresh] = useTransition();
+  const [refreshToastId, setRefreshToastId] = useState<string | number | null>(null);
   const isLive = source === "workbook";
 
+  useEffect(() => {
+    if (!refreshToastId || isRefreshing) return;
+
+    const timeout = window.setTimeout(() => {
+      toast.success("Workbook refreshed", {
+        id: refreshToastId,
+        description: isLive ? "Latest workbook rows settled in the dashboard." : "Local preview data reloaded.",
+      });
+      setRefreshToastId(null);
+    }, 150);
+
+    return () => window.clearTimeout(timeout);
+  }, [isLive, isRefreshing, refreshToastId]);
+
   function handleRefresh() {
+    const toastId = toast.loading("Syncing workbook", {
+      description: isLive ? "Refreshing Google Sheets-backed server data." : "Reloading local preview data.",
+    });
+    setRefreshToastId(toastId);
     startRefresh(() => {
       router.refresh();
-      toast.success("Workbook refreshed", {
-        description: isLive ? "Re-pulled the latest published sheet rows." : "Reloaded the local demo dataset.",
-      });
     });
   }
 
@@ -37,10 +54,8 @@ export function WorkbookSyncStatusBar({ source, provider, updatedAt }: WorkbookS
       )}
     >
       <DatabaseZap className={cn("size-4 shrink-0", isLive ? "text-emerald-600" : "text-muted-foreground")} />
-      <div className="min-w-0 flex flex-col leading-snug">
-        <span className="truncate font-medium">
-          {isLive ? "Google Sheets live sync" : "Demo preview mode"}
-        </span>
+      <div className="flex min-w-0 flex-col leading-snug">
+        <span className="truncate font-medium">{isLive ? "Google Sheets live sync" : "Demo preview mode"}</span>
         <span className="truncate text-muted-foreground">
           {isLive && provider ? `${workbookProviderLabel(provider)} · ` : "Local dataset · "}
           <RelativeTime value={updatedAt} prefix="Updated " className="text-muted-foreground" />

@@ -34,7 +34,13 @@ export async function GET(_request: Request, context: RouteContext) {
 
   try {
     const result = await fetchSheet(slug);
-    return NextResponse.json(result);
+    return NextResponse.json({
+      ...result,
+      metadata: {
+        fetchedAt: result.syncedAt,
+        status: "success",
+      },
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
 
@@ -43,6 +49,10 @@ export async function GET(_request: Request, context: RouteContext) {
         ok: false,
         slug,
         error: message,
+        metadata: {
+          fetchedAt: new Date().toISOString(),
+          status: "error",
+        },
       },
       { status: 500 },
     );

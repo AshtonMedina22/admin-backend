@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -23,8 +23,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { CommandCenterData } from "@/data/demo/command-center";
 import { cn } from "@/lib/utils";
-import { TelemetrySimulatorControl, useTelemetrySimulation } from "../../enterprise/_components/telemetry-simulator";
 
+import { TelemetrySimulatorControl, useTelemetrySimulation } from "../../enterprise/_components/telemetry-simulator";
 import { AIEscalationButton } from "./ai-escalation-button";
 import { GlobalEventsFeed } from "./global-events-feed";
 import { RevenueSplitChart } from "./revenue-split-chart";
@@ -70,8 +70,10 @@ function entityBadgeClass(value: string) {
 
 function utilityAuthorityFor(company: string, projectName: string) {
   const target = `${company} ${projectName}`.toLowerCase();
-  if (target.includes("retail") || target.includes("warehouse") || target.includes("2sk")) return "Wylie Warehouse Operations";
-  if (target.includes("yellow") || target.includes("hunt") || target.includes("cedar")) return "Oncor Utility Engineering";
+  if (target.includes("retail") || target.includes("warehouse") || target.includes("2sk"))
+    return "Wylie Warehouse Operations";
+  if (target.includes("yellow") || target.includes("hunt") || target.includes("cedar"))
+    return "Oncor Utility Engineering";
   if (target.includes("plano")) return "City of Plano Building Inspections";
   return "Oncor Interconnection Desk";
 }
@@ -132,7 +134,7 @@ function TelemetryMatrixCard() {
   const telemetry = useTelemetrySimulation();
 
   return (
-    <Card className="h-full border-l-4 border-amber-500 [--card-spacing:--spacing(5)]">
+    <Card className="h-full border-amber-500 border-l-4 [--card-spacing:--spacing(5)]">
       <CardHeader className="p-5 pb-0">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -153,7 +155,7 @@ function TelemetryMatrixCard() {
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-md border bg-muted/25 p-3">
             <p className="text-[11px] text-muted-foreground uppercase">Generation</p>
-            <p className="font-mono font-semibold text-lg text-amber-600">{telemetry.liveYield.toFixed(1)} kW</p>
+            <p className="font-mono font-semibold text-amber-600 text-lg">{telemetry.liveYield.toFixed(1)} kW</p>
           </div>
           <div className="rounded-md border bg-muted/25 p-3">
             <p className="text-[11px] text-muted-foreground uppercase">Consumption</p>
@@ -161,7 +163,7 @@ function TelemetryMatrixCard() {
           </div>
           <div className="rounded-md border bg-muted/25 p-3">
             <p className="text-[11px] text-muted-foreground uppercase">Grid Export</p>
-            <p className="font-mono font-semibold text-lg text-emerald-600">{telemetry.netExport.toFixed(1)} kW</p>
+            <p className="font-mono font-semibold text-emerald-600 text-lg">{telemetry.netExport.toFixed(1)} kW</p>
           </div>
         </div>
       </CardContent>
@@ -171,14 +173,19 @@ function TelemetryMatrixCard() {
 
 function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["projects"] }) {
   return (
-    <Card className="border-l-4 border-indigo-500 [--card-spacing:--spacing(5)]">
+    <Card className="border-indigo-500 border-l-4 [--card-spacing:--spacing(5)]">
       <CardHeader className="p-5 pb-0">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
             <CardTitle>Active Project Escalation Matrix</CardTitle>
-            <CardDescription>Commercial, retail, and grid workstreams with utility-aware action drafts.</CardDescription>
+            <CardDescription>
+              Commercial, retail, and grid workstreams with utility-aware action drafts.
+            </CardDescription>
           </div>
-          <Badge variant="outline" className="border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300">
+          <Badge
+            variant="outline"
+            className="border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300"
+          >
             AI escalation lane
           </Badge>
         </div>
@@ -211,7 +218,7 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
                       </Badge>
                     </TableCell>
                     <TableCell className="py-2 text-muted-foreground text-xs">{project.stage}</TableCell>
-                    <TableCell className="py-2 text-right font-mono font-medium">{project.value}</TableCell>
+                    <TableCell className="py-2 text-right font-medium font-mono">{project.value}</TableCell>
                     <TableCell className="py-2 text-right font-mono">{daysStale}d</TableCell>
                     <TableCell className="py-2 text-xs">{authority}</TableCell>
                     <TableCell className="py-2 text-right">
@@ -236,18 +243,37 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
 export function CommandCenter({ data }: CommandCenterProps) {
   const router = useRouter();
   const [isSyncing, startSync] = useTransition();
+  const [syncToastId, setSyncToastId] = useState<string | number | null>(null);
   const metricCards = useMemo(() => buildMetricCards(data), [data]);
   const openIssues = data.events.filter((e) => e.status === "critical" || e.status === "warning").length;
 
-  function handleSyncNow() {
-    startSync(async () => {
-      router.refresh();
+  useEffect(() => {
+    if (!syncToastId || isSyncing) return;
+
+    const timeout = window.setTimeout(() => {
       toast.success("Workbook sync complete", {
+        id: syncToastId,
         description:
           openIssues > 0
-            ? `Pulled latest rows. ${openIssues} open issue${openIssues === 1 ? "" : "s"} in the operations stream.`
-            : "Pulled latest rows from the Google Sheets workbook.",
+            ? `Latest rows settled. ${openIssues} open issue${openIssues === 1 ? "" : "s"} in the operations stream.`
+            : "Latest Google Sheets rows settled in the command center.",
       });
+      setSyncToastId(null);
+    }, 150);
+
+    return () => window.clearTimeout(timeout);
+  }, [isSyncing, openIssues, syncToastId]);
+
+  function handleSyncNow() {
+    const toastId = toast.loading("Syncing workbook", {
+      description:
+        data.source === "workbook"
+          ? "Refreshing the Google Sheets-backed command center."
+          : "Reloading the preview command center dataset.",
+    });
+    setSyncToastId(toastId);
+    startSync(() => {
+      router.refresh();
     });
   }
 
