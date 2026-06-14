@@ -32,7 +32,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
   const pendingCount = data.filter((row) => row.status === "pending_reconciliation").length;
 
   return (
-    <Card size="sm" className={cn("@container/card border-l-4 border-indigo-500", dashCardClass)}>
+    <Card size="sm" className={cn("@container/card border-indigo-500/70 border-l-4", dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -44,7 +44,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
           {pendingCount > 0 ? (
             <Badge
               variant="secondary"
-              className="shrink-0 border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200"
+              className="shrink-0 whitespace-nowrap border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200"
             >
               {pendingCount} period{pendingCount === 1 ? "" : "s"} pending reconciliation
             </Badge>
@@ -55,13 +55,22 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
           )}
         </div>
         <div className="flex flex-wrap gap-2 pt-2">
-          <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+          <Badge
+            variant="outline"
+            className="whitespace-nowrap border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+          >
             Solar 2SK
           </Badge>
-          <Badge variant="outline" className="border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300">
+          <Badge
+            variant="outline"
+            className="whitespace-nowrap border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300"
+          >
             Solar 3SK
           </Badge>
-          <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300">
+          <Badge
+            variant="outline"
+            className="whitespace-nowrap border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300"
+          >
             Yellow Star Power
           </Badge>
           {data.map((row) => (
@@ -71,8 +80,8 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
                   variant={row.status === "finalized" ? "outline" : "secondary"}
                   className={
                     row.status === "pending_reconciliation"
-                      ? "cursor-help border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200"
-                      : "cursor-help"
+                      ? "cursor-help whitespace-nowrap border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200"
+                      : "cursor-help whitespace-nowrap"
                   }
                 >
                   {row.month}: {statusLabel(row.status)}
@@ -88,11 +97,22 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
         </div>
       </CardHeader>
       <CardContent className={dashSectionCardContentClass}>
-        <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full">
+        <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full overflow-hidden">
           <BarChart data={data} margin={{ top: 8, right: 8, left: 8 }}>
             <CartesianGrid vertical={false} strokeOpacity={0.5} />
-            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} className="font-mono" />
-            <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value) / 1000}k`} className="font-mono" />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              className="whitespace-nowrap font-mono"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickFormatter={(value) => `$${Number(value) / 1000}k`}
+              className="whitespace-nowrap font-mono"
+            />
             <ChartTooltip
               cursor={{ fill: "hsl(var(--muted))", opacity: 0.35 }}
               content={
@@ -106,7 +126,12 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
                   }}
                   formatter={(value, name) => {
                     const label = chartConfig[name as keyof typeof chartConfig]?.label ?? String(name);
-                    return [<span key="value" className="font-mono">${Number(value).toLocaleString()}</span>, label];
+                    return [
+                      <span key="value" className="whitespace-nowrap font-mono">
+                        ${Number(value).toLocaleString()}
+                      </span>,
+                      label,
+                    ];
                   }}
                 />
               }

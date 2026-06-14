@@ -82,7 +82,7 @@ export function EngineeringBomConsole() {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="p-4 pb-3">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <CardTitle className="flex items-center gap-2 text-base">
@@ -90,7 +90,8 @@ export function EngineeringBomConsole() {
               Cross-Company Material Allocator
             </CardTitle>
             <CardDescription>
-              Reconciles OpenSolar CAD blueprints against Solar 2SK retail warehouse stock ({anenjiSku?.componentName})
+              Reconciles OpenSolar CAD blueprints from Solar 3SK against Solar 2SK LLC retail warehouse stock (Anenji
+              3KW Hybrid Inverter)
             </CardDescription>
           </div>
           <Button disabled={status === "running"} onClick={runDiagnostics}>
@@ -108,7 +109,7 @@ export function EngineeringBomConsole() {
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 pt-0 pb-4">
         <div className="flex h-48 flex-col justify-end overflow-y-auto rounded-lg bg-zinc-950 p-4 font-mono text-xs shadow-inner">
           {logs.length === 0 ? (
             <div className="py-10 text-center text-zinc-600">
@@ -116,9 +117,9 @@ export function EngineeringBomConsole() {
             </div>
           ) : (
             <div className="space-y-2">
-              {logs.map((log, index) => (
-                <div key={`${log.time}-${index}`} className="flex items-start gap-2">
-                  <span className="text-zinc-500 select-none">[{log.time}]</span>
+              {logs.map((log) => (
+                <div key={`${log.time}-${log.text}`} className="flex items-start gap-2">
+                  <span className="select-none text-zinc-500">[{log.time}]</span>
                   <span
                     className={
                       log.type === "success"

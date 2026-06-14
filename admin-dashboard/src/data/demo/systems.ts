@@ -16,7 +16,7 @@ export interface SoftwareSubscription {
   id: string;
   toolName: string;
   monthlyCost: number;
-  accountOwner: "Alex Morgan" | "Jordan Lee";
+  accountOwner: string;
   category: string;
   serves: string;
   renewal: string;
@@ -32,7 +32,7 @@ export const websiteHealthData: WebsiteHealth[] = [
     hosting: "DreamHost",
     sslValid: false,
     sslStatus: "CRITICAL - SSL handshake failing on base domain",
-    lastChecked: "2026-06-12",
+    lastChecked: "Dynamic: 4 days overdue",
   },
   {
     id: "web-002",
@@ -74,7 +74,7 @@ export const softwareSubscriptionData: SoftwareSubscription[] = [
     id: "sub-001",
     toolName: "DreamHost Server Stack",
     monthlyCost: 45,
-    accountOwner: "Alex Morgan",
+    accountOwner: "Builder Ops",
     category: "Hosting",
     serves: "PHP/WordPress retail storefront (shop.solar2sk.com)",
     renewal: "Jul 13, 2026",
@@ -83,7 +83,7 @@ export const softwareSubscriptionData: SoftwareSubscription[] = [
     id: "sub-002",
     toolName: "Vercel Pro Tier",
     monthlyCost: 20,
-    accountOwner: "Alex Morgan",
+    accountOwner: "Builder Ops",
     category: "Hosting",
     serves: "Next.js commercial landing pages (Solar 3SK / Yellow Star Power)",
     renewal: "Jul 1, 2026",
@@ -92,7 +92,7 @@ export const softwareSubscriptionData: SoftwareSubscription[] = [
     id: "sub-003",
     toolName: "Zapier Team Tier",
     monthlyCost: 49,
-    accountOwner: "Alex Morgan",
+    accountOwner: "Builder Ops",
     category: "Automation",
     serves: "WooCommerce webhooks, lead forms, Google Sheets sync",
     renewal: "Jul 15, 2026",
@@ -101,7 +101,7 @@ export const softwareSubscriptionData: SoftwareSubscription[] = [
     id: "sub-004",
     toolName: "DocuSign Corporate Pro",
     monthlyCost: 45,
-    accountOwner: "Alex Morgan",
+    accountOwner: "Builder Ops",
     category: "Contracts",
     serves: "Solar 3SK engineering layouts and power consultation contracts",
     renewal: "Jun 28, 2026",
@@ -110,7 +110,7 @@ export const softwareSubscriptionData: SoftwareSubscription[] = [
     id: "sub-005",
     toolName: "QuickBooks Online",
     monthlyCost: 90,
-    accountOwner: "Jordan Lee",
+    accountOwner: "Builder Ops",
     category: "Finance",
     serves: "Retail invoicing ledger and cross-entity financial reconciliation",
     renewal: "Jul 1, 2026",

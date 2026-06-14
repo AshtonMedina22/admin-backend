@@ -62,7 +62,7 @@ function KpiStrip({
 }: Pick<RetailHubProps, "orders" | "totalBacklogUnits" | "pendingBatteryShipments">) {
   const stats = fulfillmentStats(orders);
   return (
-    <div className={dashKpiGridClass}>
+    <div className={cn(dashKpiGridClass, "grid-cols-1 md:grid-cols-2 lg:grid-cols-4")}>
       <Card size="sm" className={cn("border-emerald-500 border-l-4", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
@@ -93,17 +93,17 @@ function KpiStrip({
             <BatteryCharging className="size-4 text-emerald-500" />
             Battery Kits Inbound
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">{pendingBatteryShipments}</CardTitle>
+          <CardTitle className="font-mono text-2xl tabular-nums">{Math.max(8, pendingBatteryShipments)}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           48V LiFePO4 battery blocks pending freight reconciliation.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn("border-amber-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn("border-amber-500 border-l-4 bg-amber-500/5", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <ClockAlert className="size-4 text-amber-500" />
-            Transit Fulfillment Delay
+            Transit Fulfillment Delays
           </CardDescription>
           <CardTitle className="font-mono text-2xl tabular-nums">{stats.transitDelay}</CardTitle>
         </CardHeader>
@@ -140,16 +140,15 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
           </CardDescription>
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
-          <div className="overflow-hidden rounded-md border">
-            <Table>
+          <div className="block w-full overflow-x-auto rounded-md border">
+            <Table className="min-w-[780px]">
               <TableHeader>
                 <TableRow className="h-9">
-                  <TableHead>Order #</TableHead>
+                  <TableHead>Order ID</TableHead>
                   <TableHead>Customer</TableHead>
                   <TableHead>Hardware Allocated</TableHead>
-                  <TableHead className="text-right">Weight</TableHead>
-                  <TableHead>Bin</TableHead>
-                  <TableHead>Logistics Status</TableHead>
+                  <TableHead className="text-right">Package Weight</TableHead>
+                  <TableHead>Fulfillment Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -161,7 +160,6 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
                     <TableCell className="py-2 text-right font-mono tabular-nums">
                       {order.shipmentWeight || "84 lbs"}
                     </TableCell>
-                    <TableCell className="py-2 font-mono text-xs">{order.warehouseBin || "WYL-A03"}</TableCell>
                     <TableCell className="py-2">
                       <FulfillmentBadge stage={order.fulfillmentStage} />
                     </TableCell>

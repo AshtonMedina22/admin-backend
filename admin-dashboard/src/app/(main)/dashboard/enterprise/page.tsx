@@ -50,17 +50,26 @@ export default async function Page() {
         </p>
       </div>
 
-      <Tabs defaultValue="pipeline" className="flex flex-col gap-4">
-        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto p-1 md:w-fit">
-          <TabsTrigger value="pipeline" className="gap-2">
+      <Tabs defaultValue="telemetry" className="flex flex-col gap-4">
+        <TabsList className="h-auto w-full justify-start gap-2 overflow-x-auto rounded-xl border border-indigo-500/20 bg-zinc-950/80 p-1.5 shadow-[0_0_0_1px_theme(colors.indigo.500/0.08)] md:w-fit">
+          <TabsTrigger
+            value="pipeline"
+            className="gap-2 border border-transparent px-3 py-2 text-muted-foreground transition-all hover:bg-zinc-800/60 hover:text-neutral-200 data-[state=active]:border-indigo-500/40 data-[state=active]:bg-indigo-950/50 data-[state=active]:font-semibold data-[state=active]:text-indigo-400"
+          >
             <Activity className="size-4" />
             Commercial Pipeline
           </TabsTrigger>
-          <TabsTrigger value="telemetry" className="gap-2">
+          <TabsTrigger
+            value="telemetry"
+            className="gap-2 border border-transparent px-3 py-2 text-muted-foreground transition-all hover:bg-zinc-800/60 hover:text-neutral-200 data-[state=active]:border-indigo-500/40 data-[state=active]:bg-indigo-950/50 data-[state=active]:font-semibold data-[state=active]:text-indigo-400"
+          >
             <RadioTower className="size-4" />
             Telemetry Analytics
           </TabsTrigger>
-          <TabsTrigger value="engineering" className="gap-2">
+          <TabsTrigger
+            value="engineering"
+            className="gap-2 border border-transparent px-3 py-2 text-muted-foreground transition-all hover:bg-zinc-800/60 hover:text-neutral-200 data-[state=active]:border-indigo-500/40 data-[state=active]:bg-indigo-950/50 data-[state=active]:font-semibold data-[state=active]:text-indigo-400"
+          >
             <Ruler className="size-4" />
             Engineering Milestones
           </TabsTrigger>
