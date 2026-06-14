@@ -13,6 +13,7 @@ import { softwareSubscriptionData, websiteHealthData } from "@/data/demo/systems
 import type { EntityBrand } from "@/data/demo/types";
 import { brandToDisplayCompany } from "@/data/demo/types";
 import { inferEntityBrand } from "@/lib/entity-brand";
+import { DEMO_ORG } from "@/config/demo-identity";
 import { staggerEventTimestamp } from "@/lib/sync-time";
 import type { VendorRecord } from "@/data/demo/vendors";
 import { vendorCategoryLabel, vendorsData } from "@/data/demo/vendors";
@@ -123,7 +124,7 @@ export function mapWorkbookToCommandCenter(summary: DashboardSummary): CommandCe
             id: `workbook-alert-${index + 1}`,
             title: alert.alert,
             detail: alert.detail,
-            company: alert.detail.toLowerCase().includes("solar2sk") ? "Nova Retail Co." : "Shared",
+            company: alert.detail.toLowerCase().includes("solar2sk") ? DEMO_ORG.retail : "Shared",
             owner: "Alex Morgan",
             due: "Open",
             priority: alert.priority as "Critical" | "Warning" | "Info",

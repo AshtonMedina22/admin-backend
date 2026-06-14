@@ -1,8 +1,9 @@
+/** Generic demo identities — no real client or personnel names. */
 export const DEMO_ORG = {
-  parent: "Gold Star Power",
-  retail: "Solar 2SK",
-  commercial: "Solar 3SK",
-  portfolio: "Yellow Star Power",
+  parent: "Meridian Holdings",
+  retail: "Nova Retail Co.",
+  commercial: "Summit C&I Group",
+  portfolio: "Cedar Grid Assets",
 } as const;
 
 export const DEMO_ADMIN = {
