@@ -19,9 +19,9 @@ import { dashCardClass, dashSectionCardContentClass, dashSectionCardHeaderClass 
 import { cn } from "@/lib/utils";
 
 const chartConfig = {
-  solar2sk: { label: "Solar 2SK (Direct Hardware Margins)", color: "var(--chart-1)" },
-  solar3k: { label: "Solar 3SK (Commercial Consulting & Design Fees)", color: "var(--chart-2)" },
-  yellowStar: { label: "Yellow Star Power (Macro Grid Yield Dividends)", color: "var(--chart-3)" },
+  solar2sk: { label: "2SK (Direct Hardware Margins)", color: "#a3e635" },
+  solar3k: { label: "3SK (Commercial Consulting & Design Fees)", color: "#22d3ee" },
+  yellowStar: { label: "YSP (Macro Grid Yield Dividends)", color: "#fbbf24" },
 } satisfies ChartConfig;
 
 function statusLabel(status: RevenueSplitMonth["status"]) {
@@ -32,7 +32,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
   const pendingCount = data.filter((row) => row.status === "pending_reconciliation").length;
 
   return (
-    <Card size="sm" className={cn("@container/card border-l-4 border-indigo-500", dashCardClass)}>
+    <Card size="sm" className={cn("@container/card border-indigo-500/70 border-l-4", dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -44,7 +44,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
           {pendingCount > 0 ? (
             <Badge
               variant="secondary"
-              className="shrink-0 border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200"
+              className="shrink-0 whitespace-nowrap border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200"
             >
               {pendingCount} period{pendingCount === 1 ? "" : "s"} pending reconciliation
             </Badge>
@@ -55,14 +55,23 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
           )}
         </div>
         <div className="flex flex-wrap gap-2 pt-2">
-          <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
-            Solar 2SK
+          <Badge
+            variant="outline"
+            className="whitespace-nowrap border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+          >
+            2SK
           </Badge>
-          <Badge variant="outline" className="border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300">
-            Solar 3SK
+          <Badge
+            variant="outline"
+            className="whitespace-nowrap border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300"
+          >
+            3SK
           </Badge>
-          <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300">
-            Yellow Star Power
+          <Badge
+            variant="outline"
+            className="whitespace-nowrap border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300"
+          >
+            YSP
           </Badge>
           {data.map((row) => (
             <Tooltip key={row.month}>
@@ -71,8 +80,8 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
                   variant={row.status === "finalized" ? "outline" : "secondary"}
                   className={
                     row.status === "pending_reconciliation"
-                      ? "cursor-help border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200"
-                      : "cursor-help"
+                      ? "cursor-help whitespace-nowrap border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200"
+                      : "cursor-help whitespace-nowrap"
                   }
                 >
                   {row.month}: {statusLabel(row.status)}
@@ -88,16 +97,27 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
         </div>
       </CardHeader>
       <CardContent className={dashSectionCardContentClass}>
-        <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full">
+        <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full overflow-hidden">
           <BarChart data={data} margin={{ top: 8, right: 8, left: 8 }}>
-            <CartesianGrid vertical={false} strokeOpacity={0.5} />
-            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} className="font-mono" />
-            <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value) / 1000}k`} className="font-mono" />
+            <CartesianGrid vertical={false} stroke="#18181b" strokeOpacity={1} />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              className="whitespace-nowrap font-mono"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickFormatter={(value) => `$${Number(value) / 1000}k`}
+              className="whitespace-nowrap font-mono"
+            />
             <ChartTooltip
-              cursor={{ fill: "hsl(var(--muted))", opacity: 0.35 }}
+              cursor={{ fill: "#18181b", opacity: 0.45 }}
               content={
                 <ChartTooltipContent
-                  className="min-w-48 border bg-popover text-popover-foreground shadow-lg"
+                  className="min-w-48 border border-zinc-800 bg-zinc-950 text-zinc-100 shadow-lg"
                   indicator="dot"
                   labelFormatter={(_, payload) => {
                     const row = payload?.[0]?.payload as RevenueSplitMonth | undefined;
@@ -106,7 +126,12 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
                   }}
                   formatter={(value, name) => {
                     const label = chartConfig[name as keyof typeof chartConfig]?.label ?? String(name);
-                    return [<span key="value" className="font-mono">${Number(value).toLocaleString()}</span>, label];
+                    return [
+                      <span key="value" className="whitespace-nowrap font-mono">
+                        ${Number(value).toLocaleString()}
+                      </span>,
+                      label,
+                    ];
                   }}
                 />
               }

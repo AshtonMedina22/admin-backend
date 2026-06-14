@@ -87,7 +87,10 @@ export function AIEscalationButton({
         type="button"
         variant="outline"
         size="sm"
-        className={cn("h-8 gap-1.5 px-2.5 text-xs", className)}
+        className={cn(
+          "h-8 gap-1.5 rounded-md border border-zinc-800 bg-zinc-900 px-3 py-1.5 font-mono text-xs text-zinc-300 shadow-sm transition-all hover:border-cyan-500/40 hover:bg-zinc-800 hover:text-cyan-400",
+          className,
+        )}
         onClick={() => handleOpenChange(true)}
       >
         <Sparkles className="size-3.5 text-amber-500" />
@@ -95,7 +98,10 @@ export function AIEscalationButton({
       </Button>
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="gap-0 overflow-hidden border-emerald-500/20 bg-zinc-950 p-0 sm:max-w-2xl" showCloseButton>
+        <DialogContent
+          className="gap-0 overflow-hidden border-emerald-500/20 bg-zinc-950 p-0 sm:max-w-2xl"
+          showCloseButton
+        >
           <DialogHeader className="border-emerald-500/20 border-b bg-zinc-900/80 px-5 py-4">
             <DialogTitle className="flex items-center gap-2 font-mono text-emerald-400 text-sm uppercase tracking-wider">
               <Terminal className="size-4" />
@@ -116,7 +122,7 @@ export function AIEscalationButton({
             <Textarea
               value={emailText}
               onChange={(event) => setEmailText(event.target.value)}
-              className="min-h-72 resize-y border-zinc-800 bg-zinc-900/90 font-mono text-xs leading-relaxed text-zinc-100"
+              className="min-h-72 resize-y border-zinc-800 bg-zinc-900/90 font-mono text-xs text-zinc-100 leading-relaxed"
               spellCheck={false}
             />
           </div>
