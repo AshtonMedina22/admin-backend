@@ -6,7 +6,7 @@ export function inferEntityBrand(text: string): EntityBrand {
   if (lower.includes("ssl") || lower.includes("script") || lower.includes("dreamhost") || lower.includes("systems")) {
     return "Systems Alert";
   }
-  if (lower.includes("yellow")) return "Yellow Star";
+  if (lower.includes("yellow") || lower.includes("ysp")) return "Yellow Star";
   if (lower.includes("3sk") || lower.includes("3k")) return "Solar3K";
   return "Solar2SK";
 }
@@ -33,9 +33,8 @@ export function entityBrandTone(brand: string | EntityBrand): EntityBrandTone {
 }
 
 export const entityBrandBadgeClass: Record<EntityBrandTone, string> = {
-  solar2sk: "border-[color-mix(in_oklab,var(--chart-1)_30%,transparent)] bg-[color-mix(in_oklab,var(--chart-1)_12%,transparent)] text-[var(--chart-1)]",
-  solar3k: "border-[color-mix(in_oklab,var(--chart-2)_30%,transparent)] bg-[color-mix(in_oklab,var(--chart-2)_12%,transparent)] text-[var(--chart-2)]",
-  yellowStar:
-    "border-[color-mix(in_oklab,var(--chart-3)_30%,transparent)] bg-[color-mix(in_oklab,var(--chart-3)_12%,transparent)] text-[var(--chart-3)]",
+  solar2sk: "border-lime-500/20 bg-lime-950/20 text-lime-300",
+  solar3k: "border-cyan-500/20 bg-cyan-950/30 text-cyan-300",
+  yellowStar: "border-amber-500/20 bg-amber-950/30 text-amber-300",
   systems: "border-destructive/30 bg-destructive/10 text-destructive",
 };
