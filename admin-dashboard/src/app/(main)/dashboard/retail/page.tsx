@@ -1,4 +1,6 @@
 import { ordersData, pendingBatteryShipments, totalBacklogUnits } from "@/data/demo/orders";
+import type { SupportTicket } from "@/data/demo/support-tickets";
+import { supportTicketsData } from "@/data/demo/support-tickets";
 import { fetchWorkbookScriptPayloadOrNull, type ScriptRetailOrder } from "@/lib/apps-script-workbook";
 import { fetchPublishedSectionTable } from "@/lib/published-workbook";
 
@@ -72,6 +74,43 @@ async function fetchRetailOrders(): Promise<RetailLogisticsOrder[]> {
   return ordersData.map(mapDemoOrder);
 }
 
+function normalizePriority(value: string): SupportTicket["priority"] {
+  if (value.toLowerCase().includes("high")) return "High";
+  if (value.toLowerCase().includes("medium")) return "Medium";
+  return "Low";
+}
+
+function customerFromUserGroup(value: string) {
+  const match = value.match(/\(([^)]+)\)|-\s*([^-\n]+)$/);
+  return match?.[1] || match?.[2]?.trim() || value || "Retail Customer";
+}
+
+async function fetchSupportTickets(): Promise<SupportTicket[]> {
+  try {
+    const rows = await fetchPublishedSectionTable("Retail Ops", "DIY Technical Support Tickets");
+    const tickets = rows
+      .filter((row) => row.ticket_id)
+      .map((row, index) => ({
+        id: `retail-ticket-${index + 1}`,
+        ticketNumber: row.ticket_id.startsWith("#") ? row.ticket_id : `#${row.ticket_id}`,
+        customerName: customerFromUserGroup(row.user_group || ""),
+        orderNumber: row.order_number || "Pending",
+        subject: row.subject || "Support Review",
+        message: row.message_snippet || "Pending support summary.",
+        status: (row.status || "Open") as SupportTicket["status"],
+        priority: normalizePriority(row.priority || "Medium"),
+        createdAt: row.created_at || "2026-06-13",
+        assignedTo: row.assigned_to || "S. Khan",
+      }));
+
+    if (tickets.length) return tickets;
+  } catch {
+    // Fall back to local preview data below.
+  }
+
+  return supportTicketsData;
+}
+
 function computeRetailKpis(orders: RetailLogisticsOrder[]) {
   const backlog = orders.filter((order) => {
     const stage = order.fulfillmentStage.toLowerCase();
@@ -95,7 +134,7 @@ function computeRetailKpis(orders: RetailLogisticsOrder[]) {
 }
 
 export default async function Page() {
-  const orders = await fetchRetailOrders();
+  const [orders, supportTickets] = await Promise.all([fetchRetailOrders(), fetchSupportTickets()]);
   const kpis = computeRetailKpis(orders);
 
   return (
@@ -103,6 +142,7 @@ export default async function Page() {
       orders={orders}
       totalBacklogUnits={kpis.totalBacklogUnits}
       pendingBatteryShipments={kpis.pendingBatteryShipments}
+      supportTickets={supportTickets}
     />
   );
 }

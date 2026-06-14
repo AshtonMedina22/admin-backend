@@ -164,8 +164,10 @@ const workbook: Record<string, SheetSpec> = {
       ["WOO-9403", "M. Allen", "Anenji 3KW Inverter Hardware Bank", "Support Review Required", "$3,850", "2026-06-13"],
       [],
       ["DIY Technical Support Tickets"],
-      ["Ticket ID", "User Group", "Subject", "Message Snippet", "Priority"],
-      ["2SK-TK-8012", "Retail DIY Purchaser - M. Allen", "Battery Parallel Configuration Validation", "Requesting engineering review on wiring three 48V Lithium blocks in parallel without over-volting the Anenji 3KW inverter input threshold.", "High Priority"],
+      ["Ticket ID", "User Group", "Subject", "Message Snippet", "Priority", "Status", "Created At", "Assigned To", "Order Number"],
+      ["2SK-TK-8012", "Retail DIY Purchaser - M. Allen", "Battery Parallel Configuration Validation", "Requesting engineering review on wiring three 48V Lithium blocks in parallel without over-volting the Anenji 3KW inverter input threshold.", "High Priority", "Open", "2026-06-13", "T. Khan", "9394"],
+      ["2SK-TK-8010", "Retail DIY Purchaser - Garrett Miller", "Hybrid inverter pack pre-install checklist", "Garrett Miller is requesting confirmation on Rich Solar 3KW hybrid inverter combiner wiring before warehouse pull ships from Wylie.", "Medium Priority", "In Progress", "2026-06-12", "S. Khan", "9401"],
+      ["2SK-TK-8008", "Retail DIY Purchaser - Robert Davis", "LiFePO4 add-on compatibility with existing DIY kit", "Battery add-on order on inventory hold needs validation that the 48V 100Ah LiFePO4 block matches the existing Anenji 3KW input threshold on the parallel bus.", "High Priority", "Open", "2026-06-13", "S. Khan", "9398"],
     ],
   },
   Calendar: {
