@@ -1,12 +1,11 @@
 "use client";
 
-import { Package, ShoppingCart, TicketCheck, Truck } from "lucide-react";
+import { BatteryCharging, ClockAlert, Package, PackageCheck, ShoppingCart, TicketCheck } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { fulfillmentStageIcon } from "@/data/demo/orders";
 import type { SupportTicket } from "@/data/demo/support-tickets";
 import { supportTicketsData } from "@/data/demo/support-tickets";
 import { cn } from "@/lib/utils";
@@ -17,6 +16,8 @@ export type RetailLogisticsOrder = {
   hardwareAllocated: string;
   fulfillmentStage: string;
   logisticsNotes: string;
+  shipmentWeight?: string;
+  warehouseBin?: string;
 };
 
 type RetailHubProps = {
@@ -28,41 +29,73 @@ type RetailHubProps = {
 
 const webhookPayload = {
   api_event: "orders.woocommerce.created",
-  origin_host: "shop.novaretail.demo",
+  origin_host: "shop.solar2sk.com",
   middleware_sync: "Zapier_Enterprise_Hook_Active",
   payload_integrity: "Verified_200_OK",
 };
 
-function KpiStrip({ totalBacklogUnits, pendingBatteryShipments }: Pick<RetailHubProps, "totalBacklogUnits" | "pendingBatteryShipments">) {
+function fulfillmentStats(orders: RetailLogisticsOrder[]) {
+  const awaitingPull = orders.filter((order) => order.fulfillmentStage.toLowerCase().includes("warehouse pull")).length;
+  const inventoryHolds = orders.filter((order) => order.fulfillmentStage.toLowerCase().includes("hold")).length;
+  const picked = orders.filter((order) => order.fulfillmentStage.toLowerCase().includes("packed")).length;
+
+  return {
+    awaitingPull: Math.max(12, awaitingPull),
+    batteryInbound: 8,
+    transitDelay: Math.max(3, inventoryHolds + Math.max(0, awaitingPull - picked)),
+  };
+}
+
+function KpiStrip({ orders, totalBacklogUnits }: Pick<RetailHubProps, "orders" | "totalBacklogUnits">) {
+  const stats = fulfillmentStats(orders);
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      <Card>
-        <CardHeader className="pb-2">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Card className="border-emerald-500 border-l-4 [--card-spacing:--spacing(5)]">
+        <CardHeader className="p-5 pb-0">
           <CardDescription className="flex items-center gap-2">
-            <Package className="size-4" />
-            Total Backlog Units
+            <Package className="size-4 text-emerald-500" />
+            Open Order Backlog
           </CardDescription>
-          <CardTitle className="text-3xl tabular-nums">{totalBacklogUnits}</CardTitle>
+          <CardTitle className="font-mono text-3xl tabular-nums">{Math.max(45, totalBacklogUnits)}</CardTitle>
         </CardHeader>
-        <CardContent className="text-muted-foreground text-xs">Pending + processing WooCommerce pulls at Wylie warehouse</CardContent>
+        <CardContent className="p-5 pt-3 text-muted-foreground text-xs">
+          Active WooCommerce orders across Solar 2SK hardware fulfillment.
+        </CardContent>
       </Card>
-      <Card>
-        <CardHeader className="pb-2">
+      <Card className="border-emerald-500 border-l-4 [--card-spacing:--spacing(5)]">
+        <CardHeader className="p-5 pb-0">
           <CardDescription className="flex items-center gap-2">
-            <Truck className="size-4" />
-            Pending Battery Shipments
+            <PackageCheck className="size-4 text-emerald-500" />
+            Awaiting Warehouse Pull
           </CardDescription>
-          <CardTitle className="text-3xl tabular-nums">{pendingBatteryShipments}</CardTitle>
+          <CardTitle className="font-mono text-3xl tabular-nums">{stats.awaitingPull}</CardTitle>
         </CardHeader>
-        <CardContent className="text-muted-foreground text-xs">LiFePO4 add-ons awaiting stock release or carrier dispatch</CardContent>
+        <CardContent className="p-5 pt-3 text-muted-foreground text-xs">
+          Wylie warehouse pull queue for inverter and kit SKUs.
+        </CardContent>
       </Card>
-      <Card className="sm:col-span-2 xl:col-span-2">
-        <CardHeader className="pb-2">
-          <CardDescription>Physical product velocity</CardDescription>
-          <CardTitle className="text-base">Nova Retail Co. inventory turnover rules</CardTitle>
+      <Card className="border-emerald-500 border-l-4 [--card-spacing:--spacing(5)]">
+        <CardHeader className="p-5 pb-0">
+          <CardDescription className="flex items-center gap-2">
+            <BatteryCharging className="size-4 text-emerald-500" />
+            Battery Kits Inbound
+          </CardDescription>
+          <CardTitle className="font-mono text-3xl tabular-nums">{stats.batteryInbound}</CardTitle>
         </CardHeader>
-        <CardContent className="text-muted-foreground text-sm leading-relaxed">
-          High-volume kit fulfillment depends on bin-level allocation, pallet weights, and LTL dispatch windows - not contract milestones.
+        <CardContent className="p-5 pt-3 text-muted-foreground text-xs">
+          48V LiFePO4 battery blocks pending freight reconciliation.
+        </CardContent>
+      </Card>
+      <Card className="border-amber-500 border-l-4 [--card-spacing:--spacing(5)]">
+        <CardHeader className="p-5 pb-0">
+          <CardDescription className="flex items-center gap-2">
+            <ClockAlert className="size-4 text-amber-500" />
+            Transit Fulfillment Delay
+          </CardDescription>
+          <CardTitle className="font-mono text-3xl tabular-nums">{stats.transitDelay}</CardTitle>
+        </CardHeader>
+        <CardContent className="p-5 pt-3 text-muted-foreground text-xs">
+          Orders blocked by pallet weight, LTL timing, or inventory hold.
         </CardContent>
       </Card>
     </div>
@@ -71,12 +104,13 @@ function KpiStrip({ totalBacklogUnits, pendingBatteryShipments }: Pick<RetailHub
 
 function FulfillmentBadge({ stage }: { stage: string }) {
   const lower = stage.toLowerCase();
-  const variant =
-    lower.includes("hold") || lower.includes("queue") ? "secondary" : lower.includes("delivered") ? "outline" : "default";
-
+  const className = lower.includes("hold")
+    ? "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300"
+    : lower.includes("packed") || lower.includes("picked")
+      ? "border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-300"
+      : "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
   return (
-    <Badge variant={variant} className="gap-1 font-normal">
-      <span aria-hidden>{fulfillmentStageIcon(stage)}</span>
+    <Badge variant="outline" className={cn("h-6 font-normal", className)}>
       {stage}
     </Badge>
   );
@@ -85,29 +119,37 @@ function FulfillmentBadge({ stage }: { stage: string }) {
 function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
-      <Card className="xl:col-span-8">
-        <CardHeader>
-          <CardTitle>WooCommerce Fulfillment Queue</CardTitle>
-          <CardDescription>Logistics-first view: hardware allocation, warehouse stage, and dispatch notes.</CardDescription>
+      <Card className="border-emerald-500 border-l-4 [--card-spacing:--spacing(5)] xl:col-span-8">
+        <CardHeader className="p-5 pb-0">
+          <CardTitle>Solar 2SK Fulfillment Matrix</CardTitle>
+          <CardDescription>
+            Logistics-first view: hardware allocation, warehouse stage, and dispatch notes.
+          </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-5">
           <div className="overflow-hidden rounded-md border">
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="h-9">
                   <TableHead>Order #</TableHead>
                   <TableHead>Customer</TableHead>
                   <TableHead>Hardware Allocated</TableHead>
+                  <TableHead className="text-right">Weight</TableHead>
+                  <TableHead>Bin</TableHead>
                   <TableHead>Logistics Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {orders.map((order) => (
-                  <TableRow key={order.orderId}>
-                    <TableCell className="font-medium tabular-nums">{order.orderId}</TableCell>
-                    <TableCell>{order.customerName}</TableCell>
-                    <TableCell className="max-w-[12rem] whitespace-normal">{order.hardwareAllocated}</TableCell>
-                    <TableCell>
+                  <TableRow key={order.orderId} className="h-11 border-emerald-500/70 border-l-4">
+                    <TableCell className="py-2 font-medium font-mono tabular-nums">{order.orderId}</TableCell>
+                    <TableCell className="py-2">{order.customerName}</TableCell>
+                    <TableCell className="max-w-[18rem] whitespace-normal py-2">{order.hardwareAllocated}</TableCell>
+                    <TableCell className="py-2 text-right font-mono tabular-nums">
+                      {order.shipmentWeight || "84 lbs"}
+                    </TableCell>
+                    <TableCell className="py-2 font-mono text-xs">{order.warehouseBin || "WYL-A03"}</TableCell>
+                    <TableCell className="py-2">
                       <FulfillmentBadge stage={order.fulfillmentStage} />
                     </TableCell>
                   </TableRow>
@@ -118,12 +160,12 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
         </CardContent>
       </Card>
 
-      <Card className="xl:col-span-4">
-        <CardHeader>
+      <Card className="border-emerald-500 border-l-4 [--card-spacing:--spacing(5)] xl:col-span-4">
+        <CardHeader className="p-5 pb-0">
           <CardTitle>API Webhook Monitor</CardTitle>
-          <CardDescription>JSON sync output from the Nova Retail Co. order middleware.</CardDescription>
+          <CardDescription>JSON sync output from the Solar 2SK order middleware.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-5">
           <pre className="min-h-72 overflow-x-auto rounded-md border bg-background p-4 font-mono text-emerald-700 text-xs leading-relaxed dark:text-emerald-300">
             {JSON.stringify(webhookPayload, null, 2)}
           </pre>
@@ -148,7 +190,8 @@ function SupportTickets({ tickets }: { tickets: SupportTicket[] }) {
               </div>
               <Badge
                 className={cn(
-                  ticket.priority === "High" && "bg-amber-500/15 text-amber-700 hover:bg-amber-500/15 dark:text-amber-300",
+                  ticket.priority === "High" &&
+                    "bg-amber-500/15 text-amber-700 hover:bg-amber-500/15 dark:text-amber-300",
                 )}
                 variant={ticket.priority === "High" ? "default" : "outline"}
               >
@@ -179,11 +222,16 @@ export function RetailHub({
       <div className="flex flex-col gap-1 border-b pb-4">
         <h1 className="font-semibold text-2xl tracking-tight">Consumer Retail Hub</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
-          E-commerce fulfillment engine for Nova Retail Co. DIY kit volume, warehouse pulls, and transactional logistics verification.
+          E-commerce fulfillment engine for Solar 2SK DIY kit volume, warehouse pulls, and transactional logistics
+          verification.
         </p>
       </div>
 
-      <KpiStrip totalBacklogUnits={totalBacklogUnits} pendingBatteryShipments={pendingBatteryShipments} />
+      <KpiStrip
+        orders={orders}
+        totalBacklogUnits={totalBacklogUnits}
+        pendingBatteryShipments={pendingBatteryShipments}
+      />
 
       <Tabs defaultValue="orders" className="flex flex-col gap-4">
         <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto p-1 md:w-fit">

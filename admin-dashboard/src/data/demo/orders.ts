@@ -17,6 +17,8 @@ export interface SolarOrder {
   fulfillmentStage: string;
   logisticsNotes: string;
   fulfillmentNote: string;
+  shipmentWeight: string;
+  warehouseBin: string;
   acquisitionSource?: string;
 }
 
@@ -36,7 +38,9 @@ export const ordersData: SolarOrder[] = [
     fulfillmentStage: "Pending Warehouse Pull",
     logisticsNotes: "Wylie Warehouse - pull queue; organic search attribution",
     fulfillmentNote: "Pending Warehouse Pull",
-    acquisitionSource: "Organic search (shop.novaretail.demo)",
+    shipmentWeight: "84 lbs",
+    warehouseBin: "WYL-A03",
+    acquisitionSource: "Organic search (shop.solar2sk.com)",
   },
   {
     id: "ord-002",
@@ -49,42 +53,48 @@ export const ordersData: SolarOrder[] = [
     total: 2100,
     status: "Processing",
     orderDate: "2026-06-11",
-    hardwareAllocated: "48V 100Ah LiFePO4 Lithium Battery Cells",
-    fulfillmentStage: "Fulfilled & Packed",
+    hardwareAllocated: "48V 100Ah LiFePO4 Battery Block",
+    fulfillmentStage: "Picked & Packed",
     logisticsNotes: "Wylie Warehouse Bin B-12 - carrier dispatch scheduled",
-    fulfillmentNote: "Fulfilled & Packed",
+    fulfillmentNote: "Picked & Packed",
+    shipmentWeight: "115 lbs",
+    warehouseBin: "WYL-B12",
   },
   {
     id: "ord-003",
-    orderNumber: "9398",
-    displayOrderId: "#WOO-9398",
-    customerName: "Robert Davis",
+    orderNumber: "9414",
+    displayOrderId: "#2SK-9414",
+    customerName: "J. Allen",
     entityBrand: "Solar2SK",
-    kitSku: "BAT-LIFEPO4-5K",
-    systemSizeKw: 0,
-    total: 2400,
+    kitSku: "DIY-5KW-OFFGRID-COMPLETE",
+    systemSizeKw: 5,
+    total: 6850,
     status: "Pending",
     orderDate: "2026-06-12",
-    hardwareAllocated: "48V 100Ah LiFePO4 Battery Pack",
+    hardwareAllocated: "5kW DIY Off-Grid Solar Kit (Complete)",
     fulfillmentStage: "Inventory Hold",
-    logisticsNotes: "Battery add-on - 8 units remaining in Wylie stock (INV-002)",
-    fulfillmentNote: "Low stock hold on LiFePO4 wall block",
+    logisticsNotes: "Combiner box pallet waiting on inbound freight reconciliation",
+    fulfillmentNote: "Inventory Hold",
+    shipmentWeight: "420 lbs",
+    warehouseBin: "WYL-PAL-07",
   },
   {
     id: "ord-004",
-    orderNumber: "9396",
-    displayOrderId: "#WOO-9396",
-    customerName: "Maria Martinez",
+    orderNumber: "9412",
+    displayOrderId: "#2SK-9412",
+    customerName: "Garrett Miller",
     entityBrand: "Solar2SK",
-    kitSku: "DIY-3KW-BACKUP",
-    systemSizeKw: 3.5,
+    kitSku: "RS-3KW-HYBRID-PACK",
+    systemSizeKw: 3,
     total: 4200,
     status: "Processing",
-    orderDate: "2026-06-08",
-    hardwareAllocated: "Anenji 3KW Inverter Bank",
-    fulfillmentStage: "Pick Queue",
-    logisticsNotes: "Payment confirmed - awaiting Anenji inverter bin allocation",
-    fulfillmentNote: "Tied to INV-3KW-ANENJI warehouse pool",
+    orderDate: "2026-06-13",
+    hardwareAllocated: "Rich Solar 3KW Hybrid Inverter Pack",
+    fulfillmentStage: "Pending Warehouse Pull",
+    logisticsNotes: "High-priority duplicate order validation for Wylie pull desk",
+    fulfillmentNote: "Pending Warehouse Pull",
+    shipmentWeight: "84 lbs",
+    warehouseBin: "WYL-A04",
   },
 ];
 
@@ -101,11 +111,3 @@ export const pendingBatteryShipments = ordersData.filter(
     o.status !== "Shipped" &&
     o.status !== "Delivered",
 ).length;
-
-export function fulfillmentStageIcon(stage: string): string {
-  const lower = stage.toLowerCase();
-  if (lower.includes("fulfilled") || lower.includes("packed") || lower.includes("shipped")) return "🚚";
-  if (lower.includes("hold") || lower.includes("queue") || lower.includes("pending")) return "⏳";
-  if (lower.includes("delivered")) return "✅";
-  return "📦";
-}

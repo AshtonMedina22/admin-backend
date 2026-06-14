@@ -13,6 +13,8 @@ function mapDemoOrder(order: (typeof ordersData)[number]): RetailLogisticsOrder 
     hardwareAllocated: order.hardwareAllocated,
     fulfillmentStage: order.fulfillmentStage,
     logisticsNotes: order.logisticsNotes,
+    shipmentWeight: order.shipmentWeight,
+    warehouseBin: order.warehouseBin,
   };
 }
 
@@ -21,20 +23,24 @@ function mapLegacyRetailRow(row: {
   customer: string;
   product: string;
   status: string;
+  weight?: string;
+  bin?: string;
 }): RetailLogisticsOrder {
-  const stage =
-    row.status === "Pending Warehouse Pull"
-      ? "Inventory Hold"
-      : row.status.includes("Packed") || row.status.includes("Fulfill")
-        ? "Picked & Packed"
-        : row.status;
+  const normalizedId = row.id.startsWith("#")
+    ? row.id
+    : /^2SK-/i.test(row.id)
+      ? `#${row.id}`
+      : `#WOO-${row.id.replace(/^WOO-?/i, "")}`;
+  const stage = row.status.includes("Packed") || row.status.includes("Fulfill") ? "Picked & Packed" : row.status;
 
   return {
-    orderId: row.id.startsWith("#") ? row.id : `#WOO-${row.id.replace(/^WOO-?/i, "")}`,
+    orderId: normalizedId,
     customerName: row.customer,
     hardwareAllocated: row.product,
     fulfillmentStage: stage,
     logisticsNotes: row.status,
+    shipmentWeight: row.weight,
+    warehouseBin: row.bin,
   };
 }
 
@@ -58,6 +64,8 @@ async function fetchRetailOrders(): Promise<RetailLogisticsOrder[]> {
           customer: row.customer,
           product: row.product,
           status: row.status,
+          weight: row.weight,
+          bin: row.bin,
         }),
       );
 
