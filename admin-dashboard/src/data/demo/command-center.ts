@@ -8,7 +8,7 @@ import { crmPipelineData } from "./pipeline";
 import type { RevenueSplitMonth } from "./revenue-split";
 import { revenueSplitData } from "./revenue-split";
 import { totalMonthlySpend, urgentAlertsCount, websiteHealthData } from "./systems";
-import { gridEfficiencyIndex, liveSitesCount, telemetrySitesData } from "./telemetry";
+import { gridEfficiencyIndex, liveSitesCount } from "./telemetry";
 import type { DisplayCompany } from "./types";
 import { brandToDisplayCompany } from "./types";
 
@@ -18,9 +18,9 @@ export type { DisplayCompany } from "./types";
 export type CommandCenterMetrics = {
   /** Solar 3SK commercial contract + proposal pipeline ($). */
   b2bPipeline: number;
-  /** Yellow Star Power live array output (kW). */
+  /** Yellow Star Power live macro fleet output (MW). */
   fleetYield: number;
-  /** Combined installed capacity across managed sites (kW). */
+  /** Combined installed macro capacity across managed sites (MW). */
   portfolioCapacity: number;
   /** Solar 2SK MTD WooCommerce unit volume. */
   retailVolume: number;
@@ -106,14 +106,11 @@ export function computeCommandCenterMetrics(): CommandCenterMetrics {
     .filter((p) => p.entityBrand === "Solar3K")
     .reduce((sum, p) => sum + p.projectValue, 0);
 
-  const fleetYield =
-    Math.round(
-      telemetrySitesData
-        .filter((s) => s.entityBrand === "Yellow Star" && s.inverterStatus === "Online")
-        .reduce((sum, s) => sum + s.productionKw, 0) * 10,
-    ) / 10;
-
-  const portfolioCapacity = Math.round(telemetrySitesData.reduce((sum, s) => sum + s.systemSizeKw, 0) * 10) / 10;
+  // Keep the executive Command Center at institutional portfolio scale.
+  // Site-level telemetry remains in kW elsewhere, while these rollups represent
+  // Yellow Star Power's broader managed/grid asset footprint in megawatts.
+  const fleetYield = 3.4;
+  const portfolioCapacity = 4.5;
 
   const retailVolume = ordersData
     .filter((o) => o.entityBrand === "Solar2SK" && o.status !== "Cancelled")
@@ -125,7 +122,7 @@ export function computeCommandCenterMetrics(): CommandCenterMetrics {
 export const defaultCommandCenterTrends: CommandCenterTrends = {
   b2bPipeline: "+18.4%",
   fleetYield: "+3.1%",
-  portfolioCapacity: "+120 kW",
+  portfolioCapacity: "+0.7 MW",
   retailVolume: "+9 units",
 };
 

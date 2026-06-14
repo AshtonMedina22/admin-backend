@@ -6,13 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
-const BASELINE_GENERATION_KW = 48.2;
-const BASELINE_CONSUMPTION_KW = 12.4;
+const BASELINE_GENERATION_KW = 2482.0;
+const BASELINE_CONSUMPTION_KW = 412.0;
 const TICK_MS = 2000;
-const GENERATION_MIN_KW = 46.0;
-const GENERATION_MAX_KW = 51.0;
-const GENERATION_VARIANCE_KW = 0.4;
-const CONSUMPTION_VARIANCE_KW = 0.1;
+const GENERATION_MIN_KW = 2450.0;
+const GENERATION_MAX_KW = 2525.0;
+const GENERATION_VARIANCE_KW = 7.5;
+const CONSUMPTION_VARIANCE_KW = 3.2;
 
 function clamp(value: number, min: number, max: number) {
   return parseFloat(Math.min(max, Math.max(min, value)).toFixed(1));
@@ -43,7 +43,7 @@ export function TelemetrySimulatorControl({ isSimulating, onSimulatingChange, li
             <span className={cn("font-semibold tabular-nums", isSimulating ? "text-emerald-600" : "text-foreground")}>
               {liveYield.toFixed(1)} kW
             </span>{" "}
-            · Hunt County SE66.6K hardware
+            · Hunt County portfolio SCADA
           </p>
         </div>
       </div>
@@ -63,7 +63,7 @@ export function useTelemetrySimulation() {
 
   const runTelemetryTick = useCallback(() => {
     setGenerationKw((prev) => drift(prev, GENERATION_VARIANCE_KW, GENERATION_MIN_KW, GENERATION_MAX_KW));
-    setConsumptionKw((prev) => drift(prev, CONSUMPTION_VARIANCE_KW, 11.8, 13.2));
+    setConsumptionKw((prev) => drift(prev, CONSUMPTION_VARIANCE_KW, 395.0, 430.0));
     setEfficiency((prev) => {
       const next = prev + (Math.random() * 2 - 1) * 0.15;
       return parseFloat(Math.min(99.1, Math.max(92, next)).toFixed(2));

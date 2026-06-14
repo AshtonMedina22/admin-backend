@@ -2,6 +2,7 @@
 
 import { AlertTriangle, Briefcase, FileWarning, Gauge, Sigma } from "lucide-react";
 
+import { AIEscalationButton } from "@/components/ai-escalation-button";
 import { EntityBrandBadge } from "@/components/dashboard/entity-brand-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,8 +17,6 @@ import {
   dashSectionCardHeaderClass,
 } from "@/lib/dashboard-ui";
 import { cn } from "@/lib/utils";
-
-import { AIEscalationButton } from "@/components/ai-escalation-button";
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-US", { currency: "USD", maximumFractionDigits: 0, style: "currency" }).format(value);
@@ -74,9 +73,11 @@ function phaseBadgeClass(project: PipelineProject) {
 }
 
 function shouldShowEscalation(project: PipelineProject) {
-  return /architecture|structural|engineering|utility|interconnection|permit|hold|awaiting/i.test(
-    `${project.pipelineStage} ${project.pipelinePhase} ${project.nextCriticalPath}`,
-  );
+  return /McKinney Logistics Hub|Frisco Commercial Plaza|Wylie Industrial Microgrid/i.test(project.clientName);
+}
+
+function escalationBrand(project: PipelineProject) {
+  return project.entityBrand === "Yellow Star" ? "Yellow Star Power" : "Solar 3SK";
 }
 
 function PipelineKpiStrip({
@@ -88,12 +89,17 @@ function PipelineKpiStrip({
     .filter((project) => project.pipelineStage === "Active Bid Out" || project.pipelineStage === "OpenSolar Design")
     .reduce((sum, project) => sum + project.projectValue, 0);
   const underConstruction = projects
-    .filter((project) => project.pipelineStage === "DocuSign Executed" || project.pipelineStage === "Engineering Hold")
+    .filter(
+      (project) =>
+        project.pipelineStage === "DocuSign Executed" ||
+        project.pipelineStage === "Engineering Hold" ||
+        project.pipelineStage === "Interconnection Review",
+    )
     .reduce((sum, project) => sum + project.projectValue, 0);
   const alerts = projects.filter((project, index) => staleDays(project, index) >= 31).length;
 
   return (
-    <div className={dashKpiGrid3Class}>
+    <div className={cn(dashKpiGrid3Class, "grid-cols-1 gap-3 md:grid-cols-3")}>
       <Card size="sm" className={cn("border-indigo-500 border-l-4", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
@@ -163,8 +169,8 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
           </CardDescription>
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
-          <div className="overflow-hidden rounded-md border">
-            <Table>
+          <div className="scrollbar-none block w-full overflow-x-auto rounded-md border">
+            <Table className="min-w-[1120px]">
               <TableHeader>
                 <TableRow className="h-9">
                   <TableHead>Project Asset</TableHead>
@@ -174,7 +180,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                   <TableHead className="text-right">Contract Value</TableHead>
                   <TableHead>Tracking</TableHead>
                   <TableHead>Next Critical Path</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
+                  <TableHead className="text-right">Automated Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -223,7 +229,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                         {shouldShowEscalation(project) ? (
                           <AIEscalationButton
                             projectName={project.clientName}
-                            brandEntity="Solar 3SK"
+                            brandEntity={escalationBrand(project)}
                             utilityAuthority={authority}
                             permitNumber={permit}
                             daysStale={daysStale}

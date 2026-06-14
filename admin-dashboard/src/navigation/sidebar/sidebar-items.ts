@@ -1,4 +1,13 @@
-import { Building2, Calendar, FileCheck, Forklift, LayoutDashboard, type LucideIcon, Settings, ShoppingBag } from "lucide-react";
+import {
+  Building2,
+  Calendar,
+  FileCheck,
+  Forklift,
+  LayoutDashboard,
+  type LucideIcon,
+  Settings,
+  ShoppingBag,
+} from "lucide-react";
 
 export interface NavSubItem {
   title: string;

@@ -48,6 +48,17 @@ export const calendarEventsData: CalendarEvent[] = [
     location: "Hunt County Asset Expansion",
     notes: "Testing 60kW macro asset expansion tie-in matrix",
   },
+  {
+    id: "cal-004",
+    title: "Frisco Commercial Plaza Load Walk",
+    entityBrand: "Solar3K",
+    date: "2026-06-26",
+    dayOfMonth: 26,
+    type: "Regulatory Gate",
+    time: "10:45 AM",
+    location: "Frisco Commercial Plaza",
+    notes: "Structural engineer on-site roof load assessment walk for 120kW commercial array",
+  },
 ];
 
 export function calendarEventsByDay(): Record<
