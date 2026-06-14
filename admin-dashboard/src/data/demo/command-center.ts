@@ -16,13 +16,13 @@ export type { DisplayCompany } from "./types";
 
 /** Executive KPI numbers - derived from demo modules or overwritten by workbook sync. */
 export type CommandCenterMetrics = {
-  /** Summit C&I Group commercial contract + proposal pipeline ($). */
+  /** Solar 3SK commercial contract + proposal pipeline ($). */
   b2bPipeline: number;
-  /** Cedar Grid Assets live array output (kW). */
+  /** Yellow Star Power live array output (kW). */
   fleetYield: number;
   /** Combined installed capacity across managed sites (kW). */
   portfolioCapacity: number;
-  /** Nova Retail Co. MTD WooCommerce unit volume. */
+  /** Solar 2SK MTD WooCommerce unit volume. */
   retailVolume: number;
 };
 
@@ -158,7 +158,7 @@ export const demoCommandCenterData: CommandCenterData = {
     {
       label: "Active DIY Order Volume",
       value: String(pendingOrderCount),
-      detail: "Pending Nova Retail Co. backup kit orders",
+      detail: "Pending Solar 2SK backup kit orders",
       company: DEMO_ORG.retail,
       status: "watch",
     },
@@ -174,7 +174,7 @@ export const demoCommandCenterData: CommandCenterData = {
     {
       id: "alert-001",
       title: "SSL renewal required",
-      detail: `${websiteHealthData.filter((w) => w.status === "URGENT").length} domains flagged URGENT - novaretail.demo certificate expires soon`,
+      detail: `${websiteHealthData.filter((w) => w.status === "URGENT").length} domains flagged URGENT - solar2sk.com certificate expires soon`,
       company: DEMO_ORG.retail,
       owner: "Alex Morgan",
       due: "Jun 20",

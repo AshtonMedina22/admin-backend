@@ -1,6 +1,6 @@
 # Admin Dashboard
 
-Executive operations dashboard for Gold Star Power's affiliated solar businesses.
+Executive operations dashboard for Yellow Star Power's affiliated solar businesses.
 
 ## Scope
 

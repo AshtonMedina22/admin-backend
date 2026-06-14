@@ -12,8 +12,8 @@ function dayFromDate(value: string) {
 import { DEMO_ORG } from "@/config/demo-identity";
 
 function eventVariant(brand: string): CalendarEvent["variant"] {
-  if (brand.includes(DEMO_ORG.retail) || brand.includes("Retail")) return "default";
-  if (brand.includes(DEMO_ORG.portfolio) || brand.includes("Grid")) return "outline";
+  if (brand.includes(DEMO_ORG.retail) || brand.includes("2SK")) return "default";
+  if (brand.includes(DEMO_ORG.portfolio) || brand.includes("Yellow")) return "outline";
   return "secondary";
 }
 

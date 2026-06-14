@@ -32,7 +32,7 @@ export const revenueSplitData: RevenueSplitMonth[] = [
     solar3k: 71000,
     yellowStar: 17500,
     status: "pending_reconciliation",
-    statusNote: "Cedar Grid Assets yield accrual pending - workbook row 14 formula mismatch",
+    statusNote: "Yellow Star Power yield accrual pending - workbook row 14 formula mismatch",
   },
 ];
 

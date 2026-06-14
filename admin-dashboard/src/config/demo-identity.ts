@@ -1,11 +1,16 @@
-/** Generic demo identities — no real client or personnel names. */
+/**
+ * Operating company identities for the demo dashboard.
+ * Verified entities: Yellow Star Power Ltd. Co., Solar2SK LLC, Solar3K LLC
+ * (related renewable-energy portfolio — not to be confused with unrelated "Texas Star Power").
+ */
 export const DEMO_ORG = {
-  parent: "Meridian Holdings",
-  retail: "Nova Retail Co.",
-  commercial: "Summit C&I Group",
-  portfolio: "Cedar Grid Assets",
+  parent: "Yellow Star Power",
+  retail: "Solar 2SK",
+  commercial: "Solar 3SK",
+  portfolio: "Yellow Star Power",
 } as const;
 
+/** Fictional personnel — no real client names in RBAC UI. */
 export const DEMO_ADMIN = {
   id: "amorgan",
   name: "Alex Morgan",

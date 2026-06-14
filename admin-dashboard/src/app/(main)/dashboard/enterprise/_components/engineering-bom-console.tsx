@@ -45,7 +45,7 @@ export function EngineeringBomConsole() {
       setLogs((prev) => [
         ...prev,
         {
-          text: "Cross-checking electrical BOM arrays with Nova Retail Co. Wylie warehouse inventory…",
+          text: "Cross-checking electrical BOM arrays with Solar 2SK Wylie warehouse inventory…",
           type: "info",
           time: timestamp(),
         },
@@ -90,7 +90,7 @@ export function EngineeringBomConsole() {
               Cross-Company Material Allocator
             </CardTitle>
             <CardDescription>
-              Reconciles OpenSolar CAD blueprints against Nova Retail Co. retail warehouse stock ({anenjiSku?.componentName})
+              Reconciles OpenSolar CAD blueprints against Solar 2SK retail warehouse stock ({anenjiSku?.componentName})
             </CardDescription>
           </div>
           <Button disabled={status === "running"} onClick={runDiagnostics}>

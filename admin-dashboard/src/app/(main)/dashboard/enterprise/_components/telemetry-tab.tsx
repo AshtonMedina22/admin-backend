@@ -34,9 +34,9 @@ export function TelemetryTab() {
               <div className="grid gap-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <CardTitle>Hunt County Microgrid Array Core</CardTitle>
-                  <EntityBrandBadge brand="Cedar Grid Assets" />
+                  <EntityBrandBadge brand="Yellow Star Power" />
                 </div>
-                <CardDescription>Cedar Grid Assets Operations</CardDescription>
+                <CardDescription>Yellow Star Power Operations</CardDescription>
               </div>
               <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-300">
                 <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
@@ -69,9 +69,9 @@ export function TelemetryTab() {
               <div className="grid gap-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <CardTitle>Frisco Commercial Array (Inverter A)</CardTitle>
-                  <EntityBrandBadge brand="Summit C&I Group" />
+                  <EntityBrandBadge brand="Solar 3SK" />
                 </div>
-                <CardDescription>Summit C&I Group Client Operations</CardDescription>
+                <CardDescription>Solar 3SK Client Operations</CardDescription>
               </div>
               <Badge className="bg-amber-500/15 text-amber-700 hover:bg-amber-500/15 dark:text-amber-300">
                 <AlertTriangle className="size-3 animate-pulse" />

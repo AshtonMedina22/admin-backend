@@ -46,9 +46,9 @@ type MetricCardConfig = {
 
 function entityLabel(value: string) {
   const lower = value.toLowerCase();
-  if (lower.includes("yellow") || lower.includes("cedar")) return "Yellow Star Power";
-  if (lower.includes("3sk") || lower.includes("3k") || lower.includes("summit")) return "Solar 3SK";
-  if (lower.includes("2sk") || lower.includes("nova") || lower.includes("retail")) return "Solar 2SK";
+  if (lower.includes("yellow")) return "Yellow Star Power";
+  if (lower.includes("3sk") || lower.includes("3k")) return "Solar 3SK";
+  if (lower.includes("2sk")) return "Solar 2SK";
   return "Shared";
 }
 

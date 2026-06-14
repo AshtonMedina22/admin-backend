@@ -7,5 +7,5 @@ workflow is explicitly approved.
 
 - Keep the sidebar limited to the six approved sections.
 - Prefer workbook-backed data mappers over hard-coded page logic.
-- Keep operational copy specific to Gold Star Power, Yellow Star Power, Solar 2SK, and Solar 3SK.
+- Keep operational copy specific to Yellow Star Power, Yellow Star Power, Solar 2SK, and Solar 3SK.
 - Run `npm run check` and `npm run build` before handing off changes.

@@ -27,7 +27,7 @@ export const milestonesData: ProjectMilestone[] = [
   {
     id: "ms-002",
     projectName: "Hunt County Asset Expansion",
-    clientAsset: "Cedar Grid Assets",
+    clientAsset: "Yellow Star Power",
     entityBrand: "Yellow Star",
     systemSizeKw: 60,
     phase: "Commissioned",

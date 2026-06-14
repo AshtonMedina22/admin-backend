@@ -25,7 +25,7 @@ export interface SoftwareSubscription {
 export const websiteHealthData: WebsiteHealth[] = [
   {
     id: "web-001",
-    siteDomain: "novaretail.demo",
+    siteDomain: "solar2sk.com",
     company: "Solar2SK",
     status: "URGENT",
     platform: "WordPress",
@@ -36,7 +36,7 @@ export const websiteHealthData: WebsiteHealth[] = [
   },
   {
     id: "web-002",
-    siteDomain: "shop.novaretail.demo",
+    siteDomain: "shop.solar2sk.com",
     company: "Solar2SK",
     status: "HEALTHY",
     platform: "WooCommerce on WordPress",
@@ -47,7 +47,7 @@ export const websiteHealthData: WebsiteHealth[] = [
   },
   {
     id: "web-003",
-    siteDomain: "summitci.demo",
+    siteDomain: "solar3k.com",
     company: "Solar3K",
     status: "HEALTHY",
     platform: "Next.js",
@@ -58,7 +58,7 @@ export const websiteHealthData: WebsiteHealth[] = [
   },
   {
     id: "web-004",
-    siteDomain: "cedargrid.demo",
+    siteDomain: "yellowstarpower.com",
     company: "Yellow Star",
     status: "HEALTHY",
     platform: "Next.js",
@@ -76,7 +76,7 @@ export const softwareSubscriptionData: SoftwareSubscription[] = [
     monthlyCost: 45,
     accountOwner: "Alex Morgan",
     category: "Hosting",
-    serves: "PHP/WordPress retail storefront (shop.novaretail.demo)",
+    serves: "PHP/WordPress retail storefront (shop.solar2sk.com)",
     renewal: "Jul 13, 2026",
   },
   {
@@ -85,7 +85,7 @@ export const softwareSubscriptionData: SoftwareSubscription[] = [
     monthlyCost: 20,
     accountOwner: "Alex Morgan",
     category: "Hosting",
-    serves: "Next.js commercial landing pages (Summit C&I Group / Cedar Grid Assets)",
+    serves: "Next.js commercial landing pages (Solar 3SK / Yellow Star Power)",
     renewal: "Jul 1, 2026",
   },
   {
@@ -103,7 +103,7 @@ export const softwareSubscriptionData: SoftwareSubscription[] = [
     monthlyCost: 45,
     accountOwner: "Alex Morgan",
     category: "Contracts",
-    serves: "Summit C&I Group engineering layouts and power consultation contracts",
+    serves: "Solar 3SK engineering layouts and power consultation contracts",
     renewal: "Jun 28, 2026",
   },
   {
