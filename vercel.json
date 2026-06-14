@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd gold-star-ops-dashboard && npm run build",
+  "devCommand": "cd gold-star-ops-dashboard && npm run dev",
+  "framework": "nextjs",
+  "installCommand": "cd gold-star-ops-dashboard && npm install",
+  "outputDirectory": "gold-star-ops-dashboard/.next"
+}
