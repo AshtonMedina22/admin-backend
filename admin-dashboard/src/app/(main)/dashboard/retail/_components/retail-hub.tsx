@@ -211,12 +211,7 @@ function SupportTickets({ tickets }: { tickets: SupportTicket[] }) {
   );
 }
 
-export function RetailHub({
-  orders,
-  totalBacklogUnits,
-  pendingBatteryShipments,
-  supportTickets = supportTicketsData,
-}: RetailHubProps) {
+export function RetailHub({ orders, totalBacklogUnits, supportTickets = supportTicketsData }: RetailHubProps) {
   return (
     <div className="flex flex-col gap-4 md:gap-6">
       <div className="flex flex-col gap-1 border-b pb-4">
@@ -227,11 +222,7 @@ export function RetailHub({
         </p>
       </div>
 
-      <KpiStrip
-        orders={orders}
-        totalBacklogUnits={totalBacklogUnits}
-        pendingBatteryShipments={pendingBatteryShipments}
-      />
+      <KpiStrip orders={orders} totalBacklogUnits={totalBacklogUnits} />
 
       <Tabs defaultValue="orders" className="flex flex-col gap-4">
         <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto p-1 md:w-fit">
