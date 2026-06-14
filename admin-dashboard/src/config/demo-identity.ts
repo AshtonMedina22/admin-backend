@@ -1,13 +1,13 @@
 /**
  * Operating company identities for the demo dashboard.
- * Verified entities: Yellow Star Power Ltd. Co., Solar2SK LLC, Solar3K LLC
+ * Verified entities: YSP, 2SK, 3SK
  * (related renewable-energy portfolio — not to be confused with unrelated "Texas Star Power").
  */
 export const DEMO_ORG = {
-  parent: "Yellow Star Power",
-  retail: "Solar 2SK",
-  commercial: "Solar 3SK",
-  portfolio: "Yellow Star Power",
+  parent: "YSP",
+  retail: "2SK",
+  commercial: "3SK",
+  portfolio: "YSP",
 } as const;
 
 /** Fictional personnel — no real client names in RBAC UI. */
