@@ -61,7 +61,7 @@ export const sidebarItems: NavGroup[] = [
       },
       {
         title: "Systems",
-        url: "/dashboard/settings",
+        url: "/dashboard/systems",
         icon: Settings,
         accessRequired: "admin",
       },

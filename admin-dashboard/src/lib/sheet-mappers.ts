@@ -130,17 +130,17 @@ export function mapWorkbookToCommandCenter(summary: DashboardSummary): CommandCe
     projects:
       summary.projects.length > 0
         ? summary.projects.slice(0, 6).map((project) => ({
-            id: project.id,
-            customer: project.customerName,
+            id: project.id || "project-pending",
+            customer: project.customerName || "Pending Allocation",
             company: brandToDisplayCompany(
-              project.company.includes("Yellow")
+              project.company?.includes("Yellow")
                 ? "Yellow Star"
-                : project.company.includes("3")
+                : project.company?.includes("3")
                   ? "Solar3K"
                   : "Solar2SK",
             ),
             stage: project.stage || "Not started",
-            value: project.contractValue,
+            value: project.contractValue || "$0",
             owner: project.contractor || "Unassigned",
             nextStep: project.notes || "Review next action",
             due: project.estimatedCompletion || "TBD",
@@ -167,7 +167,7 @@ export function mapRecordsToPipeline(records: SheetRecord[]): PipelineProject[] 
       projectType: (row.project_type || "Commercial Rooftop") as PipelineProject["projectType"],
       pipelineStage: (row.stage || row.pipeline_stage || "New Lead") as PipelineProject["pipelineStage"],
       pipelinePhase: row.phase || row.pipeline_phase || "Engineering Design",
-      projectValue: Number(String(row.contract_value || row.project_value || 0).replace(/[$,]/g, "")) || 0,
+      projectValue: Number(String(row.contract_value || row.project_value || row.expected_value || 0).replace(/[$,]/g, "")) || 0,
       nextCriticalPath: row.next_critical_path || row.critical_path || "Pending milestone review",
     }));
 
