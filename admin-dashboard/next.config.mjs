@@ -6,6 +6,7 @@ const projectRoot = dirname(fileURLToPath(import.meta.url));
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactCompiler: true,
+  productionBrowserSourceMaps: false,
   turbopack: {
     root: projectRoot,
   },

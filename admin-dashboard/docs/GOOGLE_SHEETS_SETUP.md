@@ -140,4 +140,4 @@ You should get JSON rows from your sheet. If you see `403`, the sheet is not sha
 
 - Does **not** use your personal Google login in the app
 - Does **not** require OAuth consent screen for a service account reading your own sheet
-- Does **not** give Cursor your password - only works after `.env.local` + API routes exist
+- Does **not** expose your password - only works after `.env.local` + API routes exist
