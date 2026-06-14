@@ -2,8 +2,8 @@
 
 import { Activity, AlertCircle, AlertTriangle, CheckCircle2, Info } from "lucide-react";
 
-import { RelativeTime } from "@/components/dashboard/relative-time";
 import { EntityBrandBadge } from "@/components/dashboard/entity-brand-badge";
+import { RelativeTime } from "@/components/dashboard/relative-time";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -51,8 +51,8 @@ export function GlobalEventsFeed({
   const openIssues = events.filter((e) => e.status === "critical" || e.status === "warning").length;
 
   return (
-    <Card className="flex h-full flex-col">
-      <CardHeader>
+    <Card className="flex h-full flex-col border-amber-500 border-l-4 [--card-spacing:--spacing(5)]">
+      <CardHeader className="p-5 pb-0">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <CardTitle className="flex items-center gap-2 leading-none">
             <Activity className="size-5" />
@@ -69,18 +69,17 @@ export function GlobalEventsFeed({
           {lastSyncedAt ? (
             <>
               {" "}
-              Last pull{" "}
-              <RelativeTime value={lastSyncedAt} className="text-muted-foreground" />.
+              Last pull <RelativeTime value={lastSyncedAt} className="text-muted-foreground" />.
             </>
           ) : null}
         </CardDescription>
         {workbookConnected ? (
           <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-emerald-950 text-sm dark:text-emerald-100">
-            Workbook synced automatically with CedarGrid_Operations
+            Workbook synced automatically with YellowStarPower_Operations
           </div>
         ) : null}
       </CardHeader>
-      <CardContent className="min-h-0 flex-1">
+      <CardContent className="min-h-0 flex-1 p-5 pt-3">
         <ScrollArea className="h-72 pr-3">
           <div className="grid gap-3">
             {events.map((event) => {
@@ -108,10 +107,10 @@ export function GlobalEventsFeed({
                     {isIsoTimestamp ? (
                       <RelativeTime
                         value={event.timestamp}
-                        className="shrink-0 text-[11px] text-muted-foreground tabular-nums"
+                        className="shrink-0 font-mono text-[11px] text-muted-foreground tabular-nums"
                       />
                     ) : (
-                      <span className="shrink-0 text-[11px] text-muted-foreground tabular-nums">
+                      <span className="shrink-0 font-mono text-[11px] text-muted-foreground tabular-nums">
                         {formatEventTime(event.timestamp)}
                       </span>
                     )}

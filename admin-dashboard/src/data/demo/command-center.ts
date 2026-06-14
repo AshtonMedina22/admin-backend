@@ -1,10 +1,12 @@
+import { DEMO_ORG } from "@/config/demo-identity";
+
 import type { GlobalEvent } from "./global-events";
 import { globalEventsData } from "./global-events";
 import { activeCiPipelineMw } from "./milestones";
 import { ordersData, pendingOrderCount } from "./orders";
 import { crmPipelineData } from "./pipeline";
 import type { RevenueSplitMonth } from "./revenue-split";
-import { revenueSplitData, totalCombinedRevenue } from "./revenue-split";
+import { revenueSplitData } from "./revenue-split";
 import { totalMonthlySpend, urgentAlertsCount, websiteHealthData } from "./systems";
 import { gridEfficiencyIndex, liveSitesCount, telemetrySitesData } from "./telemetry";
 import type { DisplayCompany } from "./types";
@@ -137,7 +139,7 @@ export const demoCommandCenterData: CommandCenterData = {
   trends: defaultCommandCenterTrends,
   revenueSplit: revenueSplitData,
   events: globalEventsData,
-  companies: ["All Companies", "Cedar Grid Assets", "Nova Retail Co.", "Summit C&I Group"],
+  companies: ["All Companies", DEMO_ORG.portfolio, DEMO_ORG.retail, DEMO_ORG.commercial],
   kpis: [
     {
       label: "Total Combined Revenue",
@@ -157,7 +159,7 @@ export const demoCommandCenterData: CommandCenterData = {
       label: "Active DIY Order Volume",
       value: String(pendingOrderCount),
       detail: "Pending Nova Retail Co. backup kit orders",
-      company: "Nova Retail Co.",
+      company: DEMO_ORG.retail,
       status: "watch",
     },
     {
@@ -173,7 +175,7 @@ export const demoCommandCenterData: CommandCenterData = {
       id: "alert-001",
       title: "SSL renewal required",
       detail: `${websiteHealthData.filter((w) => w.status === "URGENT").length} domains flagged URGENT - novaretail.demo certificate expires soon`,
-      company: "Nova Retail Co.",
+      company: DEMO_ORG.retail,
       owner: "Alex Morgan",
       due: "Jun 20",
       priority: "Critical",
@@ -193,7 +195,7 @@ export const demoCommandCenterData: CommandCenterData = {
       id: "alert-003",
       title: "Low inventory - LiFePO4 batteries",
       detail: "BAT-LIFEPO4-5K at 8 units (reorder point: 12)",
-      company: "Nova Retail Co.",
+      company: DEMO_ORG.retail,
       owner: "Jordan Lee",
       due: "Today",
       priority: "Critical",
@@ -203,7 +205,7 @@ export const demoCommandCenterData: CommandCenterData = {
       id: "alert-004",
       title: "Collin County bid follow-up",
       detail: `$185k commercial bid awaiting client signature`,
-      company: "Summit C&I Group",
+      company: DEMO_ORG.commercial,
       owner: "Alex Morgan",
       due: "Jun 18",
       priority: "Warning",
@@ -224,7 +226,7 @@ export const demoCommandCenterData: CommandCenterData = {
     {
       id: "follow-001",
       contact: "Marcus Vance",
-      company: "Nova Retail Co.",
+      company: DEMO_ORG.retail,
       type: "DIY kit order",
       owner: "Alex Morgan",
       daysOverdue: 1,
@@ -233,7 +235,7 @@ export const demoCommandCenterData: CommandCenterData = {
     {
       id: "follow-002",
       contact: "Collin County Utility",
-      company: "Summit C&I Group",
+      company: DEMO_ORG.commercial,
       type: "Commercial bid",
       owner: "Alex Morgan",
       daysOverdue: 2,
@@ -242,7 +244,7 @@ export const demoCommandCenterData: CommandCenterData = {
     {
       id: "follow-003",
       contact: "Garrett Miller",
-      company: "Nova Retail Co.",
+      company: DEMO_ORG.retail,
       type: "Pending order",
       owner: "Jordan Lee",
       daysOverdue: 0,
@@ -253,7 +255,7 @@ export const demoCommandCenterData: CommandCenterData = {
     {
       id: "deadline-001",
       title: "Collin County permit hearing",
-      company: "Summit C&I Group",
+      company: DEMO_ORG.commercial,
       date: "Jun 16",
       owner: "TX Permit Solutions",
       impact: `$${openPipelineValue.toLocaleString()} pipeline`,
@@ -269,7 +271,7 @@ export const demoCommandCenterData: CommandCenterData = {
     {
       id: "deadline-003",
       title: "Hunt County commissioning walkthrough",
-      company: "Cedar Grid Assets",
+      company: DEMO_ORG.portfolio,
       date: "Jun 23",
       owner: "Alex Morgan",
       impact: "60kW microgrid go-live",
