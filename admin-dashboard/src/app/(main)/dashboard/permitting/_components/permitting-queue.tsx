@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, FileCheck, ShieldAlert } from "lucide-react";
+import { FileCheck } from "lucide-react";
 
 import { AIEscalationButton } from "@/components/ai-escalation-button";
 import { Badge } from "@/components/ui/badge";
@@ -33,7 +33,7 @@ type PermittingRow = {
 const PERMITTING_QUEUE: PermittingRow[] = [
   {
     asset: "McKinney Logistics Hub",
-    brand: "Solar 3SK",
+    brand: "3SK",
     authority: "City of McKinney / Oncor",
     stage: "Permitting Review",
     daysStale: 42,
@@ -42,7 +42,7 @@ const PERMITTING_QUEUE: PermittingRow[] = [
   },
   {
     asset: "Wylie Retail Array",
-    brand: "Solar 2SK",
+    brand: "2SK",
     authority: "City of Wylie",
     stage: "Interconnection Request",
     daysStale: 19,
@@ -51,7 +51,7 @@ const PERMITTING_QUEUE: PermittingRow[] = [
   },
   {
     asset: "Rockwall Commercial Center",
-    brand: "Yellow Star Power",
+    brand: "YSP",
     authority: "City of Rockwall / Oncor",
     stage: "PTO Final Sign-off",
     daysStale: 31,
@@ -61,74 +61,119 @@ const PERMITTING_QUEUE: PermittingRow[] = [
 ];
 
 function brandBadgeClass(brand: string) {
-  if (brand === "Solar 2SK") return "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
-  if (brand === "Solar 3SK") return "border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300";
+  if (brand === "2SK") return "border-lime-500/30 bg-lime-500/10 text-lime-700 dark:text-lime-300";
+  if (brand === "3SK") return "border-cyan-500/30 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300";
   return "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300";
 }
 
 function rowAccentClass(brand: string) {
-  if (brand === "Solar 2SK") return "border-l-4 border-emerald-500";
-  if (brand === "Solar 3SK") return "border-l-4 border-indigo-500";
+  if (brand === "2SK") return "border-l-4 border-lime-500";
+  if (brand === "3SK") return "border-l-4 border-cyan-500";
   return "border-l-4 border-amber-500";
 }
 
-function statusBadge(status: PermitStatus) {
-  if (status === "critical") {
-    return (
-      <Badge variant="outline" className="border-red-500/40 bg-red-500/10 text-red-700 dark:text-red-300">
-        <ShieldAlert className="size-3" />
-        Critical
-      </Badge>
-    );
-  }
+function riskTextClass(status: PermitStatus) {
+  return status === "critical"
+    ? "border border-rose-500/20 bg-rose-950/30 text-rose-400"
+    : "border border-amber-500/20 bg-amber-950/30 text-amber-400";
+}
 
+const PERMIT_ALERT_SCRIPT = `function onPermitStatusEdit(e) {
+  const sheet = e.range.getSheet();
+  if (sheet.getName() !== 'Permitting Queue') return;
+
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const col = (name) => headers.indexOf(name) + 1;
+  const statusCol = col('Permit Status');
+  if (e.range.getRow() === 1 || e.range.getColumn() !== statusCol) return;
+
+  const nextStatus = String(e.value || '').toLowerCase();
+  if (!/(blocked|stale|rejected|correction|overdue)/.test(nextStatus)) return;
+
+  const row = e.range.getRow();
+  const asset = sheet.getRange(row, col('Asset')).getDisplayValue();
+  const ahj = sheet.getRange(row, col('Authority')).getDisplayValue();
+  const permitId = sheet.getRange(row, col('Permit ID')).getDisplayValue();
+
+  MailApp.sendEmail({
+    to: 'ops-alerts@demo-ops.local',
+    subject: 'Permit alert: ' + asset + ' / ' + permitId,
+    htmlBody: '<b>' + asset + '</b> changed to ' + e.value + '<br>AHJ: ' + ahj + '<br>Permit: ' + permitId,
+  });
+}`;
+
+function AppsScriptPermitAlertCard() {
   return (
-    <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-300">
-      <AlertTriangle className="size-3" />
-      Warning
-    </Badge>
+    <Card size="sm" className={cn("border-cyan-500 border-l-4", dashCardClass)}>
+      <CardHeader className={dashSectionCardHeaderClass}>
+        <CardTitle className="flex items-center gap-2">
+          <FileCheck className="size-5 text-cyan-400" />
+          Google Apps Script Permit Alert Trigger
+        </CardTitle>
+        <CardDescription>
+          Production wiring example: install this as an Apps Script spreadsheet{" "}
+          <span className="font-mono">On edit</span>
+          trigger so permit status changes in the workbook immediately create an email alert.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className={cn("space-y-3", dashSectionCardContentClass)}>
+        <div className="grid gap-2 rounded-lg border border-zinc-900 bg-zinc-950 p-3 font-mono text-xs text-zinc-400 leading-relaxed">
+          <p>
+            <strong className="text-zinc-200">Configuration:</strong> Apps Script trigger → Event source:{" "}
+            <span className="text-cyan-300">From spreadsheet</span> → Event type:{" "}
+            <span className="text-cyan-300">On edit</span> → Handler:{" "}
+            <span className="text-cyan-300">onPermitStatusEdit</span>.
+          </p>
+          <p>
+            The handler checks the edited column, detects blocked/stale/rejected permit states, pulls the
+            asset/AHJ/permit fields from the same row, and sends a targeted operations alert via{" "}
+            <span className="text-cyan-300">MailApp</span>.
+          </p>
+        </div>
+        <pre className="max-h-80 overflow-x-auto rounded-lg border border-zinc-900 bg-black/80 p-4 font-mono text-[11px] text-cyan-200 leading-relaxed">
+          <code>{PERMIT_ALERT_SCRIPT}</code>
+        </pre>
+      </CardContent>
+    </Card>
   );
 }
 
 export function PermittingQueue() {
-  const criticalCount = PERMITTING_QUEUE.filter((row) => row.status === "critical").length;
-
   return (
-    <div className={dashPageClass}>
+    <div className={cn(dashPageClass, "p-3 md:p-6")}>
       <div className={dashPageHeaderClass}>
         <h1 className="font-semibold text-2xl tracking-tight">Permitting & AHJ Queue</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
-          North Texas municipal permitting and utility interconnection bottleneck matrix with AI-assisted escalation
-          drafts for stalled cash-flow workstreams.
+          Real-time tracking of municipal review cycles and utility interconnection bottlenecks.
         </p>
       </div>
 
-      <div className={dashKpiGrid3Class}>
+      <div className={cn(dashKpiGrid3Class, "grid-cols-1 md:grid-cols-3")}>
         <Card size="sm" className={cn("border-red-500 border-l-4", dashCardClass)}>
           <CardHeader className={dashCardHeaderClass}>
-            <CardDescription className="text-xs">Critical AHJ Holds</CardDescription>
-            <CardTitle className="font-mono text-2xl tabular-nums">{criticalCount}</CardTitle>
+            <CardDescription className="text-xs">Stale Permit Applications</CardDescription>
+            <CardTitle className="font-mono text-xl tabular-nums md:text-2xl">3</CardTitle>
           </CardHeader>
           <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
-            Projects exceeding 30-day municipal or utility review thresholds.
+            Projects exceeding municipal or utility review thresholds.
           </CardContent>
         </Card>
         <Card size="sm" className={cn("border-amber-500 border-l-4", dashCardClass)}>
           <CardHeader className={dashCardHeaderClass}>
-            <CardDescription className="text-xs">Queue Depth</CardDescription>
-            <CardTitle className="font-mono text-2xl tabular-nums">{PERMITTING_QUEUE.length}</CardTitle>
+            <CardDescription className="text-xs">Average AHJ Cycle Time</CardDescription>
+            <CardTitle className="font-mono text-xl tabular-nums md:text-2xl">28.4 Days</CardTitle>
           </CardHeader>
           <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
-            Active permitting, interconnection, and PTO sign-off lanes under review.
+            Rolling permit, interconnection, and PTO review duration.
           </CardContent>
         </Card>
         <Card size="sm" className={cn("border-indigo-500 border-l-4", dashCardClass)}>
           <CardHeader className={dashCardHeaderClass}>
-            <CardDescription className="text-xs">AI Drafts Ready</CardDescription>
-            <CardTitle className="font-mono text-2xl tabular-nums">{PERMITTING_QUEUE.length}</CardTitle>
+            <CardDescription className="text-xs">Escalation Drafts Dispatched</CardDescription>
+            <CardTitle className="font-mono text-xl tabular-nums md:text-2xl">14</CardTitle>
           </CardHeader>
           <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
-            One-click escalation templates mapped to authority, permit ID, and stale-day count.
+            Authority follow-up drafts generated from stalled permit metadata.
           </CardContent>
         </Card>
       </div>
@@ -145,34 +190,45 @@ export function PermittingQueue() {
           </CardDescription>
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
-          <div className="overflow-hidden rounded-md border">
-            <Table>
+          <div className="mb-3 rounded-lg border border-zinc-900 bg-zinc-950 p-3 font-mono text-xs text-zinc-400 leading-relaxed">
+            <strong className="text-zinc-200">AI Automation Layer:</strong> Production wiring would pass AHJ name,
+            permit number, days delayed, missing requirements, and brand context into a controlled prompt/template
+            service, generate a professional escalation draft, and keep a human approval step before sending through
+            email or CRM automation.
+          </div>
+          <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-zinc-900">
+            <Table className="min-w-[720px]">
               <TableHeader>
                 <TableRow className="h-9">
                   <TableHead>Asset</TableHead>
                   <TableHead>Brand</TableHead>
-                  <TableHead>Authority</TableHead>
-                  <TableHead>Stage</TableHead>
+                  <TableHead>Authority (AHJ)</TableHead>
+                  <TableHead>Permit ID</TableHead>
                   <TableHead className="text-right">Days Stale</TableHead>
-                  <TableHead>Permit</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
+                  <TableHead className="text-right">Automated Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {PERMITTING_QUEUE.map((row) => (
                   <TableRow key={row.permit} className={cn("h-11", rowAccentClass(row.brand))}>
-                    <TableCell className="py-2 font-medium">{row.asset}</TableCell>
+                    <TableCell className="max-w-[12rem] whitespace-normal py-2 font-medium">{row.asset}</TableCell>
                     <TableCell className="py-2">
                       <Badge variant="outline" className={cn("h-6", brandBadgeClass(row.brand))}>
                         {row.brand}
                       </Badge>
                     </TableCell>
                     <TableCell className="max-w-xs py-2 text-xs">{row.authority}</TableCell>
-                    <TableCell className="py-2 text-muted-foreground text-xs">{row.stage}</TableCell>
-                    <TableCell className="py-2 text-right font-mono tabular-nums">{row.daysStale}</TableCell>
                     <TableCell className="py-2 font-mono text-[11px]">{row.permit}</TableCell>
-                    <TableCell className="py-2">{statusBadge(row.status)}</TableCell>
+                    <TableCell className="py-2 text-right">
+                      <span
+                        className={cn(
+                          "rounded px-2 py-0.5 font-mono font-semibold text-xs tabular-nums",
+                          riskTextClass(row.status),
+                        )}
+                      >
+                        {row.daysStale}d
+                      </span>
+                    </TableCell>
                     <TableCell className="py-2 text-right">
                       <AIEscalationButton
                         projectName={row.asset}
@@ -189,6 +245,8 @@ export function PermittingQueue() {
           </div>
         </CardContent>
       </Card>
+
+      <AppsScriptPermitAlertCard />
     </div>
   );
 }

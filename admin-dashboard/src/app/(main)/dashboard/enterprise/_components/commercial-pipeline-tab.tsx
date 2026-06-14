@@ -2,6 +2,7 @@
 
 import { AlertTriangle, Briefcase, FileWarning, Gauge, Sigma } from "lucide-react";
 
+import { AIEscalationButton } from "@/components/ai-escalation-button";
 import { EntityBrandBadge } from "@/components/dashboard/entity-brand-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,8 +17,6 @@ import {
   dashSectionCardHeaderClass,
 } from "@/lib/dashboard-ui";
 import { cn } from "@/lib/utils";
-
-import { AIEscalationButton } from "@/components/ai-escalation-button";
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-US", { currency: "USD", maximumFractionDigits: 0, style: "currency" }).format(value);
@@ -70,13 +69,15 @@ function phaseBadgeClass(project: PipelineProject) {
   if (phase.includes("executed") || phase.includes("approved")) {
     return "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
   }
-  return "border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300";
+  return "border-cyan-500/30 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300";
 }
 
 function shouldShowEscalation(project: PipelineProject) {
-  return /architecture|structural|engineering|utility|interconnection|permit|hold|awaiting/i.test(
-    `${project.pipelineStage} ${project.pipelinePhase} ${project.nextCriticalPath}`,
-  );
+  return /McKinney Logistics Hub|Frisco Commercial Plaza|Wylie Industrial Microgrid/i.test(project.clientName);
+}
+
+function escalationBrand(project: PipelineProject) {
+  return project.entityBrand === "Yellow Star" ? "YSP" : "3SK";
 }
 
 function PipelineKpiStrip({
@@ -88,16 +89,21 @@ function PipelineKpiStrip({
     .filter((project) => project.pipelineStage === "Active Bid Out" || project.pipelineStage === "OpenSolar Design")
     .reduce((sum, project) => sum + project.projectValue, 0);
   const underConstruction = projects
-    .filter((project) => project.pipelineStage === "DocuSign Executed" || project.pipelineStage === "Engineering Hold")
+    .filter(
+      (project) =>
+        project.pipelineStage === "DocuSign Executed" ||
+        project.pipelineStage === "Engineering Hold" ||
+        project.pipelineStage === "Interconnection Review",
+    )
     .reduce((sum, project) => sum + project.projectValue, 0);
   const alerts = projects.filter((project, index) => staleDays(project, index) >= 31).length;
 
   return (
-    <div className={dashKpiGrid3Class}>
-      <Card size="sm" className={cn("border-indigo-500 border-l-4", dashCardClass)}>
+    <div className={cn(dashKpiGrid3Class, "grid-cols-1 gap-3 md:grid-cols-3")}>
+      <Card size="sm" className={cn("border-cyan-500 border-l-4", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <Sigma className="size-4 text-indigo-500" />
+            <Sigma className="size-4 text-cyan-500" />
             Open B2B Pipeline Value
           </CardDescription>
           <CardTitle className="font-mono text-2xl tabular-nums">{formatCurrency(openPipelineBalance)}</CardTitle>
@@ -113,16 +119,16 @@ function PipelineKpiStrip({
           </div>
         </CardContent>
       </Card>
-      <Card size="sm" className={cn("border-blue-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn("border-cyan-500 border-l-4", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <Gauge className="size-4 text-blue-500" />
+            <Gauge className="size-4 text-cyan-500" />
             Active Consulting MW Capacity
           </CardDescription>
           <CardTitle className="font-mono text-2xl tabular-nums">{activeCapacityMw(projects).toFixed(2)} MW</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
-          {activeProjects} active Solar 3SK commercial and utility engineering workstreams.
+          {activeProjects} active 3SK commercial and utility engineering workstreams.
         </CardContent>
       </Card>
       <Card size="sm" className={cn("border-amber-500 border-l-4", dashCardClass)}>
@@ -151,11 +157,11 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
     <div className="flex flex-col gap-3">
       <PipelineKpiStrip openPipelineBalance={openPipelineBalance} activeProjects={activeProjects} projects={projects} />
 
-      <Card size="sm" className={cn("border-indigo-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn("border-cyan-500 border-l-4", dashCardClass)}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle className="flex items-center gap-2">
             <Briefcase className="size-5" />
-            Solar 3SK Commercial Operations Matrix
+            3SK Commercial Operations Matrix
           </CardTitle>
           <CardDescription>
             Multi-million dollar milestone progressions - structural design, utility interconnection, and DocuSign
@@ -163,8 +169,8 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
           </CardDescription>
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
-          <div className="overflow-hidden rounded-md border">
-            <Table>
+          <div className="scrollbar-none block w-full overflow-x-auto rounded-md border">
+            <Table className="min-w-[1120px]">
               <TableHeader>
                 <TableRow className="h-9">
                   <TableHead>Project Asset</TableHead>
@@ -174,7 +180,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                   <TableHead className="text-right">Contract Value</TableHead>
                   <TableHead>Tracking</TableHead>
                   <TableHead>Next Critical Path</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
+                  <TableHead className="text-right">Automated Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -183,7 +189,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                   const authority = utilityAuthority(project);
                   const permit = permitNumber(project, index);
                   return (
-                    <TableRow key={project.id} className="h-11 border-indigo-500/70 border-l-4">
+                    <TableRow key={project.id} className="h-11 border-cyan-500/70 border-l-4">
                       <TableCell className="max-w-xs whitespace-normal py-2 font-medium">
                         <div>{formatProjectAssetLabel(project)}</div>
                         <div className="mt-1 font-mono text-[11px] text-muted-foreground">{project.id}</div>
@@ -191,7 +197,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                       <TableCell className="py-2">
                         <EntityBrandBadge
                           brand={project.entityBrand}
-                          className="border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300"
+                          className="border-cyan-500/30 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300"
                         />
                       </TableCell>
                       <TableCell className="py-2 text-right font-mono tabular-nums">
@@ -223,7 +229,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                         {shouldShowEscalation(project) ? (
                           <AIEscalationButton
                             projectName={project.clientName}
-                            brandEntity="Solar 3SK"
+                            brandEntity={escalationBrand(project)}
                             utilityAuthority={authority}
                             permitNumber={permit}
                             daysStale={daysStale}

@@ -25,8 +25,8 @@ export interface SolarOrder {
 export const ordersData: SolarOrder[] = [
   {
     id: "ord-001",
-    orderNumber: "9401",
-    displayOrderId: "#WOO-9401",
+    orderNumber: "9412",
+    displayOrderId: "#2SK-9412",
     customerName: "Garrett Miller",
     entityBrand: "Solar2SK",
     kitSku: "RS-3KW-HYBRID-PACK",
@@ -44,8 +44,8 @@ export const ordersData: SolarOrder[] = [
   },
   {
     id: "ord-002",
-    orderNumber: "9402",
-    displayOrderId: "#WOO-9402",
+    orderNumber: "9413",
+    displayOrderId: "#2SK-9413",
     customerName: "Marcus Vance",
     entityBrand: "Solar2SK",
     kitSku: "BAT-LIFEPO4-5K",
@@ -77,24 +77,6 @@ export const ordersData: SolarOrder[] = [
     fulfillmentNote: "Inventory Hold",
     shipmentWeight: "420 lbs",
     warehouseBin: "WYL-PAL-07",
-  },
-  {
-    id: "ord-004",
-    orderNumber: "9412",
-    displayOrderId: "#2SK-9412",
-    customerName: "Garrett Miller",
-    entityBrand: "Solar2SK",
-    kitSku: "RS-3KW-HYBRID-PACK",
-    systemSizeKw: 3,
-    total: 4200,
-    status: "Processing",
-    orderDate: "2026-06-13",
-    hardwareAllocated: "Rich Solar 3KW Hybrid Inverter Pack",
-    fulfillmentStage: "Pending Warehouse Pull",
-    logisticsNotes: "High-priority duplicate order validation for Wylie pull desk",
-    fulfillmentNote: "Pending Warehouse Pull",
-    shipmentWeight: "84 lbs",
-    warehouseBin: "WYL-A04",
   },
 ];
 
