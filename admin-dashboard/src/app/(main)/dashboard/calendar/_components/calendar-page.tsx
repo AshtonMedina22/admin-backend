@@ -2,6 +2,7 @@ import { EntityBrandBadge } from "@/components/dashboard/entity-brand-badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { calendarEventsByDay } from "@/data/demo/calendar-events";
 import { entityBrandTone } from "@/lib/entity-brand";
+import { dashCardClass, dashPageClass, dashPageHeaderClass, dashSectionCardContentClass, dashSectionCardHeaderClass } from "@/lib/dashboard-ui";
 import { cn } from "@/lib/utils";
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -40,8 +41,8 @@ export function CalendarPage({
   calendarEvents?: Record<number, CalendarEvent[]>;
 }) {
   return (
-    <div className="flex flex-col gap-4 md:gap-6">
-      <div className="flex flex-col gap-1 border-b pb-4">
+    <div className={dashPageClass}>
+      <div className={dashPageHeaderClass}>
         <h1 className="font-semibold text-2xl tracking-tight">Calendar</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
           Full month view mapping operational dependencies, municipal schedules, freight movement, and installation
@@ -49,15 +50,15 @@ export function CalendarPage({
         </p>
       </div>
 
-      <Card className="[--card-spacing:--spacing(5)]">
-        <CardHeader className="border-b p-5">
+      <Card size="sm" className={dashCardClass}>
+        <CardHeader className={cn("border-b", dashSectionCardHeaderClass)}>
           <CardTitle>June 2026 Operational Calendar</CardTitle>
           <CardDescription>
             Field operations calendar - municipal permitting, warehouse freight, and utility inspection windows across
             North Texas operating units.
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-5">
+        <CardContent className={dashSectionCardContentClass}>
           <div className="grid grid-cols-7 border-t border-l text-sm">
             {weekdays.map((weekday) => (
               <div
@@ -68,7 +69,7 @@ export function CalendarPage({
               </div>
             ))}
             {monthCells.map((cell) => (
-              <div key={cell.key} className="min-h-32 border-r border-b bg-card p-2 empty:bg-muted/15">
+              <div key={cell.key} className="min-h-24 border-r border-b bg-card p-1.5 empty:bg-muted/15">
                 {cell.day && (
                   <div className="grid gap-2">
                     <div className="font-medium font-mono text-sm tabular-nums">{cell.day}</div>

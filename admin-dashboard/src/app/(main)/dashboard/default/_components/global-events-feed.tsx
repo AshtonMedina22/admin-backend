@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import type { GlobalEvent, GlobalEventStatus } from "@/data/demo/global-events";
 import { globalEventsData } from "@/data/demo/global-events";
 import { formatSyncRelativeTime } from "@/lib/sync-time";
+import { dashCardClass, dashSectionCardContentClass, dashSectionCardHeaderClass } from "@/lib/dashboard-ui";
 import { cn } from "@/lib/utils";
 
 const statusStyles: Record<GlobalEventStatus, string> = {
@@ -51,8 +52,8 @@ export function GlobalEventsFeed({
   const openIssues = events.filter((e) => e.status === "critical" || e.status === "warning").length;
 
   return (
-    <Card className="flex h-full flex-col border-amber-500 border-l-4 [--card-spacing:--spacing(5)]">
-      <CardHeader className="p-5 pb-0">
+    <Card size="sm" className={cn("flex h-full flex-col border-amber-500 border-l-4", dashCardClass)}>
+      <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <CardTitle className="flex items-center gap-2 leading-none">
             <Activity className="size-5" />
@@ -79,7 +80,7 @@ export function GlobalEventsFeed({
           </div>
         ) : null}
       </CardHeader>
-      <CardContent className="min-h-0 flex-1 p-5 pt-3">
+      <CardContent className={cn("min-h-0 flex-1", dashSectionCardContentClass)}>
         <ScrollArea className="h-72 pr-3">
           <div className="grid gap-3">
             {events.map((event) => {

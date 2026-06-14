@@ -1,4 +1,4 @@
-import { Building2, Calendar, Forklift, LayoutDashboard, type LucideIcon, Settings, ShoppingBag } from "lucide-react";
+import { Building2, Calendar, FileCheck, Forklift, LayoutDashboard, type LucideIcon, Settings, ShoppingBag } from "lucide-react";
 
 export interface NavSubItem {
   title: string;
@@ -53,6 +53,11 @@ export const sidebarItems: NavGroup[] = [
         title: "Vendor Ops",
         url: "/dashboard/vendor-ops",
         icon: Forklift,
+      },
+      {
+        title: "Permitting & AHJ Queue",
+        url: "/dashboard/permitting",
+        icon: FileCheck,
       },
       {
         title: "Calendar",

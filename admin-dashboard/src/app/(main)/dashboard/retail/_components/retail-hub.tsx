@@ -8,6 +8,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { SupportTicket } from "@/data/demo/support-tickets";
 import { supportTicketsData } from "@/data/demo/support-tickets";
+import {
+  dashCardClass,
+  dashCardContentClass,
+  dashCardHeaderClass,
+  dashKpiGridClass,
+  dashPageClass,
+  dashPageHeaderClass,
+  dashSectionCardContentClass,
+  dashSectionCardHeaderClass,
+} from "@/lib/dashboard-ui";
 import { cn } from "@/lib/utils";
 
 export type RetailLogisticsOrder = {
@@ -41,60 +51,63 @@ function fulfillmentStats(orders: RetailLogisticsOrder[]) {
 
   return {
     awaitingPull: Math.max(12, awaitingPull),
-    batteryInbound: 8,
     transitDelay: Math.max(3, inventoryHolds + Math.max(0, awaitingPull - picked)),
   };
 }
 
-function KpiStrip({ orders, totalBacklogUnits }: Pick<RetailHubProps, "orders" | "totalBacklogUnits">) {
+function KpiStrip({
+  orders,
+  totalBacklogUnits,
+  pendingBatteryShipments,
+}: Pick<RetailHubProps, "orders" | "totalBacklogUnits" | "pendingBatteryShipments">) {
   const stats = fulfillmentStats(orders);
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card className="border-emerald-500 border-l-4 [--card-spacing:--spacing(5)]">
-        <CardHeader className="p-5 pb-0">
-          <CardDescription className="flex items-center gap-2">
+    <div className={dashKpiGridClass}>
+      <Card size="sm" className={cn("border-emerald-500 border-l-4", dashCardClass)}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <Package className="size-4 text-emerald-500" />
             Open Order Backlog
           </CardDescription>
-          <CardTitle className="font-mono text-3xl tabular-nums">{Math.max(45, totalBacklogUnits)}</CardTitle>
+          <CardTitle className="font-mono text-2xl tabular-nums">{Math.max(45, totalBacklogUnits)}</CardTitle>
         </CardHeader>
-        <CardContent className="p-5 pt-3 text-muted-foreground text-xs">
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Active WooCommerce orders across Solar 2SK hardware fulfillment.
         </CardContent>
       </Card>
-      <Card className="border-emerald-500 border-l-4 [--card-spacing:--spacing(5)]">
-        <CardHeader className="p-5 pb-0">
-          <CardDescription className="flex items-center gap-2">
+      <Card size="sm" className={cn("border-emerald-500 border-l-4", dashCardClass)}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <PackageCheck className="size-4 text-emerald-500" />
             Awaiting Warehouse Pull
           </CardDescription>
-          <CardTitle className="font-mono text-3xl tabular-nums">{stats.awaitingPull}</CardTitle>
+          <CardTitle className="font-mono text-2xl tabular-nums">{stats.awaitingPull}</CardTitle>
         </CardHeader>
-        <CardContent className="p-5 pt-3 text-muted-foreground text-xs">
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Wylie warehouse pull queue for inverter and kit SKUs.
         </CardContent>
       </Card>
-      <Card className="border-emerald-500 border-l-4 [--card-spacing:--spacing(5)]">
-        <CardHeader className="p-5 pb-0">
-          <CardDescription className="flex items-center gap-2">
+      <Card size="sm" className={cn("border-emerald-500 border-l-4", dashCardClass)}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <BatteryCharging className="size-4 text-emerald-500" />
             Battery Kits Inbound
           </CardDescription>
-          <CardTitle className="font-mono text-3xl tabular-nums">{stats.batteryInbound}</CardTitle>
+          <CardTitle className="font-mono text-2xl tabular-nums">{pendingBatteryShipments}</CardTitle>
         </CardHeader>
-        <CardContent className="p-5 pt-3 text-muted-foreground text-xs">
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           48V LiFePO4 battery blocks pending freight reconciliation.
         </CardContent>
       </Card>
-      <Card className="border-amber-500 border-l-4 [--card-spacing:--spacing(5)]">
-        <CardHeader className="p-5 pb-0">
-          <CardDescription className="flex items-center gap-2">
+      <Card size="sm" className={cn("border-amber-500 border-l-4", dashCardClass)}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <ClockAlert className="size-4 text-amber-500" />
             Transit Fulfillment Delay
           </CardDescription>
-          <CardTitle className="font-mono text-3xl tabular-nums">{stats.transitDelay}</CardTitle>
+          <CardTitle className="font-mono text-2xl tabular-nums">{stats.transitDelay}</CardTitle>
         </CardHeader>
-        <CardContent className="p-5 pt-3 text-muted-foreground text-xs">
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Orders blocked by pallet weight, LTL timing, or inventory hold.
         </CardContent>
       </Card>
@@ -119,14 +132,14 @@ function FulfillmentBadge({ stage }: { stage: string }) {
 function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
-      <Card className="border-emerald-500 border-l-4 [--card-spacing:--spacing(5)] xl:col-span-8">
-        <CardHeader className="p-5 pb-0">
+      <Card size="sm" className={cn("border-emerald-500 border-l-4 xl:col-span-8", dashCardClass)}>
+        <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle>Solar 2SK Fulfillment Matrix</CardTitle>
           <CardDescription>
             Logistics-first view: hardware allocation, warehouse stage, and dispatch notes.
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-5">
+        <CardContent className={dashSectionCardContentClass}>
           <div className="overflow-hidden rounded-md border">
             <Table>
               <TableHeader>
@@ -160,12 +173,12 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
         </CardContent>
       </Card>
 
-      <Card className="border-emerald-500 border-l-4 [--card-spacing:--spacing(5)] xl:col-span-4">
-        <CardHeader className="p-5 pb-0">
+      <Card size="sm" className={cn("border-emerald-500 border-l-4 xl:col-span-4", dashCardClass)}>
+        <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle>API Webhook Monitor</CardTitle>
           <CardDescription>JSON sync output from the Solar 2SK order middleware.</CardDescription>
         </CardHeader>
-        <CardContent className="p-5">
+        <CardContent className={dashSectionCardContentClass}>
           <pre className="min-h-72 overflow-x-auto rounded-md border bg-background p-4 font-mono text-emerald-700 text-xs leading-relaxed dark:text-emerald-300">
             {JSON.stringify(webhookPayload, null, 2)}
           </pre>
@@ -211,10 +224,15 @@ function SupportTickets({ tickets }: { tickets: SupportTicket[] }) {
   );
 }
 
-export function RetailHub({ orders, totalBacklogUnits, supportTickets = supportTicketsData }: RetailHubProps) {
+export function RetailHub({
+  orders,
+  totalBacklogUnits,
+  pendingBatteryShipments,
+  supportTickets = supportTicketsData,
+}: RetailHubProps) {
   return (
-    <div className="flex flex-col gap-4 md:gap-6">
-      <div className="flex flex-col gap-1 border-b pb-4">
+    <div className={dashPageClass}>
+      <div className={dashPageHeaderClass}>
         <h1 className="font-semibold text-2xl tracking-tight">Consumer Retail Hub</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
           E-commerce fulfillment engine for Solar 2SK DIY kit volume, warehouse pulls, and transactional logistics
@@ -222,7 +240,11 @@ export function RetailHub({ orders, totalBacklogUnits, supportTickets = supportT
         </p>
       </div>
 
-      <KpiStrip orders={orders} totalBacklogUnits={totalBacklogUnits} />
+      <KpiStrip
+        orders={orders}
+        totalBacklogUnits={totalBacklogUnits}
+        pendingBatteryShipments={pendingBatteryShipments}
+      />
 
       <Tabs defaultValue="orders" className="flex flex-col gap-4">
         <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto p-1 md:w-fit">

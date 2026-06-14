@@ -27,9 +27,9 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       style={{ colorScheme: "dark" }}
       data-theme-mode="dark"
       data-theme-preset={theme_preset}
-      data-content-layout={content_layout}
+      data-content-layout="full-width"
       data-navbar-style={navbar_style}
-      data-sidebar-variant={sidebar_variant}
+      data-sidebar-variant="sidebar"
       data-sidebar-collapsible={sidebar_collapsible}
       data-font={font}
       suppressHydrationWarning

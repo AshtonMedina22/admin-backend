@@ -81,9 +81,9 @@ export function ThemeBootScript() {
         var resolvedMode = "dark";
         var preset = rawPreset || DEFAULTS.theme_preset;
         var font = rawFont || DEFAULTS.font;
-        var contentLayout = rawContentLayout || DEFAULTS.content_layout;
+        var contentLayout = "full-width";
         var navbarStyle = rawNavbarStyle || DEFAULTS.navbar_style;
-        var sidebarVariant = rawSidebarVariant || DEFAULTS.sidebar_variant;
+        var sidebarVariant = "sidebar";
         var sidebarCollapsible = rawSidebarCollapsible || DEFAULTS.sidebar_collapsible;
 
         root.classList.add("dark");

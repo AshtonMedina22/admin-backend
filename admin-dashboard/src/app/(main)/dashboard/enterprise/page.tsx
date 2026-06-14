@@ -41,8 +41,8 @@ export default async function Page() {
   const pipeline = await fetchCommercialPipeline();
 
   return (
-    <div className="flex flex-col gap-4 md:gap-6">
-      <div className="flex flex-col gap-1 border-b pb-4">
+    <div className="flex flex-col gap-3 md:gap-4">
+      <div className="flex flex-col gap-1 border-b pb-3">
         <h1 className="font-semibold text-2xl tracking-tight">Enterprise Hub</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
           High-ticket commercial pipeline, infrastructure telemetry, and engineering milestone tracking for Solar 3SK

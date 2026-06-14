@@ -31,7 +31,7 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
         defaultOpen={defaultOpen}
         style={
           {
-            "--sidebar-width": "calc(var(--spacing) * 68)",
+            "--sidebar-width": "calc(var(--spacing) * 50)",
           } as React.CSSProperties
         }
       >
@@ -67,7 +67,7 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
               </div>
             </div>
           </header>
-          <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden p-4 has-data-[content-padding=false]:p-0 md:p-6 md:has-data-[content-padding=false]:p-0">
+          <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden p-3 md:p-4 has-data-[content-padding=false]:p-0">
             <RoleRouteGuard>{children}</RoleRouteGuard>
           </div>
         </SidebarInset>

@@ -15,6 +15,8 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { RevenueSplitMonth } from "@/data/demo/revenue-split";
 import { revenueSplitData } from "@/data/demo/revenue-split";
+import { dashCardClass, dashSectionCardContentClass, dashSectionCardHeaderClass } from "@/lib/dashboard-ui";
+import { cn } from "@/lib/utils";
 
 const chartConfig = {
   solar2sk: { label: "Solar 2SK (Direct Hardware Margins)", color: "var(--chart-1)" },
@@ -30,8 +32,8 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
   const pendingCount = data.filter((row) => row.status === "pending_reconciliation").length;
 
   return (
-    <Card className="@container/card border-l-4 border-indigo-500 [--card-spacing:--spacing(5)]">
-      <CardHeader className="p-5 pb-0">
+    <Card size="sm" className={cn("@container/card border-l-4 border-indigo-500", dashCardClass)}>
+      <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
             <CardTitle className="leading-none">Combined Revenue Split Matrix</CardTitle>
@@ -85,7 +87,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
           ))}
         </div>
       </CardHeader>
-      <CardContent className="p-5 pt-3">
+      <CardContent className={dashSectionCardContentClass}>
         <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full">
           <BarChart data={data} margin={{ top: 8, right: 8, left: 8 }}>
             <CartesianGrid vertical={false} strokeOpacity={0.5} />

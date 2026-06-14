@@ -16,16 +16,26 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { AIEscalationButton } from "@/components/ai-escalation-button";
 import { RelativeTime } from "@/components/dashboard/relative-time";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { CommandCenterData } from "@/data/demo/command-center";
+import {
+  dashCardClass,
+  dashCardContentClass,
+  dashCardHeaderClass,
+  dashKpiGridClass,
+  dashPageClass,
+  dashPageHeaderClass,
+  dashSectionCardContentClass,
+  dashSectionCardHeaderClass,
+} from "@/lib/dashboard-ui";
 import { cn } from "@/lib/utils";
 
 import { TelemetrySimulatorControl, useTelemetrySimulation } from "../../enterprise/_components/telemetry-simulator";
-import { AIEscalationButton } from "./ai-escalation-button";
 import { GlobalEventsFeed } from "./global-events-feed";
 import { RevenueSplitChart } from "./revenue-split-chart";
 
@@ -79,8 +89,13 @@ function utilityAuthorityFor(company: string, projectName: string) {
 }
 
 function staleDaysFor(index: number, stage: string) {
-  if (/blocked|pending|review|testing/i.test(stage)) return 5 + index * 2;
+  if (/blocked|pending|review|testing|interconnection|permit|hold/i.test(stage)) return 5 + index * 2;
   return Math.max(1, index + 1);
+}
+
+function permitNumberFor(projectName: string, index: number) {
+  const slug = projectName.split(/\s+/).slice(0, 1)[0]?.slice(0, 3).toUpperCase() || "PRJ";
+  return `${slug}-2026-${9940 + index}`;
 }
 
 function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
@@ -134,8 +149,8 @@ function TelemetryMatrixCard() {
   const telemetry = useTelemetrySimulation();
 
   return (
-    <Card className="h-full border-amber-500 border-l-4 [--card-spacing:--spacing(5)]">
-      <CardHeader className="p-5 pb-0">
+    <Card size="sm" className={cn("h-full border-amber-500 border-l-4", dashCardClass)}>
+      <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
             <CardTitle>Live Interconnection Telemetry</CardTitle>
@@ -146,7 +161,7 @@ function TelemetryMatrixCard() {
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="grid gap-4 p-5">
+      <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
         <TelemetrySimulatorControl
           isSimulating={telemetry.isSimulating}
           onSimulatingChange={telemetry.setIsSimulating}
@@ -173,8 +188,8 @@ function TelemetryMatrixCard() {
 
 function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["projects"] }) {
   return (
-    <Card className="border-indigo-500 border-l-4 [--card-spacing:--spacing(5)]">
-      <CardHeader className="p-5 pb-0">
+    <Card size="sm" className={cn("border-indigo-500 border-l-4", dashCardClass)}>
+      <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
             <CardTitle>Active Project Escalation Matrix</CardTitle>
@@ -190,7 +205,7 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="p-5">
+      <CardContent className={dashSectionCardContentClass}>
         <div className="overflow-hidden rounded-md border">
           <Table>
             <TableHeader>
@@ -209,6 +224,9 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
                 const entity = entityLabel(project.company);
                 const daysStale = staleDaysFor(index, project.stage);
                 const authority = utilityAuthorityFor(project.company, project.customer);
+                const permitNumber = permitNumberFor(project.customer, index);
+                const showEscalation =
+                  daysStale >= 3 || /hold|review|interconnection|permit|pending/i.test(project.stage);
                 return (
                   <TableRow key={project.id} className={cn("h-11", entityAccent(entity))}>
                     <TableCell className="py-2 font-medium">{project.customer}</TableCell>
@@ -222,12 +240,15 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
                     <TableCell className="py-2 text-right font-mono">{daysStale}d</TableCell>
                     <TableCell className="py-2 text-xs">{authority}</TableCell>
                     <TableCell className="py-2 text-right">
-                      <AIEscalationButton
-                        projectName={project.customer}
-                        brandEntity={entity}
-                        daysStale={daysStale}
-                        utilityAuthority={authority}
-                      />
+                      {showEscalation ? (
+                        <AIEscalationButton
+                          projectName={project.customer}
+                          brandEntity={entity}
+                          daysStale={daysStale}
+                          utilityAuthority={authority}
+                          permitNumber={permitNumber}
+                        />
+                      ) : null}
                     </TableCell>
                   </TableRow>
                 );
@@ -278,18 +299,21 @@ export function CommandCenter({ data }: CommandCenterProps) {
   }
 
   return (
-    <div className="@container/main flex flex-col gap-4 md:gap-5">
-      <div className="flex flex-col gap-3 border-b pb-4 lg:flex-row lg:items-end lg:justify-between">
+    <div className={dashPageClass}>
+      <div className={cn(dashPageHeaderClass, "lg:flex-row lg:items-end lg:justify-between")}>
         <div className="grid gap-1">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="font-semibold text-2xl tracking-tight">Executive Control Tower</h1>
+            <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300">
+              Proof-of-capability demo
+            </Badge>
             <Badge variant={data.source === "workbook" ? "default" : "outline"}>
               {data.source === "workbook" ? "Workbook connected" : "Preview mode"}
             </Badge>
           </div>
           <p className="max-w-3xl text-muted-foreground text-sm">
-            Master executive control tower for Yellow Star Power, Solar 2SK, and Solar 3SK operating signals - metrics
-            derived from the same schema as the Google Sheets operating workbook.
+            Demo operations dashboard for Yellow Star Power, Solar 2SK, and Solar 3SK - built to show how a workbook-led
+            operating process can be converted into a clean executive review surface.
           </p>
         </div>
 
@@ -313,29 +337,31 @@ export function CommandCenter({ data }: CommandCenterProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className={dashKpiGridClass}>
         {metricCards.map((metric) => {
           const Icon = metric.icon;
           return (
-            <Card key={metric.title} className={cn("min-h-44 [--card-spacing:--spacing(5)]", metric.accentClassName)}>
-              <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0 p-5 pb-0">
-                <div className="grid gap-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <CardDescription>{metric.title}</CardDescription>
+            <Card key={metric.title} size="sm" className={cn(dashCardClass, metric.accentClassName)}>
+              <CardHeader
+                className={cn("flex flex-row items-start justify-between gap-2 space-y-0", dashCardHeaderClass)}
+              >
+                <div className="grid gap-0.5">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <CardDescription className="text-xs">{metric.title}</CardDescription>
                     <Badge variant="outline" className={cn("h-5 px-1.5 text-[10px]", entityBadgeClass(metric.entity))}>
                       {metric.entity}
                     </Badge>
                   </div>
-                  <CardTitle className="font-mono font-semibold text-3xl tabular-nums tracking-tight">
+                  <CardTitle className="font-mono font-semibold text-2xl tabular-nums tracking-tight">
                     {metric.value}
                   </CardTitle>
                 </div>
-                <Icon className={`size-5 ${metric.iconClassName}`} />
+                <Icon className={`size-4 ${metric.iconClassName}`} />
               </CardHeader>
-              <CardContent className="p-5 pt-3">
-                <div className="flex items-start justify-between gap-3">
-                  <p className="text-muted-foreground text-sm">{metric.caption}</p>
-                  <Badge variant="outline" className="shrink-0 text-emerald-600">
+              <CardContent className={dashCardContentClass}>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-muted-foreground text-xs leading-snug">{metric.caption}</p>
+                  <Badge variant="outline" className="shrink-0 text-[10px] text-emerald-600">
                     {metric.trend}
                   </Badge>
                 </div>
@@ -345,7 +371,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
         })}
       </div>
 
-      <div className="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-12">
+      <div className="grid grid-cols-1 items-stretch gap-3 xl:grid-cols-12">
         <div className="xl:col-span-8">
           <RevenueSplitChart data={data.revenueSplit} />
         </div>
@@ -358,7 +384,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-12">
+      <div className="grid grid-cols-1 items-stretch gap-3 xl:grid-cols-12">
         <div className="xl:col-span-5">
           <TelemetryMatrixCard />
         </div>

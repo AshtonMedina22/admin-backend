@@ -72,7 +72,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const collapsible = isSynced ? sidebarCollapsible : props.collapsible;
 
   return (
-    <Sidebar {...props} variant={variant} collapsible={collapsible}>
+    <Sidebar {...props} variant={variant} collapsible={collapsible} className="[&_[data-slot=sidebar-group]]:px-1.5 [&_[data-slot=sidebar-header]]:px-2 [&_[data-slot=sidebar-footer]]:gap-1 [&_[data-slot=sidebar-footer]]:px-2">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

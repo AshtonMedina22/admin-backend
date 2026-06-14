@@ -7,9 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { PipelineProject } from "@/data/demo/pipeline";
+import {
+  dashCardClass,
+  dashCardContentClass,
+  dashCardHeaderClass,
+  dashKpiGrid3Class,
+  dashSectionCardContentClass,
+  dashSectionCardHeaderClass,
+} from "@/lib/dashboard-ui";
 import { cn } from "@/lib/utils";
 
-import { AIEscalationButton } from "../../default/_components/ai-escalation-button";
+import { AIEscalationButton } from "@/components/ai-escalation-button";
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-US", { currency: "USD", maximumFractionDigits: 0, style: "currency" }).format(value);
@@ -85,16 +93,16 @@ function PipelineKpiStrip({
   const alerts = projects.filter((project, index) => staleDays(project, index) >= 31).length;
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <Card className="border-indigo-500 border-l-4 [--card-spacing:--spacing(5)]">
-        <CardHeader className="p-5 pb-0">
-          <CardDescription className="flex items-center gap-2">
+    <div className={dashKpiGrid3Class}>
+      <Card size="sm" className={cn("border-indigo-500 border-l-4", dashCardClass)}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <Sigma className="size-4 text-indigo-500" />
             Open B2B Pipeline Value
           </CardDescription>
-          <CardTitle className="font-mono text-3xl tabular-nums">{formatCurrency(openPipelineBalance)}</CardTitle>
+          <CardTitle className="font-mono text-2xl tabular-nums">{formatCurrency(openPipelineBalance)}</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-2 p-5 pt-3 text-xs">
+        <CardContent className={cn("grid gap-1.5 text-xs", dashCardContentClass)}>
           <div className="flex justify-between gap-3">
             <span className="text-muted-foreground">Bids Pending</span>
             <span className="font-medium font-mono">{formatCurrency(bidValue)}</span>
@@ -105,27 +113,27 @@ function PipelineKpiStrip({
           </div>
         </CardContent>
       </Card>
-      <Card className="border-blue-500 border-l-4 [--card-spacing:--spacing(5)]">
-        <CardHeader className="p-5 pb-0">
-          <CardDescription className="flex items-center gap-2">
+      <Card size="sm" className={cn("border-blue-500 border-l-4", dashCardClass)}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <Gauge className="size-4 text-blue-500" />
             Active Consulting MW Capacity
           </CardDescription>
-          <CardTitle className="font-mono text-3xl tabular-nums">{activeCapacityMw(projects).toFixed(2)} MW</CardTitle>
+          <CardTitle className="font-mono text-2xl tabular-nums">{activeCapacityMw(projects).toFixed(2)} MW</CardTitle>
         </CardHeader>
-        <CardContent className="p-5 pt-3 text-muted-foreground text-xs">
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           {activeProjects} active Solar 3SK commercial and utility engineering workstreams.
         </CardContent>
       </Card>
-      <Card className="border-amber-500 border-l-4 [--card-spacing:--spacing(5)]">
-        <CardHeader className="p-5 pb-0">
-          <CardDescription className="flex items-center gap-2">
+      <Card size="sm" className={cn("border-amber-500 border-l-4", dashCardClass)}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <FileWarning className="size-4 text-amber-500" />
             SLA Milestone Alerts
           </CardDescription>
-          <CardTitle className="font-mono text-3xl tabular-nums">{alerts}</CardTitle>
+          <CardTitle className="font-mono text-2xl tabular-nums">{alerts}</CardTitle>
         </CardHeader>
-        <CardContent className="p-5 pt-3 text-muted-foreground text-xs">
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Architectural, utility, or municipal checks requiring owner-visible follow-up.
         </CardContent>
       </Card>
@@ -140,11 +148,11 @@ function formatProjectAssetLabel(project: PipelineProject) {
 
 export function CommercialPipelineTab({ projects, openPipelineBalance, activeProjects }: CommercialPipelineTabProps) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <PipelineKpiStrip openPipelineBalance={openPipelineBalance} activeProjects={activeProjects} projects={projects} />
 
-      <Card className="border-indigo-500 border-l-4 [--card-spacing:--spacing(5)]">
-        <CardHeader className="p-5 pb-0">
+      <Card size="sm" className={cn("border-indigo-500 border-l-4", dashCardClass)}>
+        <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle className="flex items-center gap-2">
             <Briefcase className="size-5" />
             Solar 3SK Commercial Operations Matrix
@@ -154,7 +162,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
             contract states.
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-5">
+        <CardContent className={dashSectionCardContentClass}>
           <div className="overflow-hidden rounded-md border">
             <Table>
               <TableHeader>

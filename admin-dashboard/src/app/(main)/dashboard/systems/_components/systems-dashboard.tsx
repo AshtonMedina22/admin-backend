@@ -7,6 +7,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { totalMonthlySpend, urgentAlertsCount } from "@/data/demo/systems";
+import {
+  dashCardClass,
+  dashCardContentClass,
+  dashCardHeaderClass,
+  dashKpiGrid3Class,
+  dashPageClass,
+  dashPageHeaderClass,
+} from "@/lib/dashboard-ui";
+import { cn } from "@/lib/utils";
 
 export type DomainMonitorRow = {
   domain: string;
@@ -272,38 +281,42 @@ function InfrastructureStatusLog() {
 
 function SystemsKpiStrip({ monthlySpend, urgentAlerts }: { monthlySpend: number; urgentAlerts: number }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-      <Card>
-        <CardHeader className="pb-2">
-          <CardDescription className="flex items-center gap-2">
+    <div className={dashKpiGrid3Class}>
+      <Card size="sm" className={dashCardClass}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <DollarSign className="size-4" />
             Monthly SaaS Burn Rate
           </CardDescription>
-          <CardTitle className="text-3xl tabular-nums">${monthlySpend.toFixed(0)}</CardTitle>
+          <CardTitle className="text-2xl tabular-nums">${monthlySpend.toFixed(0)}</CardTitle>
         </CardHeader>
-        <CardContent className="text-muted-foreground text-xs">
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           DreamHost, Vercel, Zapier, DocuSign, and QuickBooks - low-overhead automated stack
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardDescription className="flex items-center gap-2">
+      <Card size="sm" className={dashCardClass}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <Globe2 className="size-4" />
             Domain Monitors
           </CardDescription>
-          <CardTitle className="text-3xl tabular-nums">4</CardTitle>
+          <CardTitle className="text-2xl tabular-nums">4</CardTitle>
         </CardHeader>
-        <CardContent className="text-muted-foreground text-xs">Multi-tenant WordPress and Next.js property health</CardContent>
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+          Multi-tenant WordPress and Next.js property health
+        </CardContent>
       </Card>
-      <Card className={urgentAlerts > 0 ? "border-amber-500/40" : undefined}>
-        <CardHeader className="pb-2">
-          <CardDescription className="flex items-center gap-2">
+      <Card size="sm" className={cn(dashCardClass, urgentAlerts > 0 ? "border-amber-500/40" : undefined)}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <AlertTriangle className="size-4" />
             Urgent Infrastructure Alerts
           </CardDescription>
-          <CardTitle className={`text-3xl tabular-nums ${urgentAlerts > 0 ? "text-amber-600" : ""}`}>{urgentAlerts}</CardTitle>
+          <CardTitle className={cn("text-2xl tabular-nums", urgentAlerts > 0 && "text-amber-600")}>{urgentAlerts}</CardTitle>
         </CardHeader>
-        <CardContent className="text-muted-foreground text-xs">SSL renewals, DreamHost certificate issues, domain monitoring</CardContent>
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+          SSL renewals, DreamHost certificate issues, domain monitoring
+        </CardContent>
       </Card>
     </div>
   );
@@ -324,8 +337,8 @@ export function SystemsDashboard({
   const urgentAlerts = domainMonitors.filter((domain) => domain.critical).length || urgentAlertsCount;
 
   return (
-    <div className="flex flex-col gap-4 md:gap-6">
-      <div className="flex flex-col gap-1 border-b pb-4">
+    <div className={dashPageClass}>
+      <div className={dashPageHeaderClass}>
         <h1 className="font-semibold text-2xl tracking-tight">Systems & Settings</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
           Cloud optimization overhead, domain configuration, hosting stability, and corporate SaaS budget tracking.

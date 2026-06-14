@@ -15,6 +15,14 @@ import {
   type VendorRecord,
   vendorsData,
 } from "@/data/demo/vendors";
+import {
+  dashCardClass,
+  dashCardContentClass,
+  dashCardHeaderClass,
+  dashKpiGrid3Class,
+  dashPageClass,
+  dashPageHeaderClass,
+} from "@/lib/dashboard-ui";
 import { cn } from "@/lib/utils";
 
 function complianceVariant(status: ComplianceStatus): "default" | "secondary" | "destructive" | "outline" {
@@ -39,36 +47,42 @@ function VendorKpiStrip({
   vendorCount: number;
 }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-      <Card>
-        <CardHeader className="pb-2">
-          <CardDescription className="flex items-center gap-2">
+    <div className={dashKpiGrid3Class}>
+      <Card size="sm" className={dashCardClass}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <Users className="size-4" />
             Active Sub-Assignments
           </CardDescription>
-          <CardTitle className="text-3xl tabular-nums">{activeAssignments}</CardTitle>
+          <CardTitle className="text-2xl tabular-nums">{activeAssignments}</CardTitle>
         </CardHeader>
-        <CardContent className="text-muted-foreground text-xs">Live site crews, PE reviews, and permit audits in progress</CardContent>
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+          Live site crews, PE reviews, and permit audits in progress
+        </CardContent>
       </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardDescription className="flex items-center gap-2">
+      <Card size="sm" className={dashCardClass}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <ShieldAlert className="size-4" />
             Compliance Flags
           </CardDescription>
-          <CardTitle className={cn("text-3xl tabular-nums", complianceRisks > 0 && "text-amber-600")}>{complianceRisks}</CardTitle>
+          <CardTitle className={cn("text-2xl tabular-nums", complianceRisks > 0 && "text-amber-600")}>{complianceRisks}</CardTitle>
         </CardHeader>
-        <CardContent className="text-muted-foreground text-xs">Insurance / COI certifications requiring renewal or review</CardContent>
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+          Insurance / COI certifications requiring renewal or review
+        </CardContent>
       </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardDescription className="flex items-center gap-2">
+      <Card size="sm" className={dashCardClass}>
+        <CardHeader className={dashCardHeaderClass}>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <ClipboardCheck className="size-4" />
             Vendor Partner Pool
           </CardDescription>
-          <CardTitle className="text-3xl tabular-nums">{vendorCount}</CardTitle>
+          <CardTitle className="text-2xl tabular-nums">{vendorCount}</CardTitle>
         </CardHeader>
-        <CardContent className="text-muted-foreground text-xs">Install crews, equipment suppliers, and regulatory specialists</CardContent>
+        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+          Install crews, equipment suppliers, and regulatory specialists
+        </CardContent>
       </Card>
     </div>
   );
@@ -101,8 +115,8 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
     vendors.filter((vendor) => vendor.complianceStatus !== "Verified Active").length || complianceRiskCount;
 
   return (
-    <div className="flex flex-col gap-4 md:gap-6">
-      <div className="flex flex-col gap-1 border-b pb-4">
+    <div className={dashPageClass}>
+      <div className={dashPageHeaderClass}>
         <h1 className="font-semibold text-2xl tracking-tight">Vendor Ops</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
           Field labor pools, subcontractor assignments, and insurance compliance for multi-tenant solar operations.

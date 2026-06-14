@@ -2,12 +2,12 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 
 export function SidebarSupportCard() {
   return (
-    <Card size="sm" className="shadow-none group-data-[collapsible=icon]:hidden">
-      <CardHeader className="px-4">
-        <CardTitle className="text-sm">Workbook-backed preview</CardTitle>
-        <CardDescription>
-          Operations views are scoped for executive review across enterprise, retail, vendor, calendar, and systems
-          workflows.
+    <Card size="sm" className="gap-0 py-0 shadow-none group-data-[collapsible=icon]:hidden">
+      <CardHeader className="px-2.5 pt-2.5 pb-0">
+        <CardTitle className="text-xs">Workbook-backed demo</CardTitle>
+        <CardDescription className="text-[11px] leading-snug">
+          Proof-of-capability site showing how Google Sheets workflows can power executive, retail, vendor, calendar,
+          and systems views.
         </CardDescription>
       </CardHeader>
     </Card>
