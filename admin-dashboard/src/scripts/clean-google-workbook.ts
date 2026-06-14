@@ -11,293 +11,184 @@ type ServiceAccountCredentials = {
   private_key: string;
 };
 
+type SheetSpec = {
+  values: string[][];
+  sectionRows?: number[];
+  headerRows?: number[];
+};
+
 const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
-const sheetsToWrite = {
-  Dashboard: [
-    ["section", "item", "Yellow Star Power", "Solar 2SK", "Solar 3SK", "total", "detail", "priority", "action"],
-    [
-      "company_roles",
-      "Umbrella / developer",
-      "Large commercial development, capital markets, asset strategy",
-      "",
-      "",
-      "",
-      "Parent entity",
-      "",
-      "",
+const workbook: Record<string, SheetSpec> = {
+  Dashboard: {
+    sectionRows: [1, 8, 14],
+    headerRows: [2, 9, 15],
+    values: [
+      ["Command Center Metrics"],
+      ["Metric", "Value", "Detail", "Company", "Status"],
+      ["Active B2B Pipeline", "$680,000", "Solar 3SK active contract and proposal pipeline value.", "Solar 3SK", "Healthy"],
+      ["Live Fleet Yield", "48.2 kW", "Real-time grid performance across active managed arrays.", "Yellow Star Power", "Healthy"],
+      [
+        "Combined Portfolio Capacity",
+        "633.5 kW",
+        "Aggregated footprint: Hunt County, Frisco, Wylie, Plano, and McKinney.",
+        "Portfolio",
+        "Healthy",
+      ],
+      [
+        "DIY Retail Vol (Mo)",
+        "54 Units",
+        "Solar 2SK active monthly WooCommerce warehouse fulfillment flow.",
+        "Solar 2SK",
+        "Healthy",
+      ],
+      [],
+      ["Combined Revenue Split Matrix"],
+      [
+        "Period",
+        "Solar 2SK Direct Hardware Margins",
+        "Solar 3SK Commercial Consulting and Design Fees",
+        "Yellow Star Power Macro Grid Yield Dividends",
+      ],
+      ["Q1-26", "$96,500", "$225,000", "$110,000"],
+      ["Q2-26", "$142,000", "$270,000", "$155,000"],
+      ["Current Month", "$38,000", "$185,000", "$72,000"],
+      [],
+      ["Global Operations Stream"],
+      ["Brand", "Event", "Status"],
+      ["Solar 2SK", "Order #9401 synced via WooCommerce API webhook - pending warehouse pull for Garrett Miller.", "Info"],
+      ["Solar 3SK", "OpenSolar Design Model V2 saved for Frisco Commercial Plaza, 120kW array.", "Info"],
+      ["Systems Alert", "SSL handshake failing on base domain solar2sk.com. Action required in DreamHost panel.", "Critical"],
+      ["Yellow Star Power", "Hunt County 60kW microgrid injection balance stabilized at 35.8 kW export.", "Info"],
     ],
-    [
-      "company_roles",
-      "Residential / DIY",
-      "",
-      "Hybrid solar kits, backup power, portable power sales",
-      "",
-      "",
-      "Consumer-facing",
-      "",
-      "",
+  },
+  "Lead Tracker": {
+    headerRows: [1],
+    values: [
+      [
+        "Lead ID",
+        "Timestamp",
+        "Client Business Name",
+        "Entity Brand",
+        "Project Type",
+        "Source",
+        "Status",
+        "Expected Value",
+        "Estimated kW Size",
+      ],
+      ["LD-201", "2026-06-10", "Frisco Office Complex", "Solar 3SK", "B2B Commercial Roof", "DFW Appointment Setters", "New", "$145,000", "120 kW"],
+      ["LD-202", "2026-06-11", "Garrett Miller", "Solar 2SK", "Residential DIY Kit", "Organic Search", "Contacted", "$4,200", "3.5 kW"],
+      ["LD-203", "2026-06-12", "Wylie Industrial Park", "Yellow Star Power", "Microgrid / Asset Development", "Executive Referral", "In Progress", "$450,000", "300 kW"],
+      ["LD-204", "2026-06-13", "Plano Auto Body Shop", "Solar 3SK", "B2B Commercial Roof", "Cold Outreach", "New", "$85,000", "60 kW"],
     ],
-    [
-      "company_roles",
-      "Commercial engineering",
-      "",
-      "",
-      "C&I consulting, structural design, system engineering",
-      "",
-      "Commercial delivery",
-      "",
-      "",
+  },
+  "Solar3K Bids": {
+    headerRows: [1],
+    values: [
+      ["Proposal ID", "Client Name", "Company", "Scope of Work", "OpenSolar Layout", "Structural PE Status", "Interconnection Status", "Contract Status", "Bid Total"],
+      ["BID-301", "McKinney Logistics Hub", "Solar 3SK", "150kW Array Layout", "Completed", "Pending Review", "Oncor App Filed", "DocuSign Executed", "$185,000"],
+      ["BID-302", "Denton Multi-Family Array", "Solar 3SK", "200kW Grid Interconnection", "Completed", "PE Approved", "Approved by Utility", "Active Proposal Out", "$240,000"],
+      ["BID-303", "Rockwall Retail Strip", "Solar 3SK", "90kW Structural Assessment", "In Progress", "Awaiting Draft", "Not Started", "Reviewing Scope", "$110,000"],
+      ["BID-304", "Frisco Commercial Plaza", "Solar 3SK", "120kW Roof Layout and PE Coordination", "Model V2 Saved", "Awaiting Load Assessment", "Utility Pre-Screen", "Engineering Hold", "$145,000"],
     ],
-    ["executive_kpi", "Active Projects", "1", "6", "4", "11", "Current open work across companies", "", ""],
-    ["executive_kpi", "Lead Pipeline", "2", "7", "4", "13", "$438.5k weighted value", "", ""],
-    [
-      "executive_kpi",
-      "Active Revenue",
-      "$275,000",
-      "$96,500",
-      "$67,000",
-      "$438,500",
-      "Demo operating pipeline",
-      "",
-      "",
+  },
+  "Solar3K Contracts": {
+    headerRows: [1],
+    values: [
+      ["Contract ID", "Client Name", "Company", "Scope", "Status", "Contract Value", "Signature Channel", "Next Action"],
+      ["CTR-401", "McKinney Logistics Hub", "Solar 3SK", "150kW Layout Design", "Executed", "$185,000", "DocuSign", "Kickoff engineering package"],
+      ["CTR-402", "Denton Multi-Family Array", "Solar 3SK", "200kW Grid Interconnection", "Proposal Out", "$240,000", "DocuSign", "Follow up decision maker"],
+      ["CTR-403", "Frisco Commercial Plaza", "Solar 3SK", "120kW Array Engineering", "Blocked", "$145,000", "Pending", "Wait for structural PE upload"],
     ],
-    ["executive_kpi", "Upcoming Deadlines", "1", "2", "2", "5", "Items due within 30 days", "", ""],
-    [
-      "urgent_alert",
-      "SSL renewal required",
-      "",
-      "solar2sk.com certificate expires soon",
-      "",
-      "",
-      "Renew certificate in DreamHost",
-      "Critical",
-      "Renew via DreamHost",
+  },
+  "Project Tracker": {
+    headerRows: [1],
+    values: [
+      ["Project ID", "Customer Name", "Company", "Project Type", "Contractor", "Contract Value", "Stage", "Permit Status", "Grid Status", "Contract Date", "Est Completion", "System kW", "Notes"],
+      ["PRJ-101", "Hunt County Asset Expansion", "Yellow Star Power", "Microgrid / Asset Development", "Lone Star Electrical & Interconnection", "$450,000", "Combiner Box Tie-In", "Approved (Local)", "Live - 48.2kW", "2026-06-01", "2026-06-30", "60", "Oncor field inspection window active."],
+      ["PRJ-102", "Frisco Commercial Plaza", "Solar 3SK", "B2B Commercial Roof", "North Texas Structural PE Group", "$145,000", "Structural Load Testing", "Pending Municipality", "Provisioned (Offline)", "2026-06-10", "2026-07-15", "120", "Blocked until PE load assessment blueprints are uploaded."],
+      ["PRJ-103", "Wylie Warehouse Restock", "Solar 2SK", "Residential DIY Kit Fulfillment", "Internal Ops Core", "$38,000", "Inbound Freight Check", "N/A Retail", "N/A", "2026-06-11", "2026-06-18", "54", "Rich Solar pallet arrival scheduled."],
     ],
-    [
-      "urgent_alert",
-      "Permit follow-up overdue",
-      "",
-      "Brown residence has been in permit review for 23 days",
-      "",
-      "",
-      "Request permit status update",
-      "Critical",
-      "Follow up vendor",
+  },
+  "Contractors & Vendors": {
+    headerRows: [1],
+    values: [
+      ["Vendor", "Type", "Scope", "Company", "Status", "Budget", "Region", "Assignments", "Compliance"],
+      ["Rich Solar Distribution", "Hardware Wholesaler", "Bulk 3KW Inverter Pallet Freight", "Solar 2SK", "In Transit via LTL", "$14,250", "North Texas", "1", "Verified Active"],
+      ["North Texas Structural PE Group", "Structural Engineering Stamp", "120kW Roof Load Assessment", "Solar 3SK", "Awaiting PE Signature", "$3,200", "DFW Metro", "1", "Verified Active"],
+      ["Lone Star Electrical & Interconnection", "Field Subcontractor", "Hunt County Combiner Box Upgrade", "Yellow Star Power", "On-Site Crew Dispatched", "$8,500", "Hunt County", "1", "Verified Active"],
+      ["DFW Solar Appointment Setters", "Marketing Agency / Lead Gen", "Commercial Roof Pre-Qualification Run", "Solar 3SK", "Completed Pay-Per-Sit Out", "$1,800", "DFW Metro", "0", "Verified Active"],
     ],
-    [
-      "urgent_alert",
-      "Solar 3SK design scope due",
-      "",
-      "",
-      "Commercial plan set needs final review",
-      "",
-      "Finalize engineering scope and pricing",
-      "Warning",
-      "Review with design partner",
+  },
+  "Financial Summary": {
+    sectionRows: [1],
+    headerRows: [2],
+    values: [
+      ["Revenue Split Matrix"],
+      ["Company", "Jan", "Feb", "Mar", "Apr", "May", "Jun YTD"],
+      ["Solar 2SK", "$28,000", "$31,500", "$37,000", "$54,000", "$50,000", "$38,000"],
+      ["Solar 3SK", "$65,000", "$72,000", "$88,000", "$85,000", "$100,000", "$185,000"],
+      ["Yellow Star Power", "$35,000", "$40,000", "$35,000", "$72,000", "$83,000", "$72,000"],
     ],
-    [
-      "urgent_alert",
-      "Yellow Star Power asset review",
-      "Large commercial valuation model needs owner review",
-      "",
-      "",
-      "",
-      "Review assumptions",
-      "Warning",
-      "Review model",
+  },
+  "Website & Systems": {
+    sectionRows: [1, 8],
+    headerRows: [2, 9],
+    values: [
+      ["Domain Monitors"],
+      ["Site Domain", "Hosting", "Platform", "SSL", "Renewal", "Admin", "Status"],
+      ["solar2sk.com", "DreamHost Hosting Console", "WordPress Engine", "CRITICAL EXPIRED", "June 10, 2026 (Action Overdue)", "S. Khan", "Critical"],
+      ["shop.solar2sk.com", "DreamHost Hosting Console", "WooCommerce", "OPERATIONAL", "Jan 15, 2027", "S. Khan", "Healthy"],
+      ["solar3k.com", "Vercel", "Custom Next.js Platform", "OPERATIONAL", "Nov 22, 2026", "T. Khan", "Healthy"],
+      ["yellowstarpower.com", "Vercel", "Custom Next.js Platform", "OPERATIONAL", "Dec 05, 2026", "T. Khan", "Healthy"],
+      [],
+      ["SaaS Subscription Ledger"],
+      ["Tool", "Cadence", "Cost", "Purpose", "Admin"],
+      ["Google Workspace", "Monthly", "$72", "Global Holdings Identity - email and docs", "T. Khan"],
+      ["DreamHost Server Stack", "Monthly", "$45", "Multi-tenant site hosting layer", "T. Khan"],
+      ["QuickBooks Online", "Monthly", "$90", "Cross-entity invoicing ledger", "S. Khan"],
+      ["Zapier Automation Engine", "Monthly", "$49", "Webhook lead synchronization pipeline", "T. Khan"],
+      ["DocuSign Corporate Pro", "Monthly", "$45", "B2B commercial contract delivery", "T. Khan"],
+      ["OpenSolar Platform", "Monthly", "$0", "Freemium B2B CAD array design layouts", "T. Khan"],
+      ["SolarEdge Monitoring API", "Monthly", "$0", "Hardware bundle telemetry polling layer", "T. Khan"],
     ],
-  ],
-  "Lead Tracker": [
-    [
-      "lead_id",
-      "timestamp",
-      "client_business_name",
-      "entity_brand",
-      "project_type",
-      "source",
-      "status",
-      "expected_value",
-      "estimated_kw_size",
+  },
+  "Retail Ops": {
+    sectionRows: [1, 7],
+    headerRows: [2, 8],
+    values: [
+      ["WooCommerce Order Management"],
+      ["Order ID", "Customer", "Product", "Status", "Value", "Date"],
+      ["WOO-9401", "Garrett Miller", "Rich Solar 3KW Hybrid Inverter Pack", "Pending Warehouse Pull", "$4,200", "2026-06-12"],
+      ["WOO-9402", "Marcus Vance", "48V 100Ah LiFePO4 Battery Block", "Fulfilled & Packed", "$2,100", "2026-06-11"],
+      ["WOO-9403", "M. Allen", "Anenji 3KW Inverter Hardware Bank", "Support Review Required", "$3,850", "2026-06-13"],
+      [],
+      ["DIY Technical Support Tickets"],
+      ["Ticket ID", "User Group", "Subject", "Message Snippet", "Priority"],
+      ["2SK-TK-8012", "Retail DIY Purchaser - M. Allen", "Battery Parallel Configuration Validation", "Requesting engineering review on wiring three 48V Lithium blocks in parallel without over-volting the Anenji 3KW inverter input threshold.", "High Priority"],
     ],
-    [
-      "LD-201",
-      "2026-06-10",
-      "Frisco Office Complex",
-      "Solar 3SK",
-      "B2B Commercial Roof",
-      "DFW Appointment Setters",
-      "New",
-      "$145,000",
-      "120 kW",
+  },
+  Calendar: {
+    headerRows: [1],
+    values: [
+      ["Date", "Brand", "Event", "Owner"],
+      ["2026-06-15", "Solar 3SK", "Submit zoning variance paperwork to City of Plano Building Inspections Department for 60kW Auto Body build.", "T. Khan"],
+      ["2026-06-18", "Solar 2SK", "Inbound bulk freight pallet arrival from Rich Solar at Wylie Warehouse.", "S. Khan"],
+      ["2026-06-22", "Yellow Star Power", "Oncor on-site utility engineering field inspection window for Hunt County 60kW asset expansion tie-in.", "T. Khan"],
+      ["2026-06-26", "Solar 3SK", "Structural engineer on-site roof load assessment walk at Frisco Commercial Plaza.", "North Texas Structural PE Group"],
     ],
-    [
-      "LD-202",
-      "2026-06-11",
-      "Garrett Miller",
-      "Solar 2SK",
-      "Residential DIY Kit",
-      "Organic Search",
-      "Contacted",
-      "$4,200",
-      "3.5 kW",
+  },
+  "Access Control": {
+    sectionRows: [1],
+    headerRows: [2],
+    values: [
+      ["User Access / RBAC Controls"],
+      ["Profile", "Corporate Role Assigned", "Scope", "Module Permissions Profile"],
+      ["Thureen Khan (t.khan@yellowstarpower.com)", "SUPER_ADMIN", "Global Holdings", "Command Center READ_WRITE | CRM READ_WRITE | Telemetry READ_WRITE | Vendor Ops READ_WRITE | System Settings READ_WRITE"],
+      ["S. Khan (s.khan@solar2sk.com)", "OPS_MANAGER", "Solar 2SK Retail", "Command Center READ_ONLY | CRM READ_WRITE | Telemetry NO_ACCESS | Vendor Ops READ_WRITE | System Settings READ_ONLY"],
+      ["Field Installation Contractor Team (install-dfw2@external-vendors.net)", "FIELD_CREW", "Solar 3SK Sites", "Command Center NO_ACCESS | CRM NO_ACCESS | Telemetry READ_ONLY | Vendor Ops READ_ONLY | System Settings NO_ACCESS"],
     ],
-    [
-      "LD-203",
-      "2026-06-12",
-      "Wylie Industrial Park",
-      "Yellow Star Power",
-      "Microgrid / Asset Dev",
-      "Executive Referral",
-      "In Progress",
-      "$450,000",
-      "300 kW",
-    ],
-    [
-      "LD-204",
-      "2026-06-13",
-      "Plano Auto Body Shop",
-      "Solar 3SK",
-      "B2B Commercial Roof",
-      "Cold Outreach",
-      "New",
-      "$85,000",
-      "60 kW",
-    ],
-  ],
-  "Solar 3SK Bids & Contracts": [
-    [
-      "proposal_id",
-      "client_name",
-      "scope_of_work",
-      "opensolar_layout",
-      "structural_pe_status",
-      "interconnection_status",
-      "contract_status",
-      "bid_total",
-    ],
-    [
-      "BID-301",
-      "McKinney Logistics Hub",
-      "150kW Layout Design",
-      "Completed",
-      "Pending Review",
-      "Oncor App Filed",
-      "Sent via DocuSign",
-      "$185,000",
-    ],
-    [
-      "BID-302",
-      "Rockwall Retail Strip",
-      "90kW Structural Assessment",
-      "In Progress",
-      "Awaiting Draft",
-      "Not Started",
-      "Reviewing Scope",
-      "$110,000",
-    ],
-    [
-      "BID-303",
-      "Denton Multi-Family Array",
-      "200kW Grid Interconnection",
-      "Completed",
-      "PE Approved",
-      "Approved by Utility",
-      "Executed",
-      "$240,000",
-    ],
-  ],
-  "Project Tracker": [
-    [
-      "project_id",
-      "project_name",
-      "entity_brand",
-      "assigned_crew",
-      "phase_milestone",
-      "on_site_permit_status",
-      "solaredge_api_status",
-      "estimated_completion",
-    ],
-    [
-      "PRJ-101",
-      "Hunt County Asset Expansion",
-      "Yellow Star Power",
-      "Lone Star Electrical",
-      "Combiner Box Tie-In",
-      "Approved (Local)",
-      "Live - 48.2kW",
-      "2026-06-30",
-    ],
-    [
-      "PRJ-102",
-      "Frisco Commercial Plaza",
-      "Solar 3SK",
-      "NTX Structural Group",
-      "Structural Load Testing",
-      "Pending Municipality",
-      "Provisioned (Offline)",
-      "2026-07-15",
-    ],
-    [
-      "PRJ-103",
-      "Wylie Warehouse Restock",
-      "Solar 2SK",
-      "Internal Ops Core",
-      "Inbound Freight Check",
-      "N/A (Retail)",
-      "N/A",
-      "2026-06-18",
-    ],
-  ],
-  "Website & Systems": [
-    ["asset", "company", "platform", "hosting", "domain_expires", "ssl_expires", "last_backup", "status", "notes"],
-    [
-      "yellowstarpower.com",
-      "Yellow Star Power",
-      "WordPress",
-      "DreamHost",
-      "6/1/2026",
-      "6/1/2026",
-      "6/11/2025",
-      "Healthy",
-      "Umbrella company site",
-    ],
-    [
-      "solar2sk.com",
-      "Solar 2SK",
-      "WordPress",
-      "DreamHost",
-      "3/15/2026",
-      "6/20/2025",
-      "6/13/2025",
-      "SSL urgent",
-      "Residential and DIY solar hardware",
-    ],
-    [
-      "shop.solar2sk.com",
-      "Solar 2SK",
-      "WooCommerce",
-      "DreamHost",
-      "3/15/2026",
-      "12/15/2025",
-      "6/13/2025",
-      "Healthy",
-      "Direct-to-consumer store",
-    ],
-    [
-      "solar3sk.com",
-      "Solar 3SK",
-      "WordPress",
-      "DreamHost",
-      "9/20/2026",
-      "9/20/2025",
-      "6/12/2025",
-      "Healthy",
-      "Commercial consulting and engineering",
-    ],
-    ["Google Workspace", "Shared", "SaaS", "Google", "Monthly", "N/A", "N/A", "Active", "Email and cloud files"],
-    ["QuickBooks Online", "Shared", "SaaS", "Intuit", "Monthly", "N/A", "N/A", "Active", "Multi-entity bookkeeping"],
-  ],
+  },
 };
 
 async function getCredentials(): Promise<ServiceAccountCredentials> {
@@ -313,10 +204,20 @@ async function getCredentials(): Promise<ServiceAccountCredentials> {
   throw new Error("Set GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_APPLICATION_CREDENTIALS.");
 }
 
+function cell(value: string) {
+  return { userEnteredValue: value ? { stringValue: value } : undefined };
+}
+
+function row(values: string[]) {
+  return { values: values.map(cell) };
+}
+
+function range(sheetId: number, startRowIndex: number, endRowIndex: number, startColumnIndex = 0, endColumnIndex = 12) {
+  return { sheetId, startRowIndex, endRowIndex, startColumnIndex, endColumnIndex };
+}
+
 async function main() {
-  if (!spreadsheetId) {
-    throw new Error("Set GOOGLE_SHEET_ID.");
-  }
+  if (!spreadsheetId) throw new Error("Set GOOGLE_SHEET_ID.");
 
   const credentials = await getCredentials();
   const auth = new google.auth.JWT({
@@ -326,51 +227,107 @@ async function main() {
   });
   const sheets = google.sheets({ version: "v4", auth });
   const metadata = await sheets.spreadsheets.get({ spreadsheetId });
-  const tabs = new Map(
-    metadata.data.sheets?.map((sheet) => [sheet.properties?.title, sheet.properties?.sheetId]) ?? [],
-  );
+  const tabs = new Map(metadata.data.sheets?.map((sheet) => [sheet.properties?.title, sheet.properties?.sheetId]) ?? []);
+
+  for (const sheetName of Object.keys(workbook)) {
+    if (!tabs.has(sheetName)) {
+      await sheets.spreadsheets.batchUpdate({
+        spreadsheetId,
+        requestBody: { requests: [{ addSheet: { properties: { title: sheetName } } }] },
+      });
+    }
+  }
+
+  const refreshed = await sheets.spreadsheets.get({ spreadsheetId });
+  const sheetIds = new Map(refreshed.data.sheets?.map((sheet) => [sheet.properties?.title, sheet.properties?.sheetId]) ?? []);
+
+  await sheets.spreadsheets.values.batchClear({
+    spreadsheetId,
+    requestBody: { ranges: Object.keys(workbook).map((sheetName) => `'${sheetName}'!A1:Z200`) },
+  });
+
+  await sheets.spreadsheets.values.batchUpdate({
+    spreadsheetId,
+    requestBody: {
+      valueInputOption: "USER_ENTERED",
+      data: Object.entries(workbook).map(([sheetName, spec]) => ({
+        range: `'${sheetName}'!A1`,
+        values: spec.values,
+      })),
+    },
+  });
 
   const requests = [];
-  const bidsSheetId = tabs.get("Solar3K Bids");
-  const contractsSheetId = tabs.get("Solar3K Contracts");
+  const dark = { red: 0.078, green: 0.118, blue: 0.176 };
+  const header = { red: 0.898, green: 0.929, blue: 0.957 };
+  const white = { red: 1, green: 1, blue: 1 };
 
-  if (typeof bidsSheetId === "number" && !tabs.has("Solar 3SK Bids & Contracts")) {
-    requests.push({
-      updateSheetProperties: {
-        properties: { sheetId: bidsSheetId, title: "Solar 3SK Bids & Contracts" },
-        fields: "title",
+  for (const [sheetName, spec] of Object.entries(workbook)) {
+    const sheetId = sheetIds.get(sheetName);
+    if (typeof sheetId !== "number") continue;
+
+    const maxColumns = Math.max(...spec.values.map((values) => values.length));
+
+    requests.push(
+      {
+        updateSheetProperties: {
+          properties: {
+            sheetId,
+            gridProperties: { frozenRowCount: spec.sectionRows?.includes(1) ? 0 : 1, hideGridlines: true },
+          },
+          fields: "gridProperties.frozenRowCount,gridProperties.hideGridlines",
+        },
       },
-    });
-  }
-
-  if (typeof contractsSheetId === "number" && !tabs.has("Archive - Solar3K Contracts")) {
-    requests.push({
-      updateSheetProperties: {
-        properties: { sheetId: contractsSheetId, title: "Archive - Solar3K Contracts" },
-        fields: "title",
+      {
+        repeatCell: {
+          range: range(sheetId, 0, Math.max(spec.values.length, 1), 0, Math.max(maxColumns, 1)),
+          cell: {
+            userEnteredFormat: {
+              backgroundColor: white,
+              textFormat: { fontFamily: "Arial", fontSize: 10, foregroundColor: { red: 0.12, green: 0.12, blue: 0.12 } },
+              wrapStrategy: "WRAP",
+              verticalAlignment: "MIDDLE",
+            },
+          },
+          fields: "userEnteredFormat(backgroundColor,textFormat,wrapStrategy,verticalAlignment)",
+        },
       },
-    });
+      { autoResizeDimensions: { dimensions: { sheetId, dimension: "COLUMNS", startIndex: 0, endIndex: Math.max(maxColumns, 1) } } },
+    );
+
+    for (const sectionRow of spec.sectionRows ?? []) {
+      requests.push({
+        repeatCell: {
+          range: range(sheetId, sectionRow - 1, sectionRow, 0, Math.max(maxColumns, 1)),
+          cell: {
+            userEnteredFormat: {
+              backgroundColor: dark,
+              textFormat: { bold: true, fontSize: 12, foregroundColor: white },
+            },
+          },
+          fields: "userEnteredFormat(backgroundColor,textFormat)",
+        },
+      });
+    }
+
+    for (const headerRow of spec.headerRows ?? []) {
+      requests.push({
+        repeatCell: {
+          range: range(sheetId, headerRow - 1, headerRow, 0, Math.max(maxColumns, 1)),
+          cell: {
+            userEnteredFormat: {
+              backgroundColor: header,
+              textFormat: { bold: true, foregroundColor: { red: 0.12, green: 0.12, blue: 0.12 } },
+            },
+          },
+          fields: "userEnteredFormat(backgroundColor,textFormat)",
+        },
+      });
+    }
   }
 
-  if (!tabs.has("Solar3K Bids") && !tabs.has("Solar 3SK Bids & Contracts")) {
-    requests.push({ addSheet: { properties: { title: "Solar 3SK Bids & Contracts" } } });
-  }
-
-  if (requests.length > 0) {
-    await sheets.spreadsheets.batchUpdate({ spreadsheetId, requestBody: { requests } });
-  }
-
-  for (const [sheetName, values] of Object.entries(sheetsToWrite)) {
-    await sheets.spreadsheets.values.clear({ spreadsheetId, range: `'${sheetName}'!A1:Z200` });
-    await sheets.spreadsheets.values.update({
-      spreadsheetId,
-      range: `'${sheetName}'!A1`,
-      valueInputOption: "USER_ENTERED",
-      requestBody: { values },
-    });
-  }
-
-  console.log("Workbook cleaned for Yellow Star Power / Solar 2SK / Solar 3SK demo model.");
+  await sheets.spreadsheets.batchUpdate({ spreadsheetId, requestBody: { requests } });
+  console.log("Workbook synced to the current admin dashboard demo data.");
 }
 
 main().catch((error) => {
