@@ -53,6 +53,12 @@ function mapScriptOrder(order: ScriptRetailOrder): RetailLogisticsOrder {
   });
 }
 
+function hasGenericRetailPlaceholders(orders: RetailLogisticsOrder[]) {
+  return orders.some((order) =>
+    /john doe|jane smith|bob johnson|widget a|widget b/i.test(`${order.customerName} ${order.hardwareAllocated}`),
+  );
+}
+
 async function fetchRetailOrders(): Promise<RetailLogisticsOrder[]> {
   try {
     const rows = await fetchPublishedSectionTable("Retail Ops", "WooCommerce Order Management");
@@ -69,14 +75,15 @@ async function fetchRetailOrders(): Promise<RetailLogisticsOrder[]> {
         }),
       );
 
-    if (publishedOrders.length) return publishedOrders;
+    if (publishedOrders.length && !hasGenericRetailPlaceholders(publishedOrders)) return publishedOrders;
   } catch {
     // Fall back to Apps Script or local preview data below.
   }
 
   const scriptPayload = await fetchWorkbookScriptPayloadOrNull();
   if (scriptPayload?.retailOrders?.length) {
-    return scriptPayload.retailOrders.map(mapScriptOrder);
+    const scriptOrders = scriptPayload.retailOrders.map(mapScriptOrder);
+    if (!hasGenericRetailPlaceholders(scriptOrders)) return scriptOrders;
   }
 
   return ordersData.map(mapDemoOrder);

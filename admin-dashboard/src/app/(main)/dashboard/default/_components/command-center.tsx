@@ -47,35 +47,42 @@ type MetricCardConfig = {
   title: string;
   value: string;
   caption: string;
+  technicalNote: string;
   trend: string;
   icon: LucideIcon;
   iconClassName: string;
-  entity: "Solar 2SK" | "Solar 3SK" | "Yellow Star Power";
+  entity: "2SK" | "3SK" | "YSP";
   accentClassName: string;
 };
 
 function entityLabel(value: string) {
   const lower = value.toLowerCase();
-  if (lower.includes("yellow")) return "Yellow Star Power";
-  if (lower.includes("3sk") || lower.includes("3k")) return "Solar 3SK";
-  if (lower.includes("2sk")) return "Solar 2SK";
+  if (lower.includes("yellow") || lower.includes("ysp")) return "YSP";
+  if (lower.includes("3sk") || lower.includes("3k")) return "3SK";
+  if (lower.includes("2sk")) return "2SK";
   return "Shared";
 }
 
 function entityAccent(value: string) {
   const label = entityLabel(value);
-  if (label === "Solar 2SK") return "border-l-4 border-emerald-500";
-  if (label === "Solar 3SK") return "border-l-4 border-indigo-500";
-  if (label === "Yellow Star Power") return "border-l-4 border-amber-500";
-  return "border-l-4 border-slate-400";
+  if (label === "2SK") return "border-lime-500 border-l-2";
+  if (label === "3SK") return "border-cyan-500 border-l-2";
+  if (label === "YSP") return "border-amber-500 border-l-2";
+  return "border-l-4 border-slate-400/70";
 }
 
 function entityBadgeClass(value: string) {
   const label = entityLabel(value);
-  if (label === "Solar 2SK") return "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
-  if (label === "Solar 3SK") return "border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300";
-  if (label === "Yellow Star Power") return "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300";
+  if (label === "2SK") return "border-lime-500/20 bg-lime-950/20 text-lime-300";
+  if (label === "3SK") return "border-cyan-500/20 bg-cyan-950/30 text-cyan-300";
+  if (label === "YSP") return "border-amber-500/20 bg-amber-950/30 text-amber-300";
   return "border-border bg-muted/30 text-muted-foreground";
+}
+
+function metricValueClass(entity: MetricCardConfig["entity"]) {
+  if (entity === "2SK") return "text-lime-300";
+  if (entity === "3SK") return "text-cyan-300";
+  return "text-amber-300";
 }
 
 function utilityAuthorityFor(company: string, projectName: string) {
@@ -105,42 +112,50 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
     {
       title: "Active B2B Pipeline",
       value: `$${metrics.b2bPipeline.toLocaleString()}`,
-      caption: "Solar 3SK active contract and proposal pipeline value.",
+      caption: "Contract and proposal pipeline.",
+      technicalNote:
+        "Production wiring: Google Sheets API and Apps Script webhooks ingest workbook rows, normalize company fields, and reconcile multi-company balances before the KPI render pass.",
       trend: trends.b2bPipeline,
       icon: TrendingUp,
-      iconClassName: "text-indigo-500",
-      entity: "Solar 3SK",
-      accentClassName: "border-l-4 border-indigo-500",
+      iconClassName: "text-cyan-500",
+      entity: "3SK",
+      accentClassName: "border-cyan-500 border-l-2",
     },
     {
       title: "Live Fleet Yield",
-      value: `${metrics.fleetYield} kW`,
-      caption: "Yellow Star Power active managed array performance.",
+      value: `${metrics.fleetYield.toFixed(1)} MW`,
+      caption: "Active macro fleet generation.",
+      technicalNote:
+        "Production wiring: a scheduled SolarEdge / SCADA polling worker batches inverter register reads, rate-limits API calls, and maps generation samples into YSP fleet-yield metrics.",
       trend: trends.fleetYield,
       icon: Activity,
-      iconClassName: "text-emerald-500",
-      entity: "Yellow Star Power",
-      accentClassName: "border-l-4 border-amber-500",
+      iconClassName: "text-amber-500",
+      entity: "YSP",
+      accentClassName: "border-amber-500 border-l-2",
     },
     {
       title: "Combined Portfolio",
-      value: `${metrics.portfolioCapacity} kW`,
-      caption: "Aggregated Hunt Co., Frisco, Wylie, Plano, and McKinney footprint.",
+      value: `${metrics.portfolioCapacity.toFixed(1)} MW`,
+      caption: "Aggregated North Texas asset footprint.",
+      technicalNote:
+        "Production wiring: workbook and telemetry rows are cleaned, type-cast, entity-mapped, and rolled into MW-scale executive capacity metrics for portfolio review.",
       trend: trends.portfolioCapacity,
       icon: Zap,
       iconClassName: "text-amber-500",
-      entity: "Yellow Star Power",
-      accentClassName: "border-l-4 border-amber-500",
+      entity: "YSP",
+      accentClassName: "border-amber-500 border-l-2",
     },
     {
       title: "DIY Retail Vol (Mo)",
       value: `${metrics.retailVolume} Units`,
-      caption: "Solar 2SK active monthly WooCommerce warehouse fulfillment flow.",
+      caption: "Monthly warehouse fulfillment flow.",
+      technicalNote:
+        "Production wiring: WooCommerce order webhooks post JSON payloads into middleware, which validates SKUs, deduplicates orders, and writes sanitized fulfillment rows to the operations workbook.",
       trend: trends.retailVolume,
       icon: ShoppingCart,
-      iconClassName: "text-emerald-500",
-      entity: "Solar 2SK",
-      accentClassName: "border-l-4 border-emerald-500",
+      iconClassName: "text-lime-500",
+      entity: "2SK",
+      accentClassName: "border-lime-500 border-l-2",
     },
   ];
 }
@@ -149,15 +164,15 @@ function TelemetryMatrixCard() {
   const telemetry = useTelemetrySimulation();
 
   return (
-    <Card size="sm" className={cn("h-full border-amber-500 border-l-4", dashCardClass)}>
+    <Card size="sm" className={cn("h-full border-amber-500/70 border-l-4", dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
             <CardTitle>Live Interconnection Telemetry</CardTitle>
-            <CardDescription>SolarEdge polling loop for Yellow Star Power grid export status.</CardDescription>
+            <CardDescription>SolarEdge polling loop for YSP grid export status.</CardDescription>
           </div>
-          <Badge variant="outline" className={entityBadgeClass("Yellow Star Power")}>
-            Yellow Star Power
+          <Badge variant="outline" className={entityBadgeClass("YSP")}>
+            YSP
           </Badge>
         </div>
       </CardHeader>
@@ -188,7 +203,7 @@ function TelemetryMatrixCard() {
 
 function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["projects"] }) {
   return (
-    <Card size="sm" className={cn("border-indigo-500 border-l-4", dashCardClass)}>
+    <Card size="sm" className={cn("border-indigo-500/70 border-l-4", dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -206,10 +221,10 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
         </div>
       </CardHeader>
       <CardContent className={dashSectionCardContentClass}>
-        <div className="overflow-hidden rounded-md border">
-          <Table>
+        <div className="overflow-hidden rounded-md border border-border/60">
+          <Table className="min-w-[760px]">
             <TableHeader>
-              <TableRow className="h-9">
+              <TableRow className="h-9 border-neutral-800/60 hover:bg-transparent">
                 <TableHead>Project</TableHead>
                 <TableHead>Entity</TableHead>
                 <TableHead>Stage</TableHead>
@@ -228,17 +243,22 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
                 const showEscalation =
                   daysStale >= 3 || /hold|review|interconnection|permit|pending/i.test(project.stage);
                 return (
-                  <TableRow key={project.id} className={cn("h-11", entityAccent(entity))}>
-                    <TableCell className="py-2 font-medium">{project.customer}</TableCell>
+                  <TableRow
+                    key={project.id}
+                    className={cn("h-11 border-neutral-800/60 hover:bg-muted/30", entityAccent(entity))}
+                  >
+                    <TableCell className="max-w-[220px] truncate py-2 font-medium">{project.customer}</TableCell>
                     <TableCell className="py-2">
                       <Badge variant="outline" className={cn("h-6", entityBadgeClass(entity))}>
                         {entity}
                       </Badge>
                     </TableCell>
                     <TableCell className="py-2 text-muted-foreground text-xs">{project.stage}</TableCell>
-                    <TableCell className="py-2 text-right font-medium font-mono">{project.value}</TableCell>
-                    <TableCell className="py-2 text-right font-mono">{daysStale}d</TableCell>
-                    <TableCell className="py-2 text-xs">{authority}</TableCell>
+                    <TableCell className="py-2 text-right font-medium font-mono tabular-nums">
+                      {project.value}
+                    </TableCell>
+                    <TableCell className="py-2 text-right font-mono tabular-nums">{daysStale}d</TableCell>
+                    <TableCell className="max-w-[220px] truncate py-2 text-xs">{authority}</TableCell>
                     <TableCell className="py-2 text-right">
                       {showEscalation ? (
                         <AIEscalationButton
@@ -299,32 +319,34 @@ export function CommandCenter({ data }: CommandCenterProps) {
   }
 
   return (
-    <div className={dashPageClass}>
-      <div className={cn(dashPageHeaderClass, "lg:flex-row lg:items-end lg:justify-between")}>
+    <div className={cn(dashPageClass, "mx-auto w-full max-w-[1600px] gap-4 p-3 md:gap-6 md:p-5 xl:p-6")}>
+      <div className={cn(dashPageHeaderClass, "gap-3 pb-4 lg:flex-row lg:items-end lg:justify-between")}>
         <div className="grid gap-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="font-semibold text-2xl tracking-tight">Executive Control Tower</h1>
-            <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300">
+            <h1 className="font-semibold text-xl tracking-tight md:text-3xl">Executive Control Tower</h1>
+            <Badge
+              variant="outline"
+              className="h-6 border-amber-500/30 bg-amber-500/10 px-2 font-mono text-[10px] text-amber-700 dark:text-amber-300"
+            >
               Proof-of-capability demo
             </Badge>
-            <Badge variant={data.source === "workbook" ? "default" : "outline"}>
+            <Badge variant={data.source === "workbook" ? "default" : "outline"} className="h-6 px-2 text-[10px]">
               {data.source === "workbook" ? "Workbook connected" : "Preview mode"}
             </Badge>
           </div>
-          <p className="max-w-3xl text-muted-foreground text-sm">
-            Demo operations dashboard for Yellow Star Power, Solar 2SK, and Solar 3SK - built to show how a workbook-led
-            operating process can be converted into a clean executive review surface.
+          <p className="max-w-3xl text-muted-foreground text-xs leading-relaxed md:text-sm">
+            Workbook-led review surface for YSP, 2SK, and 3SK operating signals.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-2 rounded-md border bg-muted/35 px-3 py-2 text-sm">
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <div className="flex items-center gap-2 rounded-md border bg-muted/35 px-2.5 py-1.5">
             <DatabaseZap className="size-4 text-primary" />
             <span className="font-medium">
               {data.source === "workbook" ? "Google Sheets live sync" : "Preview fallback"}
             </span>
           </div>
-          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <div className="flex items-center gap-2 text-muted-foreground">
             <CheckCircle2 className="size-4 shrink-0" />
             <span>
               Updated <RelativeTime value={data.updatedAt} />
@@ -337,41 +359,66 @@ export function CommandCenter({ data }: CommandCenterProps) {
         </div>
       </div>
 
-      <div className={dashKpiGridClass}>
+      <div className={cn(dashKpiGridClass, "gap-3 sm:grid-cols-2 md:gap-4 xl:grid-cols-4")}>
         {metricCards.map((metric) => {
           const Icon = metric.icon;
           return (
-            <Card key={metric.title} size="sm" className={cn(dashCardClass, metric.accentClassName)}>
+            <Card
+              key={metric.title}
+              size="sm"
+              className={cn(dashCardClass, "overflow-hidden shadow-sm", metric.accentClassName)}
+            >
               <CardHeader
-                className={cn("flex flex-row items-start justify-between gap-2 space-y-0", dashCardHeaderClass)}
+                className={cn(
+                  "flex flex-row items-start justify-between gap-3 space-y-0 px-3.5 pt-3.5 md:px-4 md:pt-4",
+                  dashCardHeaderClass,
+                )}
               >
-                <div className="grid gap-0.5">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <CardDescription className="text-xs">{metric.title}</CardDescription>
-                    <Badge variant="outline" className={cn("h-5 px-1.5 text-[10px]", entityBadgeClass(metric.entity))}>
+                <div className="grid min-w-0 gap-1">
+                  <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                    <CardDescription className="whitespace-nowrap text-[11px] md:text-xs">
+                      {metric.title}
+                    </CardDescription>
+                    <Badge
+                      variant="outline"
+                      className={cn("h-5 shrink-0 px-1.5 text-[10px]", entityBadgeClass(metric.entity))}
+                    >
                       {metric.entity}
                     </Badge>
                   </div>
-                  <CardTitle className="font-mono font-semibold text-2xl tabular-nums tracking-tight">
+                  <CardTitle
+                    className={cn(
+                      "whitespace-nowrap font-bold font-mono text-xl tabular-nums tracking-tight md:text-3xl",
+                      metricValueClass(metric.entity),
+                    )}
+                  >
                     {metric.value}
                   </CardTitle>
                 </div>
-                <Icon className={`size-4 ${metric.iconClassName}`} />
+                <span className="rounded-full border border-border/60 bg-background/70 p-2 shadow-sm">
+                  <Icon className={`size-4 ${metric.iconClassName}`} />
+                </span>
               </CardHeader>
-              <CardContent className={dashCardContentClass}>
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-muted-foreground text-xs leading-snug">{metric.caption}</p>
-                  <Badge variant="outline" className="shrink-0 text-[10px] text-emerald-600">
+              <CardContent className={cn(dashCardContentClass, "px-3.5 pb-3.5 md:px-4 md:pb-4")}>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="line-clamp-2 text-[11px] text-muted-foreground leading-snug">{metric.caption}</p>
+                  <Badge
+                    variant="outline"
+                    className="shrink-0 whitespace-nowrap border-emerald-500/30 bg-emerald-500/10 text-[10px] text-emerald-600"
+                  >
                     {metric.trend}
                   </Badge>
                 </div>
+                <p className="mt-2 border-zinc-900 border-t pt-2 font-mono text-[10px] text-zinc-500 leading-relaxed">
+                  {metric.technicalNote}
+                </p>
               </CardContent>
             </Card>
           );
         })}
       </div>
 
-      <div className="grid grid-cols-1 items-stretch gap-3 xl:grid-cols-12">
+      <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-12">
         <div className="xl:col-span-8">
           <RevenueSplitChart data={data.revenueSplit} />
         </div>
@@ -384,7 +431,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 items-stretch gap-3 xl:grid-cols-12">
+      <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-12">
         <div className="xl:col-span-5">
           <TelemetryMatrixCard />
         </div>
