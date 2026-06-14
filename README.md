@@ -14,8 +14,18 @@ Open `http://localhost:3000/dashboard`.
 
 ## Deploy on Vercel
 
-**Recommended:** In the Vercel project, set **Root Directory** to `admin-dashboard`, then use default Next.js build settings (`npm run build`). You can delete the repo-root `vercel.json` or leave it unused.
+In the Vercel project go to **Settings → General → Build & Development Settings** and set:
 
-**Alternative (repo root as project root):** Keep Root Directory blank and use the repo-root `vercel.json`, which runs install/build inside `admin-dashboard`. Do **not** set a custom Output Directory - Vercel handles `.next` for Next.js automatically.
+| Setting | Value |
+|---------|-------|
+| **Root Directory** | `admin-dashboard` |
+| **Framework Preset** | Next.js |
+| **Build Command** | `npm run build` (default) |
+| **Install Command** | `npm install` (default) |
+| **Output Directory** | **leave blank** (do not use `public` or `.next`) |
+
+If you see `No Output Directory named "public" found`, the project is misconfigured as a static site. Clear **Output Directory** and set **Framework Preset** to **Next.js**.
+
+The repo-root `vercel.json` is only for legacy setups that keep Root Directory blank. Prefer Root Directory = `admin-dashboard` instead.
 
 Optional env vars for live Google Sheets (demo mode works without them): copy `.env.example` to `.env.local` locally, or add the same keys in Vercel Project Settings.
