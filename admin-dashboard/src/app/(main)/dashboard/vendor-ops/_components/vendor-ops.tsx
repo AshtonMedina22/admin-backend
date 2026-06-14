@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { AlertTriangle, ClipboardCheck, Search, ShieldAlert, Users } from "lucide-react";
+import { AlertTriangle, MapPinned, Search, ShieldAlert, Users } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,8 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   activeVendorAssignments,
-  complianceRiskCount,
   type ComplianceStatus,
+  complianceRiskCount,
   type VendorRecord,
   vendorsData,
 } from "@/data/demo/vendors";
@@ -37,51 +37,68 @@ function compliancePrefix(status: ComplianceStatus): string {
   return "⛔";
 }
 
+function tradeTagClass(specialty: string) {
+  const normalized = specialty.toLowerCase();
+  if (normalized.includes("electrical") || normalized.includes("interconnection")) {
+    return "border-cyan-500/20 bg-cyan-950/30 text-cyan-300";
+  }
+  if (normalized.includes("regulatory") || normalized.includes("zoning")) {
+    return "border-amber-500/20 bg-amber-950/30 text-amber-300";
+  }
+  return "border-lime-500/20 bg-lime-950/20 text-lime-300";
+}
+
+function assignmentLabel(vendor: VendorRecord) {
+  if (vendor.name.includes("TX Permit")) return `${vendor.activeAssignments} Active Audits`;
+  if (vendor.name.includes("Kaufman")) return `${vendor.activeAssignments} Pending Dispatch`;
+  return `${vendor.activeAssignments} Live Sites`;
+}
+
 function VendorKpiStrip({
   activeAssignments,
   complianceRisks,
-  vendorCount,
 }: {
   activeAssignments: number;
   complianceRisks: number;
-  vendorCount: number;
 }) {
   return (
-    <div className={dashKpiGrid3Class}>
-      <Card size="sm" className={dashCardClass}>
+    <div className={cn(dashKpiGrid3Class, "grid-cols-1 md:grid-cols-3")}>
+      <Card size="sm" className={cn("border-emerald-500 border-l-4", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <Users className="size-4" />
-            Active Sub-Assignments
+            <Users className="size-4 text-emerald-500" />
+            Active Subcontractor Crews
           </CardDescription>
-          <CardTitle className="text-2xl tabular-nums">{activeAssignments}</CardTitle>
+          <CardTitle className="font-mono text-2xl tabular-nums">12</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
-          Live site crews, PE reviews, and permit audits in progress
+          Roof, electrical, and permit partner crews available for field execution.
         </CardContent>
       </Card>
-      <Card size="sm" className={dashCardClass}>
+      <Card size="sm" className={cn("border-emerald-500 border-l-4", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <ShieldAlert className="size-4" />
-            Compliance Flags
+            <MapPinned className="size-4 text-emerald-500" />
+            Live Field Assignments
           </CardDescription>
-          <CardTitle className={cn("text-2xl tabular-nums", complianceRisks > 0 && "text-amber-600")}>{complianceRisks}</CardTitle>
+          <CardTitle className="font-mono text-2xl tabular-nums">{Math.max(6, activeAssignments)}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
-          Insurance / COI certifications requiring renewal or review
+          Active sites, permit audits, and interconnection dispatch lanes.
         </CardContent>
       </Card>
-      <Card size="sm" className={dashCardClass}>
+      <Card size="sm" className={cn("border-amber-500 border-l-4 bg-amber-500/5", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <ClipboardCheck className="size-4" />
-            Vendor Partner Pool
+            <ShieldAlert className="size-4 text-amber-500" />
+            Compliance Renewal Alerts
           </CardDescription>
-          <CardTitle className="text-2xl tabular-nums">{vendorCount}</CardTitle>
+          <CardTitle className="font-mono text-2xl text-amber-600 tabular-nums">
+            {Math.max(1, complianceRisks)}
+          </CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
-          Install crews, equipment suppliers, and regulatory specialists
+          General Liability / COI renewal exposure requiring owner-visible follow-up.
         </CardContent>
       </Card>
     </div>
@@ -126,14 +143,15 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
       <VendorKpiStrip
         activeAssignments={activeAssignments || activeVendorAssignments}
         complianceRisks={complianceRisks}
-        vendorCount={vendors.length}
       />
 
-      <Card className="border-amber-500/40 bg-amber-500/5">
-        <CardContent className="flex items-start gap-3 pt-6">
+      <Card className="border-amber-500/30 bg-amber-950/20">
+        <CardContent className="flex items-start gap-3 p-4 md:p-5">
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600" />
-          <p className="text-amber-950 text-sm leading-relaxed dark:text-amber-200">
-            Critical Path Blockage: Solar 3SK Frisco Commercial Plaza cannot transition to structural assembly until North Texas Structural PE Group uploads verified load assessment blueprints. North TX Racking Crews general liability certificate expires in 14 days.
+          <p className="text-amber-200 text-xs leading-relaxed md:text-sm">
+            Critical Path Blockage: 3SK Frisco Commercial Plaza cannot transition to structural assembly until North
+            Texas Structural PE Group uploads verified load assessment blueprints. North TX Racking Crews general
+            liability certificate expires in 14 days.
           </p>
         </CardContent>
       </Card>
@@ -141,8 +159,10 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
       <Card className="min-h-[calc(100vh-22rem)]">
         <CardHeader className="gap-4 border-b">
           <div className="flex flex-col gap-1">
-            <CardTitle>Contractor & Vendor Registry</CardTitle>
-            <CardDescription>Resource allocation, regional coverage, and compliance certification status.</CardDescription>
+            <CardTitle>Solar Field Partner Matrix</CardTitle>
+            <CardDescription>
+              Regional subcontractor coverage, live assignments, and General Liability compliance status.
+            </CardDescription>
           </div>
           <div className="relative max-w-sm">
             <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -155,34 +175,34 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
           </div>
         </CardHeader>
         <CardContent className="pt-4">
-          <div className="overflow-hidden rounded-md border">
-            <Table>
+          <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-zinc-900">
+            <Table className="min-w-[720px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Vendor Partner</TableHead>
                   <TableHead>Specialty Type</TableHead>
                   <TableHead>Regional Coverage</TableHead>
-                  <TableHead>Active Sub-Assignments</TableHead>
-                  <TableHead>General Liability Status</TableHead>
+                  <TableHead>Active Assignments</TableHead>
+                  <TableHead>Compliance Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredVendors.map((vendor) => (
-                  <TableRow key={vendor.id}>
-                    <TableCell className="font-medium">{vendor.name}</TableCell>
-                    <TableCell>{vendor.specialtyType}</TableCell>
-                    <TableCell>{vendor.region}</TableCell>
-                    <TableCell className="tabular-nums">
-                      {vendor.activeAssignments}{" "}
-                      {vendor.category === "service"
-                        ? vendor.activeAssignments === 1
-                          ? "Active Audit"
-                          : "Active Audits"
-                        : vendor.activeAssignments === 1
-                          ? "Live Site"
-                          : "Live Sites"}
+                  <TableRow key={vendor.id} className="border-zinc-900">
+                    <TableCell className="max-w-[12rem] whitespace-normal py-2 font-medium">{vendor.name}</TableCell>
+                    <TableCell className="py-2">
+                      <span
+                        className={cn(
+                          "rounded-md border px-2 py-0.5 font-bold font-mono text-[10px] uppercase tracking-wider",
+                          tradeTagClass(vendor.specialtyType),
+                        )}
+                      >
+                        {vendor.specialtyType}
+                      </span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="py-2 font-mono text-xs">{vendor.region}</TableCell>
+                    <TableCell className="py-2 font-mono tabular-nums">{assignmentLabel(vendor)}</TableCell>
+                    <TableCell className="py-2">
                       <Badge variant={complianceVariant(vendor.complianceStatus)} className="gap-1 font-normal">
                         <span aria-hidden>{compliancePrefix(vendor.complianceStatus)}</span>
                         {vendor.complianceStatus}

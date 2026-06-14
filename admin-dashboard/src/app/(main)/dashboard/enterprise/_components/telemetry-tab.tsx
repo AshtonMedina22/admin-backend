@@ -5,6 +5,7 @@ import { AlertTriangle, Cpu } from "lucide-react";
 import { EntityBrandBadge } from "@/components/dashboard/entity-brand-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { TelemetrySimulatorControl, useTelemetrySimulation } from "./telemetry-simulator";
 
 function MetricRow({ label, value }: { label: string; value: string }) {
@@ -29,14 +30,14 @@ export function TelemetryTab() {
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <Card>
-          <CardHeader>
+          <CardHeader className="p-4 pb-3">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="grid gap-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <CardTitle>Hunt County Microgrid Array Core</CardTitle>
-                  <EntityBrandBadge brand="Yellow Star Power" />
+                  <EntityBrandBadge brand="YSP" />
                 </div>
-                <CardDescription>Yellow Star Power Operations</CardDescription>
+                <CardDescription>YSP Operations</CardDescription>
               </div>
               <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-300">
                 <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
@@ -44,7 +45,7 @@ export function TelemetryTab() {
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="grid gap-3">
+          <CardContent className="grid gap-3 px-4 pt-0 pb-4">
             <MetricRow label="Current Array Generation" value={`${liveYield.toFixed(1)} kW`} />
             <MetricRow label="Local Consumption Load" value={`${consumptionKw.toFixed(1)} kW`} />
             <MetricRow label="Net Grid Export Feed-In" value={`${netExport.toFixed(1)} kW (Surplus to Oncor Grid)`} />
@@ -56,22 +57,20 @@ export function TelemetryTab() {
                 <Cpu className="size-4" />
                 Hardware Data
               </div>
-              <p className="text-muted-foreground">
-                SolarEdge SE66.6K-USRW | SN: 7E120934-21B | Core Temp: 41.2°C | Lifetime Yield: 184.5 MWh
-              </p>
+              <p className="text-muted-foreground">Array Matrix: 4x SolarEdge SE100K Units</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="p-4 pb-3">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="grid gap-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <CardTitle>Frisco Commercial Array (Inverter A)</CardTitle>
-                  <EntityBrandBadge brand="Solar 3SK" />
+                  <EntityBrandBadge brand="3SK" />
                 </div>
-                <CardDescription>Solar 3SK Client Operations</CardDescription>
+                <CardDescription>3SK Client Operations</CardDescription>
               </div>
               <Badge className="bg-amber-500/15 text-amber-700 hover:bg-amber-500/15 dark:text-amber-300">
                 <AlertTriangle className="size-3 animate-pulse" />
@@ -79,7 +78,7 @@ export function TelemetryTab() {
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="grid gap-3">
+          <CardContent className="grid gap-3 px-4 pt-0 pb-4">
             <MetricRow label="Current Array Generation" value="0.0 kW" />
             <MetricRow label="Local Consumption Load" value="45.1 kW" />
             <MetricRow
