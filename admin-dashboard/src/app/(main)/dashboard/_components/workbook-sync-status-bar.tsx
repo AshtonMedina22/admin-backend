@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { DatabaseZap, RefreshCw } from "lucide-react";
+import { DatabaseZap, ExternalLink, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 import { RelativeTime } from "@/components/dashboard/relative-time";
@@ -15,6 +15,9 @@ import type { WorkbookSyncStatus } from "@/lib/workbook-sync-types";
 import { workbookProviderLabel } from "@/lib/workbook-sync-types";
 
 type WorkbookSyncStatusBarProps = WorkbookSyncStatus;
+
+const PUBLIC_WORKBOOK_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5mXkwweS1p_ZQS3SlZe80Sr_jRm6GDhJrITebFzXUUlqDGKcPLRN81wGcNKHaRkN2AE5zd6v-ehtt/pubhtml#gid=959365996";
 
 export function WorkbookSyncStatusBar({ source, provider, updatedAt }: WorkbookSyncStatusBarProps) {
   const router = useRouter();
@@ -71,6 +74,11 @@ export function WorkbookSyncStatusBar({ source, provider, updatedAt }: WorkbookS
           Preview
         </Badge>
       )}
+      <Button variant="ghost" size="icon" className="size-7 shrink-0" asChild>
+        <a href={PUBLIC_WORKBOOK_URL} target="_blank" rel="noreferrer" aria-label="Open published workbook">
+          <ExternalLink className="size-3.5" />
+        </a>
+      </Button>
       <Button
         variant="ghost"
         size="icon"
