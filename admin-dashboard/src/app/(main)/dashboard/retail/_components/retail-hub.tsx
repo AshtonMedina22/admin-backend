@@ -28,7 +28,7 @@ type RetailHubProps = {
 
 const webhookPayload = {
   api_event: "orders.woocommerce.created",
-  origin_host: "shop.solar2sk.com",
+  origin_host: "shop.novaretail.demo",
   middleware_sync: "Zapier_Enterprise_Hook_Active",
   payload_integrity: "Verified_200_OK",
 };
@@ -59,7 +59,7 @@ function KpiStrip({ totalBacklogUnits, pendingBatteryShipments }: Pick<RetailHub
       <Card className="sm:col-span-2 xl:col-span-2">
         <CardHeader className="pb-2">
           <CardDescription>Physical product velocity</CardDescription>
-          <CardTitle className="text-base">Solar 2SK inventory turnover rules</CardTitle>
+          <CardTitle className="text-base">Nova Retail Co. inventory turnover rules</CardTitle>
         </CardHeader>
         <CardContent className="text-muted-foreground text-sm leading-relaxed">
           High-volume kit fulfillment depends on bin-level allocation, pallet weights, and LTL dispatch windows - not contract milestones.
@@ -121,7 +121,7 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
       <Card className="xl:col-span-4">
         <CardHeader>
           <CardTitle>API Webhook Monitor</CardTitle>
-          <CardDescription>JSON sync output from the Solar 2SK order middleware.</CardDescription>
+          <CardDescription>JSON sync output from the Nova Retail Co. order middleware.</CardDescription>
         </CardHeader>
         <CardContent>
           <pre className="min-h-72 overflow-x-auto rounded-md border bg-background p-4 font-mono text-emerald-700 text-xs leading-relaxed dark:text-emerald-300">
@@ -179,7 +179,7 @@ export function RetailHub({
       <div className="flex flex-col gap-1 border-b pb-4">
         <h1 className="font-semibold text-2xl tracking-tight">Consumer Retail Hub</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
-          E-commerce fulfillment engine for Solar 2SK DIY kit volume, warehouse pulls, and transactional logistics verification.
+          E-commerce fulfillment engine for Nova Retail Co. DIY kit volume, warehouse pulls, and transactional logistics verification.
         </p>
       </div>
 

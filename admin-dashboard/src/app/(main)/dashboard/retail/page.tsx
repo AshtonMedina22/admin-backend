@@ -100,7 +100,7 @@ async function fetchSupportTickets(): Promise<SupportTicket[]> {
         status: (row.status || "Open") as SupportTicket["status"],
         priority: normalizePriority(row.priority || "Medium"),
         createdAt: row.created_at || "2026-06-13",
-        assignedTo: row.assigned_to || "S. Khan",
+        assignedTo: row.assigned_to || "Jordan Lee",
       }));
 
     if (tickets.length) return tickets;

@@ -16,7 +16,7 @@ export interface SupportTicket {
 export const supportTicketsData: SupportTicket[] = [
   {
     id: "tkt-001",
-    ticketNumber: "#2SK-TK-8012",
+    ticketNumber: "#NRC-8012",
     customerName: "M. Allen",
     orderNumber: "9394",
     subject: "Battery Parallel Configuration Validation",
@@ -25,11 +25,11 @@ export const supportTicketsData: SupportTicket[] = [
     status: "Open",
     priority: "High",
     createdAt: "2026-06-13",
-    assignedTo: "T. Khan",
+    assignedTo: "Alex Morgan",
   },
   {
     id: "tkt-002",
-    ticketNumber: "#2SK-TK-8010",
+    ticketNumber: "#NRC-8010",
     customerName: "Garrett Miller",
     orderNumber: "9401",
     subject: "Hybrid inverter pack pre-install checklist",
@@ -38,11 +38,11 @@ export const supportTicketsData: SupportTicket[] = [
     status: "In Progress",
     priority: "Medium",
     createdAt: "2026-06-12",
-    assignedTo: "S. Khan",
+    assignedTo: "Jordan Lee",
   },
   {
     id: "tkt-003",
-    ticketNumber: "#2SK-TK-8008",
+    ticketNumber: "#NRC-8008",
     customerName: "Robert Davis",
     orderNumber: "9398",
     subject: "LiFePO4 add-on compatibility with existing DIY kit",
@@ -51,6 +51,6 @@ export const supportTicketsData: SupportTicket[] = [
     status: "Open",
     priority: "High",
     createdAt: "2026-06-13",
-    assignedTo: "S. Khan",
+    assignedTo: "Jordan Lee",
   },
 ];

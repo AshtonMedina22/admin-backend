@@ -74,7 +74,7 @@ export function GlobalEventsFeed({
         </CardDescription>
         {workbookConnected ? (
           <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-emerald-800 text-xs dark:text-emerald-200">
-            Workbook synced automatically with YellowStarPower_Operations
+            Workbook synced automatically with CedarGrid_Operations
           </div>
         ) : null}
       </CardHeader>

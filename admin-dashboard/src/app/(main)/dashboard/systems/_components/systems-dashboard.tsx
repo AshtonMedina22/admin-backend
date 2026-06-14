@@ -34,35 +34,35 @@ export type AccessRow = {
 
 export const defaultDomainMonitors: DomainMonitorRow[] = [
   {
-    domain: "solar2sk.com",
+    domain: "novaretail.demo",
     detail: "DreamHost | Base Platform: WordPress - SSL handshake failing on apex domain",
     ssl: "CRITICAL EXPIRED",
     renewal: "June 10, 2026 (Action Overdue)",
-    admin: "S. Khan",
+    admin: "Jordan Lee",
     critical: true,
   },
   {
-    domain: "shop.solar2sk.com",
+    domain: "shop.novaretail.demo",
     detail: "DreamHost | WooCommerce retail storefront - active customer traffic",
     ssl: "OPERATIONAL",
     renewal: "Jan 15, 2027",
-    admin: "S. Khan",
+    admin: "Jordan Lee",
     critical: false,
   },
   {
-    domain: "solar3k.com",
+    domain: "summitci.demo",
     detail: "Vercel | Next.js commercial consultation platform",
     ssl: "OPERATIONAL",
     renewal: "Nov 22, 2026",
-    admin: "T. Khan",
+    admin: "Alex Morgan",
     critical: false,
   },
   {
-    domain: "yellowstarpower.com",
+    domain: "cedargrid.demo",
     detail: "Vercel | Next.js utility asset and grid operations platform",
     ssl: "OPERATIONAL",
     renewal: "Dec 05, 2026",
-    admin: "T. Khan",
+    admin: "Alex Morgan",
     critical: false,
   },
 ];
@@ -72,58 +72,58 @@ export const defaultSubscriptions: SubscriptionRow[] = [
     tool: "DreamHost Server Stack",
     cadence: "Monthly",
     cost: 45,
-    purpose: "PHP/WordPress retail storefront (shop.solar2sk.com)",
-    admin: "T. Khan",
+    purpose: "PHP/WordPress retail storefront (shop.novaretail.demo)",
+    admin: "Alex Morgan",
   },
   {
     tool: "Vercel Pro Tier",
     cadence: "Monthly",
     cost: 20,
-    purpose: "Next.js commercial landing pages (Solar 3SK / Yellow Star)",
-    admin: "T. Khan",
+    purpose: "Next.js commercial landing pages (Summit C&I Group / Cedar Grid Assets)",
+    admin: "Alex Morgan",
   },
   {
     tool: "Zapier Team Tier",
     cadence: "Monthly",
     cost: 49,
     purpose: "WooCommerce webhooks, lead forms, Google Sheets sync",
-    admin: "T. Khan",
+    admin: "Alex Morgan",
   },
   {
     tool: "DocuSign Corporate Pro",
     cadence: "Monthly",
     cost: 45,
-    purpose: "Solar 3SK engineering layouts and power consultation contracts",
-    admin: "T. Khan",
+    purpose: "Summit C&I Group engineering layouts and power consultation contracts",
+    admin: "Alex Morgan",
   },
   {
     tool: "QuickBooks Online",
     cadence: "Monthly",
     cost: 90,
     purpose: "Retail invoicing ledger and cross-entity financial reconciliation",
-    admin: "S. Khan",
+    admin: "Jordan Lee",
   },
 ];
 
 export const defaultAccessRows: AccessRow[] = [
   {
-    profile: "T. Khan (operations@goldstarpower.local)",
+    profile: "Alex Morgan (alex.morgan@demo-ops.local)",
     role: "SUPER_ADMIN",
     scope: "Global Holdings",
     permissions:
       "Command Center (READ_WRITE) | CRM (READ_WRITE) | Telemetry (READ_WRITE) | Vendor Ops (READ_WRITE) | System Settings (READ_WRITE)",
   },
   {
-    profile: "S. Khan (s.khan@solar2sk.com)",
+    profile: "Jordan Lee (jordan.lee@demo-retail.local)",
     role: "OPS_MANAGER",
-    scope: "Solar 2SK Retail",
+    scope: "Nova Retail Co. Retail",
     permissions:
       "Command Center (READ_ONLY) | CRM (READ_WRITE) | Telemetry (NO_ACCESS) | Vendor Ops (READ_WRITE) | System Settings (READ_ONLY)",
   },
   {
     profile: "Field Installation Contractor Team (install-dfw2@external-vendors.net)",
     role: "FIELD_CREW",
-    scope: "Solar 3SK Sites",
+    scope: "Summit C&I Group Sites",
     permissions:
       "Command Center (NO_ACCESS) | CRM (NO_ACCESS) | Telemetry (READ_ONLY) | Vendor Ops (READ_ONLY) | System Settings (NO_ACCESS)",
   },
@@ -263,7 +263,7 @@ function InfrastructureStatusLog() {
       </CardHeader>
       <CardContent>
         <p className="font-mono text-amber-900 text-sm leading-relaxed dark:text-amber-100">
-          DreamHost Server Status: 1 Domain Flagged URGENT (solar2sk.com SSL handshake exception)
+          DreamHost Server Status: 1 Domain Flagged URGENT (novaretail.demo SSL handshake exception)
         </p>
       </CardContent>
     </Card>
@@ -349,7 +349,7 @@ export function SystemsDashboard({
             <div className="grid gap-2 text-sm">
               <div className="flex justify-between rounded-md border px-3 py-2">
                 <span className="font-medium">Published Workbook</span>
-                <span className="text-muted-foreground">YellowStarPower_Operations (HTML export)</span>
+                <span className="text-muted-foreground">CedarGrid_Operations (HTML export)</span>
               </div>
               <div className="flex justify-between rounded-md border px-3 py-2">
                 <span className="font-medium">Apps Script Webhook</span>

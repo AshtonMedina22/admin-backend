@@ -21,18 +21,18 @@ export const milestonesData: ProjectMilestone[] = [
     systemSizeKw: 120,
     phase: "Structural Load Testing",
     interconnectionStatus: "Pending Utility Review",
-    engineerAssigned: "T. Khan",
+    engineerAssigned: "Alex Morgan",
     columnId: "structural",
   },
   {
     id: "ms-002",
     projectName: "Hunt County Asset Expansion",
-    clientAsset: "Yellow Star Power",
+    clientAsset: "Cedar Grid Assets",
     entityBrand: "Yellow Star",
     systemSizeKw: 60,
     phase: "Commissioned",
     interconnectionStatus: "Approved & Live",
-    engineerAssigned: "S. Khan",
+    engineerAssigned: "Jordan Lee",
     columnId: "live",
   },
   {
@@ -43,7 +43,7 @@ export const milestonesData: ProjectMilestone[] = [
     systemSizeKw: 150,
     phase: "OpenSolar Design Complete",
     interconnectionStatus: "Oncor App Filed",
-    engineerAssigned: "T. Khan",
+    engineerAssigned: "Alex Morgan",
     columnId: "interconnection",
   },
   {
@@ -65,7 +65,7 @@ export const milestonesData: ProjectMilestone[] = [
     systemSizeKw: 300,
     phase: "Interconnection Review",
     interconnectionStatus: "Pending Utility Review",
-    engineerAssigned: "T. Khan",
+    engineerAssigned: "Alex Morgan",
     columnId: "interconnection",
   },
   {
@@ -76,7 +76,7 @@ export const milestonesData: ProjectMilestone[] = [
     systemSizeKw: 45,
     phase: "Final Inspection",
     interconnectionStatus: "Approved",
-    engineerAssigned: "S. Khan",
+    engineerAssigned: "Jordan Lee",
     columnId: "commissioned",
   },
 ];

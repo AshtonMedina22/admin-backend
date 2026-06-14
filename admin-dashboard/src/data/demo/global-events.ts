@@ -33,7 +33,7 @@ export const globalEventsData: GlobalEvent[] = [
     status: "critical",
     timestamp: "18 min ago",
     message:
-      "Workbook sync to financial-summary tab failed: SSL handshake error on solar2sk.com - DreamHost cert expired Jun 10.",
+      "Workbook sync to financial-summary tab failed: SSL handshake error on novaretail.demo - DreamHost cert expired Jun 10.",
   },
   {
     id: "evt-004",

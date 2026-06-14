@@ -46,7 +46,7 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
     {
       title: "Active B2B Pipeline",
       value: `$${metrics.b2bPipeline.toLocaleString()}`,
-      caption: "Solar 3SK active contract and proposal pipeline.",
+      caption: "Summit C&I Group active contract and proposal pipeline.",
       trend: trends.b2bPipeline,
       icon: TrendingUp,
       iconClassName: "text-emerald-500",
@@ -54,7 +54,7 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
     {
       title: "Live Fleet Yield",
       value: `${metrics.fleetYield} kW`,
-      caption: "Yellow Star Power grid performance.",
+      caption: "Cedar Grid Assets grid performance.",
       trend: trends.fleetYield,
       icon: Activity,
       iconClassName: "text-emerald-500",
@@ -62,7 +62,7 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
     {
       title: "Combined Portfolio",
       value: `${metrics.portfolioCapacity} kW`,
-      caption: "Aggregated 3SK + Yellow Star capacity.",
+      caption: "Aggregated commercial consulting and portfolio capacity.",
       trend: trends.portfolioCapacity,
       icon: Zap,
       iconClassName: "text-amber-500",
@@ -70,7 +70,7 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
     {
       title: "DIY Retail Vol (Mo)",
       value: `${metrics.retailVolume} Units`,
-      caption: "Solar 2SK warehouse fulfillment flow.",
+      caption: "Nova Retail Co. warehouse fulfillment flow.",
       trend: trends.retailVolume,
       icon: ShoppingCart,
       iconClassName: "text-blue-500",
@@ -108,7 +108,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
             </Badge>
           </div>
           <p className="max-w-3xl text-muted-foreground text-sm">
-            Master executive control tower for Yellow Star Power, Solar 2SK, and Solar 3SK operating signals - metrics
+            Master executive control tower for Cedar Grid Assets, Nova Retail Co., and Summit C&I Group operating signals - metrics
             derived from the same schema as the operating workbook.
           </p>
         </div>

@@ -28,7 +28,7 @@ export const accessRolesData: AccessRole[] = [
     users: 2,
     permissionSets: ["Command Center", "Enterprise", "Consumer Retail", "Operations", "Systems", "RBAC"],
     lastReview: "Jun 1, 2026",
-    owner: "T. Khan",
+    owner: "Alex Morgan",
     status: "Active",
   },
   {
@@ -38,7 +38,7 @@ export const accessRolesData: AccessRole[] = [
     users: 3,
     permissionSets: ["Engineering Pipeline", "Corporate Leads", "Telemetry", "Calendar"],
     lastReview: "May 15, 2026",
-    owner: "T. Khan",
+    owner: "Alex Morgan",
     status: "Active",
   },
   {
@@ -48,7 +48,7 @@ export const accessRolesData: AccessRole[] = [
     users: 6,
     permissionSets: ["Order Management", "Inventory", "Support Tickets"],
     lastReview: "May 20, 2026",
-    owner: "S. Khan",
+    owner: "Jordan Lee",
     status: "Active",
   },
   {
@@ -58,15 +58,15 @@ export const accessRolesData: AccessRole[] = [
     users: 2,
     permissionSets: ["Inbox", "Calendar", "Vendor Ops"],
     lastReview: "Jun 5, 2026",
-    owner: "S. Khan",
+    owner: "Jordan Lee",
     status: "Active",
   },
 ];
 
 export const accessUsersData: AccessUser[] = [
   {
-    name: "T. Khan",
-    email: "t.khan@yellowstarpower.com",
+    name: "Alex Morgan",
+    email: "alex.morgan@demo-ops.local",
     role: "Family Manager",
     status: "Active",
     team: "Executive",
@@ -75,8 +75,8 @@ export const accessUsersData: AccessUser[] = [
     lastActive: 0,
   },
   {
-    name: "S. Khan",
-    email: "s.khan@yellowstarpower.com",
+    name: "Jordan Lee",
+    email: "jordan.lee@demo-ops.local",
     role: "Family Manager",
     status: "Active",
     team: "Executive",

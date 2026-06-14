@@ -16,9 +16,9 @@ import type { RevenueSplitMonth } from "@/data/demo/revenue-split";
 import { revenueSplitData } from "@/data/demo/revenue-split";
 
 const chartConfig = {
-  solar2sk: { label: "Solar 2SK (Retail Volume)", color: "var(--chart-1)" },
-  solar3k: { label: "Solar 3SK (C&I Consulting)", color: "var(--chart-2)" },
-  yellowStar: { label: "Yellow Star Power (Asset Portfolio)", color: "var(--chart-3)" },
+  solar2sk: { label: "Nova Retail Co. (Retail Volume)", color: "var(--chart-1)" },
+  solar3k: { label: "Summit C&I Group (C&I Consulting)", color: "var(--chart-2)" },
+  yellowStar: { label: "Cedar Grid Assets (Asset Portfolio)", color: "var(--chart-3)" },
 } satisfies ChartConfig;
 
 function statusLabel(status: RevenueSplitMonth["status"]) {

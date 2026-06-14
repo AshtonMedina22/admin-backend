@@ -15,7 +15,7 @@ export interface CalendarEvent {
 export const calendarEventsData: CalendarEvent[] = [
   {
     id: "cal-001",
-    title: "City of Plano Permit Hearing (Solar 3SK)",
+    title: "City of Plano Permit Hearing (Summit C&I Group)",
     entityBrand: "Solar3K",
     date: "2026-06-15",
     dayOfMonth: 15,
@@ -24,7 +24,7 @@ export const calendarEventsData: CalendarEvent[] = [
   },
   {
     id: "cal-002",
-    title: "Freight Pallet Arrival - 42 Inverter Units at Wylie Hub (Solar 2SK)",
+    title: "Freight Pallet Arrival - 42 Inverter Units at Wylie Hub (Nova Retail Co.)",
     entityBrand: "Solar2SK",
     date: "2026-06-18",
     dayOfMonth: 18,
@@ -33,7 +33,7 @@ export const calendarEventsData: CalendarEvent[] = [
   },
   {
     id: "cal-003",
-    title: "Oncor On-Site Field Grid Utility Inspection (Yellow Star Power)",
+    title: "Oncor On-Site Field Grid Utility Inspection (Cedar Grid Assets)",
     entityBrand: "Yellow Star",
     date: "2026-06-22",
     dayOfMonth: 22,
@@ -51,10 +51,10 @@ export function calendarEventsByDay(): Record<
   >((acc, event) => {
     const brandLabel =
       event.entityBrand === "Solar2SK"
-        ? "Solar 2SK"
+        ? "Nova Retail Co."
         : event.entityBrand === "Solar3K"
-          ? "Solar 3SK"
-          : "Yellow Star Power";
+          ? "Summit C&I Group"
+          : "Cedar Grid Assets";
 
     const variant =
       event.entityBrand === "Solar2SK" ? "default" : event.entityBrand === "Yellow Star" ? "outline" : "secondary";

@@ -28,7 +28,7 @@ function mapWebsiteHealthToDomainRows(): DomainMonitorRow[] {
     detail: `${site.hosting} | ${site.platform}`,
     ssl: site.sslStatus,
     renewal: site.lastChecked,
-    admin: site.company === "Solar2SK" ? "S. Khan" : "T. Khan",
+    admin: site.company === "Solar2SK" ? "Jordan Lee" : "Alex Morgan",
     critical: site.status === "URGENT" || !site.sslValid,
   }));
 }

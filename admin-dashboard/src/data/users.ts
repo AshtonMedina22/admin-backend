@@ -1,17 +1,19 @@
+import { DEMO_ADMIN, DEMO_MANAGER } from "@/config/demo-identity";
+
 export const users = [
   {
     id: "1",
-    name: "T. Khan",
-    username: "tkhan",
-    email: "operations@goldstarpower.local",
+    name: DEMO_ADMIN.name,
+    username: DEMO_ADMIN.id,
+    email: DEMO_ADMIN.email,
     avatar: "",
     role: "administrator",
   },
   {
     id: "2",
-    name: "S. Khan",
-    username: "skhan",
-    email: "admin@goldstarpower.local",
+    name: DEMO_MANAGER.name,
+    username: DEMO_MANAGER.id,
+    email: DEMO_MANAGER.email,
     avatar: "",
     role: "admin",
   },

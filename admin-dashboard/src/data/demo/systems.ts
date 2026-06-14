@@ -16,7 +16,7 @@ export interface SoftwareSubscription {
   id: string;
   toolName: string;
   monthlyCost: number;
-  accountOwner: "T. Khan" | "S. Khan";
+  accountOwner: "Alex Morgan" | "Jordan Lee";
   category: string;
   serves: string;
   renewal: string;
@@ -25,7 +25,7 @@ export interface SoftwareSubscription {
 export const websiteHealthData: WebsiteHealth[] = [
   {
     id: "web-001",
-    siteDomain: "solar2sk.com",
+    siteDomain: "novaretail.demo",
     company: "Solar2SK",
     status: "URGENT",
     platform: "WordPress",
@@ -36,7 +36,7 @@ export const websiteHealthData: WebsiteHealth[] = [
   },
   {
     id: "web-002",
-    siteDomain: "shop.solar2sk.com",
+    siteDomain: "shop.novaretail.demo",
     company: "Solar2SK",
     status: "HEALTHY",
     platform: "WooCommerce on WordPress",
@@ -47,7 +47,7 @@ export const websiteHealthData: WebsiteHealth[] = [
   },
   {
     id: "web-003",
-    siteDomain: "solar3k.com",
+    siteDomain: "summitci.demo",
     company: "Solar3K",
     status: "HEALTHY",
     platform: "Next.js",
@@ -58,7 +58,7 @@ export const websiteHealthData: WebsiteHealth[] = [
   },
   {
     id: "web-004",
-    siteDomain: "yellowstarpower.com",
+    siteDomain: "cedargrid.demo",
     company: "Yellow Star",
     status: "HEALTHY",
     platform: "Next.js",
@@ -74,25 +74,25 @@ export const softwareSubscriptionData: SoftwareSubscription[] = [
     id: "sub-001",
     toolName: "DreamHost Server Stack",
     monthlyCost: 45,
-    accountOwner: "T. Khan",
+    accountOwner: "Alex Morgan",
     category: "Hosting",
-    serves: "PHP/WordPress retail storefront (shop.solar2sk.com)",
+    serves: "PHP/WordPress retail storefront (shop.novaretail.demo)",
     renewal: "Jul 13, 2026",
   },
   {
     id: "sub-002",
     toolName: "Vercel Pro Tier",
     monthlyCost: 20,
-    accountOwner: "T. Khan",
+    accountOwner: "Alex Morgan",
     category: "Hosting",
-    serves: "Next.js commercial landing pages (Solar 3SK / Yellow Star)",
+    serves: "Next.js commercial landing pages (Summit C&I Group / Cedar Grid Assets)",
     renewal: "Jul 1, 2026",
   },
   {
     id: "sub-003",
     toolName: "Zapier Team Tier",
     monthlyCost: 49,
-    accountOwner: "T. Khan",
+    accountOwner: "Alex Morgan",
     category: "Automation",
     serves: "WooCommerce webhooks, lead forms, Google Sheets sync",
     renewal: "Jul 15, 2026",
@@ -101,16 +101,16 @@ export const softwareSubscriptionData: SoftwareSubscription[] = [
     id: "sub-004",
     toolName: "DocuSign Corporate Pro",
     monthlyCost: 45,
-    accountOwner: "T. Khan",
+    accountOwner: "Alex Morgan",
     category: "Contracts",
-    serves: "Solar 3SK engineering layouts and power consultation contracts",
+    serves: "Summit C&I Group engineering layouts and power consultation contracts",
     renewal: "Jun 28, 2026",
   },
   {
     id: "sub-005",
     toolName: "QuickBooks Online",
     monthlyCost: 90,
-    accountOwner: "S. Khan",
+    accountOwner: "Jordan Lee",
     category: "Finance",
     serves: "Retail invoicing ledger and cross-entity financial reconciliation",
     renewal: "Jul 1, 2026",

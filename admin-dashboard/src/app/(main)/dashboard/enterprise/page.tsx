@@ -45,7 +45,7 @@ export default async function Page() {
       <div className="flex flex-col gap-1 border-b pb-4">
         <h1 className="font-semibold text-2xl tracking-tight">Enterprise Hub</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
-          High-ticket commercial pipeline, infrastructure telemetry, and engineering milestone tracking for Solar 3SK and Yellow Star Power.
+          High-ticket commercial pipeline, infrastructure telemetry, and engineering milestone tracking for Summit C&I Group and Cedar Grid Assets.
         </p>
       </div>
 

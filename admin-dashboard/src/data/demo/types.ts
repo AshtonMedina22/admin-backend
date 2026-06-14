@@ -1,12 +1,18 @@
+import { DEMO_ORG } from "@/config/demo-identity";
+
 export type EntityBrand = "Solar2SK" | "Solar3K" | "Yellow Star" | "Systems Alert";
 
-export type DisplayCompany = "All Companies" | "Yellow Star Power" | "Solar 2SK" | "Solar 3SK";
+export type DisplayCompany =
+  | "All Companies"
+  | typeof DEMO_ORG.portfolio
+  | typeof DEMO_ORG.retail
+  | typeof DEMO_ORG.commercial;
 
 export function formatCompany(brand: EntityBrand): string {
   const map: Record<EntityBrand, string> = {
-    Solar2SK: "Solar 2SK",
-    Solar3K: "Solar 3SK",
-    "Yellow Star": "Yellow Star Power",
+    Solar2SK: DEMO_ORG.retail,
+    Solar3K: DEMO_ORG.commercial,
+    "Yellow Star": DEMO_ORG.portfolio,
     "Systems Alert": "Systems Alert",
   };
   return map[brand];

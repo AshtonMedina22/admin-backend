@@ -1,0 +1,25 @@
+/** Generic demo identities — no real client or personnel names. */
+export const DEMO_ORG = {
+  parent: "Meridian Holdings",
+  retail: "Nova Retail Co.",
+  commercial: "Summit C&I Group",
+  portfolio: "Cedar Grid Assets",
+} as const;
+
+export const DEMO_ADMIN = {
+  id: "amorgan",
+  name: "Alex Morgan",
+  email: "alex.morgan@demo-ops.local",
+  roleLabel: "Global Super Admin",
+  company: DEMO_ORG.portfolio,
+} as const;
+
+export const DEMO_MANAGER = {
+  id: "jlee",
+  name: "Jordan Lee",
+  email: "jordan.lee@demo-ops.local",
+  roleLabel: "Operations Manager",
+  company: DEMO_ORG.retail,
+} as const;
+
+export type DemoAccountOwner = typeof DEMO_ADMIN.name | typeof DEMO_MANAGER.name;

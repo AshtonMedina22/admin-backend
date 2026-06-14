@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
+import { DEMO_ADMIN, DEMO_MANAGER } from "@/config/demo-identity";
+
 export type DashboardAccessLevel = "admin" | "manager";
 
 export type DashboardProfile = {
@@ -15,19 +17,19 @@ export type DashboardProfile = {
 
 export const dashboardProfiles: DashboardProfile[] = [
   {
-    id: "tkhan",
-    name: "T. Khan",
-    roleLabel: "Global Super Admin",
-    company: "Yellow Star Power",
-    email: "operations@goldstarpower.local",
+    id: DEMO_ADMIN.id,
+    name: DEMO_ADMIN.name,
+    roleLabel: DEMO_ADMIN.roleLabel,
+    company: DEMO_ADMIN.company,
+    email: DEMO_ADMIN.email,
     accessLevel: "admin",
   },
   {
-    id: "skhan",
-    name: "S. Khan",
-    roleLabel: "Operations Manager",
-    company: "Solar 2SK",
-    email: "admin@goldstarpower.local",
+    id: DEMO_MANAGER.id,
+    name: DEMO_MANAGER.name,
+    roleLabel: DEMO_MANAGER.roleLabel,
+    company: DEMO_MANAGER.company,
+    email: DEMO_MANAGER.email,
     accessLevel: "manager",
   },
 ];

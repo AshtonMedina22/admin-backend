@@ -14,13 +14,13 @@ export type { DisplayCompany } from "./types";
 
 /** Executive KPI numbers - derived from demo modules or overwritten by workbook sync. */
 export type CommandCenterMetrics = {
-  /** Solar 3SK commercial contract + proposal pipeline ($). */
+  /** Summit C&I Group commercial contract + proposal pipeline ($). */
   b2bPipeline: number;
-  /** Yellow Star Power live array output (kW). */
+  /** Cedar Grid Assets live array output (kW). */
   fleetYield: number;
   /** Combined installed capacity across managed sites (kW). */
   portfolioCapacity: number;
-  /** Solar 2SK MTD WooCommerce unit volume. */
+  /** Nova Retail Co. MTD WooCommerce unit volume. */
   retailVolume: number;
 };
 
@@ -137,12 +137,12 @@ export const demoCommandCenterData: CommandCenterData = {
   trends: defaultCommandCenterTrends,
   revenueSplit: revenueSplitData,
   events: globalEventsData,
-  companies: ["All Companies", "Yellow Star Power", "Solar 2SK", "Solar 3SK"],
+  companies: ["All Companies", "Cedar Grid Assets", "Nova Retail Co.", "Summit C&I Group"],
   kpis: [
     {
       label: "Total Combined Revenue",
       value: "$680k",
-      detail: "YTD combined revenue ledger across 2SK retail, 3SK consulting, Yellow Star assets",
+      detail: "YTD combined revenue ledger across retail, commercial consulting, and portfolio assets",
       company: "Shared",
       status: "healthy",
     },
@@ -156,8 +156,8 @@ export const demoCommandCenterData: CommandCenterData = {
     {
       label: "Active DIY Order Volume",
       value: String(pendingOrderCount),
-      detail: "Pending Solar 2SK backup kit orders",
-      company: "Solar 2SK",
+      detail: "Pending Nova Retail Co. backup kit orders",
+      company: "Nova Retail Co.",
       status: "watch",
     },
     {
@@ -172,9 +172,9 @@ export const demoCommandCenterData: CommandCenterData = {
     {
       id: "alert-001",
       title: "SSL renewal required",
-      detail: `${websiteHealthData.filter((w) => w.status === "URGENT").length} domains flagged URGENT - solar2sk.com certificate expires soon`,
-      company: "Solar 2SK",
-      owner: "T. Khan",
+      detail: `${websiteHealthData.filter((w) => w.status === "URGENT").length} domains flagged URGENT - novaretail.demo certificate expires soon`,
+      company: "Nova Retail Co.",
+      owner: "Alex Morgan",
       due: "Jun 20",
       priority: "Critical",
       action: "Renew certificate in DreamHost",
@@ -184,7 +184,7 @@ export const demoCommandCenterData: CommandCenterData = {
       title: "Software overhead review",
       detail: `$${totalMonthlySpend}/mo across ${urgentAlertsCount + 4} SaaS subscriptions`,
       company: "Shared",
-      owner: "T. Khan",
+      owner: "Alex Morgan",
       due: "Jul 1",
       priority: "Warning",
       action: "Review renewal dates in Systems",
@@ -193,8 +193,8 @@ export const demoCommandCenterData: CommandCenterData = {
       id: "alert-003",
       title: "Low inventory - LiFePO4 batteries",
       detail: "BAT-LIFEPO4-5K at 8 units (reorder point: 12)",
-      company: "Solar 2SK",
-      owner: "S. Khan",
+      company: "Nova Retail Co.",
+      owner: "Jordan Lee",
       due: "Today",
       priority: "Critical",
       action: "Trigger automated PO to Battery Supply Co",
@@ -203,8 +203,8 @@ export const demoCommandCenterData: CommandCenterData = {
       id: "alert-004",
       title: "Collin County bid follow-up",
       detail: `$185k commercial bid awaiting client signature`,
-      company: "Solar 3SK",
-      owner: "T. Khan",
+      company: "Summit C&I Group",
+      owner: "Alex Morgan",
       due: "Jun 18",
       priority: "Warning",
       action: "DocuSign reminder via Zapier",
@@ -216,7 +216,7 @@ export const demoCommandCenterData: CommandCenterData = {
     company: brandToDisplayCompany(p.entityBrand),
     stage: p.pipelineStage,
     value: `$${p.projectValue.toLocaleString()}`,
-    owner: "T. Khan",
+    owner: "Alex Morgan",
     nextStep: p.pipelineStage === "New Lead" ? "Initial contact" : "Advance pipeline stage",
     due: "Jul 15",
   })),
@@ -224,27 +224,27 @@ export const demoCommandCenterData: CommandCenterData = {
     {
       id: "follow-001",
       contact: "Marcus Vance",
-      company: "Solar 2SK",
+      company: "Nova Retail Co.",
       type: "DIY kit order",
-      owner: "T. Khan",
+      owner: "Alex Morgan",
       daysOverdue: 1,
       nextAction: "Confirm inverter wiring support ticket",
     },
     {
       id: "follow-002",
       contact: "Collin County Utility",
-      company: "Solar 3SK",
+      company: "Summit C&I Group",
       type: "Commercial bid",
-      owner: "T. Khan",
+      owner: "Alex Morgan",
       daysOverdue: 2,
       nextAction: "DocuSign signature chase",
     },
     {
       id: "follow-003",
       contact: "Garrett Miller",
-      company: "Solar 2SK",
+      company: "Nova Retail Co.",
       type: "Pending order",
-      owner: "S. Khan",
+      owner: "Jordan Lee",
       daysOverdue: 0,
       nextAction: "Anenji inverter allocation update",
     },
@@ -253,7 +253,7 @@ export const demoCommandCenterData: CommandCenterData = {
     {
       id: "deadline-001",
       title: "Collin County permit hearing",
-      company: "Solar 3SK",
+      company: "Summit C&I Group",
       date: "Jun 16",
       owner: "TX Permit Solutions",
       impact: `$${openPipelineValue.toLocaleString()} pipeline`,
@@ -263,15 +263,15 @@ export const demoCommandCenterData: CommandCenterData = {
       title: "DreamHost renewal check",
       company: "Shared",
       date: "Jul 13",
-      owner: "T. Khan",
+      owner: "Alex Morgan",
       impact: "Hosting and domains",
     },
     {
       id: "deadline-003",
       title: "Hunt County commissioning walkthrough",
-      company: "Yellow Star Power",
+      company: "Cedar Grid Assets",
       date: "Jun 23",
-      owner: "T. Khan",
+      owner: "Alex Morgan",
       impact: "60kW microgrid go-live",
     },
   ],

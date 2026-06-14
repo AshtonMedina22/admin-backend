@@ -30,7 +30,7 @@ function PipelineKpiStrip({ openPipelineBalance, activeProjects }: Pick<Commerci
           <CardTitle className="text-3xl tabular-nums">{formatCurrency(openPipelineBalance)}</CardTitle>
         </CardHeader>
         <CardContent className="text-muted-foreground text-xs">
-          Aggregate contract value across Solar 3SK consulting and Yellow Star utility assets - excludes retail DIY kits
+          Aggregate contract value across Summit C&I Group consulting and Cedar Grid Assets utility portfolio - excludes retail DIY kits
         </CardContent>
       </Card>
       <Card>

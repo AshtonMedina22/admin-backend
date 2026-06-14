@@ -36,7 +36,7 @@ export const ordersData: SolarOrder[] = [
     fulfillmentStage: "Pending Warehouse Pull",
     logisticsNotes: "Wylie Warehouse - pull queue; organic search attribution",
     fulfillmentNote: "Pending Warehouse Pull",
-    acquisitionSource: "Organic search (shop.solar2sk.com)",
+    acquisitionSource: "Organic search (shop.novaretail.demo)",
   },
   {
     id: "ord-002",

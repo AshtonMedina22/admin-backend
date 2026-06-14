@@ -15,13 +15,13 @@ export default function UnauthorizedPage() {
             Access Level Warning: Restricted View
           </CardTitle>
           <CardDescription className="text-base leading-relaxed">
-            Directory Account &apos;S. Khan (Operations Manager)&apos; does not possess Global Administrative clearance
+            Directory Account &apos;Jordan Lee (Operations Manager)&apos; does not possess Global Administrative clearance
             to modify core financial-summary tab lines.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-3 text-center">
           <p className="text-muted-foreground text-sm">
-            Multi-tenant RBAC simulation - Enterprise and Systems modules require Global Super Admin scope (T. Khan).
+            Multi-tenant RBAC simulation - Enterprise and Systems modules require Global Super Admin scope (Alex Morgan).
           </p>
           <Button asChild>
             <Link href="/dashboard/retail" prefetch={false}>

@@ -119,7 +119,7 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
         <CardContent className="flex items-start gap-3 pt-6">
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600" />
           <p className="text-amber-950 text-sm leading-relaxed dark:text-amber-200">
-            Critical Path Blockage: Solar 3SK Frisco Commercial Plaza cannot transition to structural assembly until North Texas Structural PE Group uploads verified load assessment blueprints. North TX Racking Crews general liability certificate expires in 14 days.
+            Critical Path Blockage: Summit C&I Group Frisco Commercial Plaza cannot transition to structural assembly until North Texas Structural PE Group uploads verified load assessment blueprints. North TX Racking Crews general liability certificate expires in 14 days.
           </p>
         </CardContent>
       </Card>
