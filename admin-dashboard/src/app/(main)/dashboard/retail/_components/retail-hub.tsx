@@ -62,7 +62,7 @@ function KpiStrip({
 }: Pick<RetailHubProps, "orders" | "totalBacklogUnits" | "pendingBatteryShipments">) {
   const stats = fulfillmentStats(orders);
   return (
-    <div className={dashKpiGridClass}>
+    <div className={cn(dashKpiGridClass, "grid-cols-1 md:grid-cols-2 lg:grid-cols-4")}>
       <Card size="sm" className={cn("border-emerald-500 border-l-4", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
@@ -72,7 +72,7 @@ function KpiStrip({
           <CardTitle className="font-mono text-2xl tabular-nums">{Math.max(45, totalBacklogUnits)}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
-          Active WooCommerce orders across Solar 2SK hardware fulfillment.
+          Active WooCommerce orders across 2SK hardware fulfillment.
         </CardContent>
       </Card>
       <Card size="sm" className={cn("border-emerald-500 border-l-4", dashCardClass)}>
@@ -93,17 +93,17 @@ function KpiStrip({
             <BatteryCharging className="size-4 text-emerald-500" />
             Battery Kits Inbound
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">{pendingBatteryShipments}</CardTitle>
+          <CardTitle className="font-mono text-2xl tabular-nums">{Math.max(8, pendingBatteryShipments)}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           48V LiFePO4 battery blocks pending freight reconciliation.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn("border-amber-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn("border-amber-500 border-l-4 bg-amber-500/5", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <ClockAlert className="size-4 text-amber-500" />
-            Transit Fulfillment Delay
+            Transit Fulfillment Delays
           </CardDescription>
           <CardTitle className="font-mono text-2xl tabular-nums">{stats.transitDelay}</CardTitle>
         </CardHeader>
@@ -118,10 +118,10 @@ function KpiStrip({
 function FulfillmentBadge({ stage }: { stage: string }) {
   const lower = stage.toLowerCase();
   const className = lower.includes("hold")
-    ? "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300"
+    ? "border-amber-500/20 bg-amber-950/30 text-amber-400"
     : lower.includes("packed") || lower.includes("picked")
-      ? "border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-300"
-      : "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
+      ? "border-cyan-500/20 bg-cyan-950/30 text-cyan-300"
+      : "border-lime-500/20 bg-lime-950/20 text-lime-300";
   return (
     <Badge variant="outline" className={cn("h-6 font-normal", className)}>
       {stage}
@@ -132,36 +132,36 @@ function FulfillmentBadge({ stage }: { stage: string }) {
 function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
-      <Card size="sm" className={cn("border-emerald-500 border-l-4 xl:col-span-8", dashCardClass)}>
+      <Card size="sm" className={cn("border-lime-500 border-l-2 xl:col-span-8", dashCardClass)}>
         <CardHeader className={dashSectionCardHeaderClass}>
-          <CardTitle>Solar 2SK Fulfillment Matrix</CardTitle>
+          <CardTitle>2SK Fulfillment Matrix</CardTitle>
           <CardDescription>
             Logistics-first view: hardware allocation, warehouse stage, and dispatch notes.
           </CardDescription>
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
-          <div className="overflow-hidden rounded-md border">
-            <Table>
+          <div className="block w-full overflow-x-auto rounded-md border border-zinc-900">
+            <Table className="min-w-[780px]">
               <TableHeader>
-                <TableRow className="h-9">
-                  <TableHead>Order #</TableHead>
+                <TableRow className="h-9 border-zinc-900">
+                  <TableHead>Order ID</TableHead>
                   <TableHead>Customer</TableHead>
                   <TableHead>Hardware Allocated</TableHead>
-                  <TableHead className="text-right">Weight</TableHead>
-                  <TableHead>Bin</TableHead>
-                  <TableHead>Logistics Status</TableHead>
+                  <TableHead className="text-right">Package Weight</TableHead>
+                  <TableHead>Fulfillment Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {orders.map((order) => (
-                  <TableRow key={order.orderId} className="h-11 border-emerald-500/70 border-l-4">
-                    <TableCell className="py-2 font-medium font-mono tabular-nums">{order.orderId}</TableCell>
+                  <TableRow key={order.orderId} className="h-11 border-lime-500 border-zinc-900 border-l-2">
+                    <TableCell className="py-2 font-medium font-mono text-lime-300 tabular-nums">
+                      {order.orderId}
+                    </TableCell>
                     <TableCell className="py-2">{order.customerName}</TableCell>
                     <TableCell className="max-w-[18rem] whitespace-normal py-2">{order.hardwareAllocated}</TableCell>
                     <TableCell className="py-2 text-right font-mono tabular-nums">
                       {order.shipmentWeight || "84 lbs"}
                     </TableCell>
-                    <TableCell className="py-2 font-mono text-xs">{order.warehouseBin || "WYL-A03"}</TableCell>
                     <TableCell className="py-2">
                       <FulfillmentBadge stage={order.fulfillmentStage} />
                     </TableCell>
@@ -173,13 +173,16 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
         </CardContent>
       </Card>
 
-      <Card size="sm" className={cn("border-emerald-500 border-l-4 xl:col-span-4", dashCardClass)}>
+      <Card size="sm" className={cn("border-lime-500 border-l-2 xl:col-span-4", dashCardClass)}>
         <CardHeader className={dashSectionCardHeaderClass}>
-          <CardTitle>API Webhook Monitor</CardTitle>
-          <CardDescription>JSON sync output from the Solar 2SK order middleware.</CardDescription>
+          <CardTitle>Order Webhook Payload Monitor</CardTitle>
+          <CardDescription>
+            WooCommerce-style order webhook → Zapier middleware → workbook row payload used by the 2SK fulfillment
+            table.
+          </CardDescription>
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
-          <pre className="min-h-72 overflow-x-auto rounded-md border bg-background p-4 font-mono text-emerald-700 text-xs leading-relaxed dark:text-emerald-300">
+          <pre className="min-h-72 overflow-x-auto rounded-md border border-zinc-800 bg-zinc-950/90 p-4 font-mono text-lime-300 text-xs leading-relaxed">
             {JSON.stringify(webhookPayload, null, 2)}
           </pre>
         </CardContent>
@@ -235,7 +238,7 @@ export function RetailHub({
       <div className={dashPageHeaderClass}>
         <h1 className="font-semibold text-2xl tracking-tight">Consumer Retail Hub</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
-          E-commerce fulfillment engine for Solar 2SK DIY kit volume, warehouse pulls, and transactional logistics
+          E-commerce fulfillment engine for 2SK DIY kit volume, warehouse pulls, and transactional logistics
           verification.
         </p>
       </div>
