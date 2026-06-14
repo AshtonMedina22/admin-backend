@@ -1,0 +1,112 @@
+import { ordersData, pendingBatteryShipments, totalBacklogUnits } from "@/data/demo/orders";
+import { fetchWorkbookScriptPayloadOrNull, type ScriptRetailOrder } from "@/lib/apps-script-workbook";
+import { fetchPublishedSectionTable } from "@/lib/published-workbook";
+
+import { RetailHub, type RetailLogisticsOrder } from "./_components/retail-hub";
+
+function mapDemoOrder(order: (typeof ordersData)[number]): RetailLogisticsOrder {
+  return {
+    orderId: order.displayOrderId,
+    customerName: order.customerName,
+    hardwareAllocated: order.hardwareAllocated,
+    fulfillmentStage: order.fulfillmentStage,
+    logisticsNotes: order.logisticsNotes,
+  };
+}
+
+function mapLegacyRetailRow(row: {
+  id: string;
+  customer: string;
+  product: string;
+  status: string;
+}): RetailLogisticsOrder {
+  const stage =
+    row.status === "Pending Warehouse Pull"
+      ? "Inventory Hold"
+      : row.status.includes("Packed") || row.status.includes("Fulfill")
+        ? "Picked & Packed"
+        : row.status;
+
+  return {
+    orderId: row.id.startsWith("#") ? row.id : `#WOO-${row.id.replace(/^WOO-?/i, "")}`,
+    customerName: row.customer,
+    hardwareAllocated: row.product,
+    fulfillmentStage: stage,
+    logisticsNotes: row.status,
+  };
+}
+
+function mapScriptOrder(order: ScriptRetailOrder): RetailLogisticsOrder {
+  return mapLegacyRetailRow({
+    id: order.order_id,
+    customer: order.customer,
+    product: order.product,
+    status: order.status,
+  });
+}
+
+async function fetchRetailOrders(): Promise<RetailLogisticsOrder[]> {
+  try {
+    const rows = await fetchPublishedSectionTable("Retail Ops", "WooCommerce Order Management");
+    const publishedOrders = rows
+      .filter((row) => row.order_id)
+      .map((row) =>
+        mapLegacyRetailRow({
+          id: row.order_id,
+          customer: row.customer,
+          product: row.product,
+          status: row.status,
+        }),
+      );
+
+    if (publishedOrders.length) return publishedOrders;
+  } catch {
+    // Fall back to Apps Script or local preview data below.
+  }
+
+  const scriptPayload = await fetchWorkbookScriptPayloadOrNull();
+  if (scriptPayload?.retailOrders?.length) {
+    return scriptPayload.retailOrders.map(mapScriptOrder);
+  }
+
+  return ordersData.map(mapDemoOrder);
+}
+
+function computeRetailKpis(orders: RetailLogisticsOrder[]) {
+  const backlog = orders.filter((order) => {
+    const stage = order.fulfillmentStage.toLowerCase();
+    return stage.includes("hold") || stage.includes("queue") || stage.includes("pick");
+  }).length;
+
+  const batteryPending = orders.filter((order) => {
+    const hardware = order.hardwareAllocated.toLowerCase();
+    const stage = order.fulfillmentStage.toLowerCase();
+    return (
+      (hardware.includes("battery") || hardware.includes("lifepo4")) &&
+      !stage.includes("delivered") &&
+      !stage.includes("shipped")
+    );
+  }).length;
+
+  return {
+    totalBacklogUnits: backlog || totalBacklogUnits,
+    pendingBatteryShipments: batteryPending || pendingBatteryShipments,
+  };
+}
+
+export default async function Page() {
+  const orders = await fetchRetailOrders();
+  const kpis = computeRetailKpis(orders);
+
+  return (
+    <RetailHub
+      orders={orders}
+      totalBacklogUnits={kpis.totalBacklogUnits}
+      pendingBatteryShipments={kpis.pendingBatteryShipments}
+    />
+  );
+}
+
+export const dynamic = "force-dynamic";
+
+export const revalidate = 0;

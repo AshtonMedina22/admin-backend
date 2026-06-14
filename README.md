@@ -1,11 +1,11 @@
-# Gold Star Ops Dashboard
+# Admin Dashboard
 
 Workbook-backed executive operations dashboard for the Gold Star / Yellow Star Power solar portfolio demo.
 
-The app lives in `gold-star-ops-dashboard`.
+The app lives in `admin-dashboard`.
 
 ```bash
-cd gold-star-ops-dashboard
+cd admin-dashboard
 npm install
 npm run dev
 ```
