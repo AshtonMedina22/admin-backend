@@ -1,6 +1,7 @@
+import { DEMO_ORG } from "@/config/demo-identity";
+import { calendarEventsByDay } from "@/data/demo/calendar-events";
 import { fetchSheet } from "@/lib/google-sheets";
 import { fetchPublishedFirstTable } from "@/lib/published-workbook";
-import { calendarEventsByDay } from "@/data/demo/calendar-events";
 
 import { type CalendarEvent, CalendarPage, defaultCalendarEvents } from "./_components/calendar-page";
 
@@ -8,8 +9,6 @@ function dayFromDate(value: string) {
   const match = value.match(/2026-06-(\d{2})/);
   return match ? Number(match[1]) : null;
 }
-
-import { DEMO_ORG } from "@/config/demo-identity";
 
 function eventVariant(brand: string): CalendarEvent["variant"] {
   if (brand.includes(DEMO_ORG.retail) || brand.includes("2SK")) return "default";
@@ -29,7 +28,11 @@ async function fetchCalendarEvents(): Promise<Record<number, CalendarEvent[]>> {
         ...(acc[day] || []),
         {
           brand,
-          text: record.event || "",
+          event: record.event || "",
+          type: record.type || "Operations Milestone",
+          time: record.time || "",
+          notes: record.notes || record.event || "",
+          text: record.notes || record.event || "",
           variant: eventVariant(brand),
         },
       ];
@@ -52,7 +55,11 @@ async function fetchCalendarEvents(): Promise<Record<number, CalendarEvent[]>> {
         ...(acc[day] || []),
         {
           brand,
-          text: record.event || record.item || "",
+          event: record.event || record.item || "",
+          type: record.type || "Operations Milestone",
+          time: record.time || "",
+          notes: record.notes || record.event || record.item || "",
+          text: record.notes || record.event || record.item || "",
           variant: eventVariant(brand),
         },
       ];

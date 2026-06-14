@@ -1,6 +1,6 @@
 import type { EntityBrand } from "./types";
 
-export type CalendarEventType = "Permit" | "Freight" | "Utility Inspection";
+export type CalendarEventType = "Regulatory Gate" | "Warehouse Logistics" | "Grid Interconnection";
 
 export interface CalendarEvent {
   id: string;
@@ -9,45 +9,72 @@ export interface CalendarEvent {
   date: string;
   dayOfMonth: number;
   type: CalendarEventType;
+  time: string;
   location: string;
+  notes: string;
 }
 
 export const calendarEventsData: CalendarEvent[] = [
   {
     id: "cal-001",
-    title: "City of Plano Permit Hearing (Solar 3SK)",
+    title: "City of Plano Permit Hearing",
     entityBrand: "Solar3K",
     date: "2026-06-15",
     dayOfMonth: 15,
-    type: "Permit",
-    location: "Plano Building Inspections - 60kW Auto Body Build",
+    type: "Regulatory Gate",
+    time: "09:00 AM",
+    location: "Plano Building Inspections",
+    notes: "Reviewing 60kW auto body build zoning variance",
   },
   {
     id: "cal-002",
-    title: "Freight Pallet Arrival - 42 Inverter Units at Wylie Hub (Solar 2SK)",
+    title: "Bulk Inbound Freight Pallet Arrival",
     entityBrand: "Solar2SK",
     date: "2026-06-18",
     dayOfMonth: 18,
-    type: "Freight",
-    location: "Wylie Warehouse operations hub",
+    type: "Warehouse Logistics",
+    time: "01:30 PM",
+    location: "Wylie Hub",
+    notes: "Receiving 42 units of Anenji 3KW Inverter stock at Wylie Hub",
   },
   {
     id: "cal-003",
-    title: "Oncor On-Site Field Grid Utility Inspection (Yellow Star Power)",
+    title: "Oncor On-Site Utility Field Inspection",
     entityBrand: "Yellow Star",
     date: "2026-06-22",
     dayOfMonth: 22,
-    type: "Utility Inspection",
-    location: "Hunt County 60kW asset expansion tie-in",
+    type: "Grid Interconnection",
+    time: "03:15 PM",
+    location: "Hunt County Asset Expansion",
+    notes: "Testing 60kW macro asset expansion tie-in matrix",
   },
 ];
 
 export function calendarEventsByDay(): Record<
   number,
-  { brand: string; text: string; variant: "default" | "secondary" | "outline" }[]
+  {
+    brand: string;
+    event: string;
+    type: string;
+    time: string;
+    notes: string;
+    text: string;
+    variant: "default" | "secondary" | "outline";
+  }[]
 > {
   return calendarEventsData.reduce<
-    Record<number, { brand: string; text: string; variant: "default" | "secondary" | "outline" }[]>
+    Record<
+      number,
+      {
+        brand: string;
+        event: string;
+        type: string;
+        time: string;
+        notes: string;
+        text: string;
+        variant: "default" | "secondary" | "outline";
+      }[]
+    >
   >((acc, event) => {
     const brandLabel =
       event.entityBrand === "Solar2SK"
@@ -59,7 +86,18 @@ export function calendarEventsByDay(): Record<
     const variant =
       event.entityBrand === "Solar2SK" ? "default" : event.entityBrand === "Yellow Star" ? "outline" : "secondary";
 
-    acc[event.dayOfMonth] = [...(acc[event.dayOfMonth] || []), { brand: brandLabel, text: event.title, variant }];
+    acc[event.dayOfMonth] = [
+      ...(acc[event.dayOfMonth] || []),
+      {
+        brand: brandLabel,
+        event: event.title,
+        type: event.type,
+        time: event.time,
+        notes: event.notes,
+        text: `${event.time} - ${event.title}: ${event.notes}`,
+        variant,
+      },
+    ];
     return acc;
   }, {});
 }
