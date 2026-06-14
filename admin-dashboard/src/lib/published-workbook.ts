@@ -1,5 +1,10 @@
 import { type CommandCenterData, demoCommandCenterData } from "@/data/demo/command-center";
-import { DEFAULT_SYNC_AGE_MINUTES, minutesAgoIso, staggerEventTimestamp } from "@/lib/sync-time";
+import {
+  mapCommandCenterMetrics,
+  mapOperationsStreamToEvents,
+  mapRevenueSplitRows,
+  type OperationsStreamRow,
+} from "@/lib/workbook-dashboard";
 
 export type WorkbookRow = Record<string, string>;
 
@@ -118,61 +123,22 @@ export async function fetchPublishedSectionTable(sheetName: string, sectionTitle
   return rowsToRecords(header, bodyRows);
 }
 
-function moneyToNumber(value: string) {
-  return Number(value.replace(/[$,]/g, "")) || 0;
-}
-
-function countToNumber(value: string) {
-  return Number(value.replace(/[^\d.]/g, "")) || 0;
-}
-
 export async function fetchPublishedCommandCenter(): Promise<CommandCenterData> {
+  const syncedAt = new Date().toISOString();
   const [metrics, revenue, events] = await Promise.all([
     fetchPublishedSectionTable("Dashboard", "Command Center Metrics"),
     fetchPublishedSectionTable("Dashboard", "Combined Revenue Split Matrix"),
     fetchPublishedSectionTable("Dashboard", "Global Operations Stream"),
   ]);
 
-  const findMetric = (name: string) => metrics.find((metric) => metric.metric === name)?.value || "";
-
-  const syncAnchorMs = Date.now();
+  const { metrics: mappedMetrics } = mapCommandCenterMetrics(metrics, syncedAt);
 
   return {
     ...demoCommandCenterData,
     source: "workbook",
-    updatedAt: minutesAgoIso(DEFAULT_SYNC_AGE_MINUTES, syncAnchorMs),
-    metrics: {
-      b2bPipeline: moneyToNumber(findMetric("Active B2B Pipeline")) || demoCommandCenterData.metrics.b2bPipeline,
-      fleetYield: countToNumber(findMetric("Live Fleet Yield")) || demoCommandCenterData.metrics.fleetYield,
-      portfolioCapacity:
-        countToNumber(findMetric("Combined Portfolio Capacity")) || demoCommandCenterData.metrics.portfolioCapacity,
-      retailVolume: countToNumber(findMetric("DIY Retail Vol (Mo)")) || demoCommandCenterData.metrics.retailVolume,
-    },
-    revenueSplit: revenue.length
-      ? revenue.map((row) => ({
-          month: row.period,
-          solar2sk: moneyToNumber(row.solar_2sk_direct_hardware_margins),
-          solar3k: moneyToNumber(row.solar_3sk_commercial_consulting_and_design_fees),
-          yellowStar: moneyToNumber(row.yellow_star_power_macro_grid_yield_dividends),
-          status: row.period === "Current Month" ? "pending_reconciliation" : "finalized",
-          statusNote:
-            row.period === "Current Month" ? "Workbook current-month rows pending close" : "Workbook period locked",
-        }))
-      : demoCommandCenterData.revenueSplit,
-    events: events.length
-      ? events.map((row, index) => ({
-          entityBrand: row.brand.includes("Yellow")
-            ? "Yellow Star"
-            : row.brand.includes("3SK")
-              ? "Solar3K"
-              : row.brand.includes("System")
-                ? "Systems Alert"
-                : "Solar2SK",
-          id: `published-event-${index + 1}`,
-          message: row.event,
-          status: row.brand.includes("System") ? "critical" : "info",
-          timestamp: staggerEventTimestamp(index, syncAnchorMs),
-        }))
-      : demoCommandCenterData.events,
+    updatedAt: syncedAt,
+    metrics: mappedMetrics,
+    revenueSplit: mapRevenueSplitRows(revenue),
+    events: mapOperationsStreamToEvents(events as OperationsStreamRow[], syncedAt),
   };
 }

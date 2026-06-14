@@ -1,4 +1,10 @@
 import { type CommandCenterData, demoCommandCenterData } from "@/data/demo/command-center";
+import {
+  mapCommandCenterMetrics,
+  mapOperationsStreamToEvents,
+  mapRevenueSplitRows,
+  type OperationsStreamRow,
+} from "@/lib/workbook-dashboard";
 
 type ScriptMetric = {
   metric_key: string;
@@ -45,6 +51,14 @@ export type WorkbookScriptPayload = {
   timestamp: string;
   source: "workbook";
   summaryMetrics?: ScriptMetric[];
+  commandCenterMetrics?: Array<{ metric: string; value: string }>;
+  globalOperationsStream?: OperationsStreamRow[];
+  revenueSplit?: Array<{
+    period: string;
+    solar_2sk_direct_hardware_margins?: string | number;
+    solar_3sk_commercial_consulting_and_design_fees?: string | number;
+    yellow_star_power_macro_grid_yield_dividends?: string | number;
+  }>;
   b2bBids?: ScriptBid[];
   retailOrders?: ScriptRetailOrder[];
   domainMonitors?: ScriptDomainMonitor[];
@@ -86,16 +100,42 @@ function metricValue(payload: WorkbookScriptPayload, key: string, fallback: numb
   return payload.summaryMetrics?.find((metric) => metric.metric_key === key)?.current_value ?? fallback;
 }
 
+function metricRowsFromLegacySummary(payload: WorkbookScriptPayload) {
+  if (payload.commandCenterMetrics?.length) return payload.commandCenterMetrics;
+
+  return [
+    { metric: "Active B2B Pipeline", value: String(metricValue(payload, "active_b2b_pipeline", demoCommandCenterData.metrics.b2bPipeline)) },
+    { metric: "Live Fleet Yield", value: `${metricValue(payload, "fleet_yield_kw", demoCommandCenterData.metrics.fleetYield)} kW` },
+    {
+      metric: "Combined Portfolio Capacity",
+      value: `${metricValue(payload, "portfolio_capacity_kw", demoCommandCenterData.metrics.portfolioCapacity)} kW`,
+    },
+    { metric: "DIY Retail Vol (Mo)", value: String(metricValue(payload, "diy_retail_volume", demoCommandCenterData.metrics.retailVolume)) },
+  ];
+}
+
 export function mapScriptPayloadToCommandCenter(payload: WorkbookScriptPayload): CommandCenterData {
+  const syncedAt = payload.timestamp || new Date().toISOString();
+  const metricRows = metricRowsFromLegacySummary(payload);
+  const { metrics } = mapCommandCenterMetrics(metricRows, syncedAt);
+
   return {
     ...demoCommandCenterData,
     source: "workbook",
-    updatedAt: payload.timestamp,
-    metrics: {
-      b2bPipeline: metricValue(payload, "active_b2b_pipeline", demoCommandCenterData.metrics.b2bPipeline),
-      fleetYield: metricValue(payload, "fleet_yield_kw", demoCommandCenterData.metrics.fleetYield),
-      portfolioCapacity: metricValue(payload, "portfolio_capacity_kw", demoCommandCenterData.metrics.portfolioCapacity),
-      retailVolume: metricValue(payload, "diy_retail_volume", demoCommandCenterData.metrics.retailVolume),
-    },
+    updatedAt: syncedAt,
+    metrics,
+    revenueSplit: payload.revenueSplit?.length
+      ? mapRevenueSplitRows(
+          payload.revenueSplit.map((row) => ({
+            period: row.period,
+            solar_2sk_direct_hardware_margins: String(row.solar_2sk_direct_hardware_margins ?? ""),
+            solar_3sk_commercial_consulting_and_design_fees: String(row.solar_3sk_commercial_consulting_and_design_fees ?? ""),
+            yellow_star_power_macro_grid_yield_dividends: String(row.yellow_star_power_macro_grid_yield_dividends ?? ""),
+          })),
+        )
+      : demoCommandCenterData.revenueSplit,
+    events: payload.globalOperationsStream?.length
+      ? mapOperationsStreamToEvents(payload.globalOperationsStream, syncedAt)
+      : demoCommandCenterData.events,
   };
 }

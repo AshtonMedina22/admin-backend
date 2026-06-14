@@ -88,6 +88,22 @@ export type DashboardSummary = {
     priority: string;
     action: string;
   }[];
+  operationsEvents: {
+    brand: string;
+    event: string;
+    status: string;
+    logged_at?: string;
+  }[];
+  commandCenterMetrics: {
+    metric: string;
+    value: string;
+  }[];
+  revenueSplitRows: {
+    period: string;
+    solar2sk: string;
+    solar3k: string;
+    yellowStar: string;
+  }[];
   syncedAt: string;
 };
 
@@ -263,11 +279,37 @@ function findDashboardMetric(records: SheetRecord[], metric: string, key = "tota
 }
 
 export async function fetchDashboardSummary(): Promise<DashboardSummary> {
+  const syncedAt = new Date().toISOString();
   const [dashboard, projects, financial] = await Promise.all([
     fetchSheet("dashboard"),
     fetchSheet("project-tracker"),
     fetchSheet("financial-summary"),
   ]);
+
+  const commandCenterMetrics = dashboard.records
+    .filter((row) => row.section === "command_center_metrics" && row.metric)
+    .map((row) => ({
+      metric: row.metric,
+      value: row.value ?? row.total ?? "",
+    }));
+
+  const operationsEvents = dashboard.records
+    .filter((row) => row.section === "global_operations_stream" && row.event)
+    .map((row) => ({
+      brand: row.brand ?? "",
+      event: row.event ?? "",
+      status: row.status ?? "Info",
+      logged_at: row.logged_at,
+    }));
+
+  const revenueSplitRows = dashboard.records
+    .filter((row) => row.section === "combined_revenue_split_matrix" && row.period)
+    .map((row) => ({
+      period: row.period,
+      solar2sk: row.solar_2sk_direct_hardware_margins ?? row.solar_2sk ?? "",
+      solar3k: row.solar_3sk_commercial_consulting_and_design_fees ?? row.solar_3sk ?? "",
+      yellowStar: row.yellow_star_power_macro_grid_yield_dividends ?? row.yellow_star ?? "",
+    }));
 
   const alerts = dashboard.records
     .filter((row) => row.alert)
@@ -316,11 +358,14 @@ export async function fetchDashboardSummary(): Promise<DashboardSummary> {
       installsThisMonth: findDashboardMetric(dashboard.records, "Installs This Month"),
       activeRevenue: findDashboardMetric(dashboard.records, "Total Revenue Active"),
       solar3kBidValue: findDashboardMetric(dashboard.records, "Total Bid Value"),
-      urgentAlerts: String(alerts.length),
+      urgentAlerts: String(operationsEvents.length || alerts.length),
     },
     revenueByCompany,
     projects: normalizedProjects,
     alerts,
-    syncedAt: new Date().toISOString(),
+    operationsEvents,
+    commandCenterMetrics,
+    revenueSplitRows,
+    syncedAt,
   };
 }

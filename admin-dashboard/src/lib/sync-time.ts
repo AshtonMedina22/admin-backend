@@ -1,18 +1,25 @@
-import { format, formatDistanceToNowStrict, parseISO } from "date-fns";
+import { format, formatDistanceToNowStrict, isValid, parseISO } from "date-fns";
 
-/** Realistic ages for demo / workbook event rows (minutes before now). */
-export const DEMO_EVENT_AGE_MINUTES = [4, 11, 18, 22, 31, 60] as const;
+/** Parse timestamps stored in the workbook (ISO, date-only, or US datetime strings). */
+export function parseWorkbookTimestamp(value: string | undefined | null): string | null {
+  if (!value?.trim()) return null;
 
-/** Default "last successful sync" age when the workbook has no explicit sync timestamp. */
-export const DEFAULT_SYNC_AGE_MINUTES = 3;
+  const trimmed = value.trim();
+  if (/ago|just now/i.test(trimmed)) return null;
 
-export function minutesAgoIso(minutes: number, anchorMs = Date.now()) {
-  return new Date(anchorMs - minutes * 60_000).toISOString();
-}
+  const iso = parseISO(trimmed);
+  if (isValid(iso)) return iso.toISOString();
 
-export function staggerEventTimestamp(index: number, anchorMs = Date.now()) {
-  const minutes = DEMO_EVENT_AGE_MINUTES[index] ?? (index + 1) * 8;
-  return minutesAgoIso(minutes, anchorMs);
+  const usDateTime = Date.parse(trimmed.replace(" ", "T"));
+  if (!Number.isNaN(usDateTime)) return new Date(usDateTime).toISOString();
+
+  const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(trimmed);
+  if (dateOnly) {
+    const parsed = parseISO(`${trimmed}T12:00:00`);
+    if (isValid(parsed)) return parsed.toISOString();
+  }
+
+  return null;
 }
 
 export function formatSyncRelativeTime(value: string, now = new Date()): string {

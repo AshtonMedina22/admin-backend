@@ -75,7 +75,7 @@ export function GlobalEventsFeed({
         </CardDescription>
         {workbookConnected ? (
           <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-emerald-950 text-sm dark:text-emerald-100">
-            Workbook synced automatically with YellowStarPower_Operations
+            Live workbook pull - event timestamps use each row&apos;s Logged At column when present, otherwise the sync pull time.
           </div>
         ) : null}
       </CardHeader>

@@ -5,10 +5,10 @@ local preview data.
 
 ## Source Order
 
-1. Published Google Sheets CSV endpoint for the cleaned workbook tabs.
-2. Apps Script JSON endpoint for the tabs it currently exposes.
-3. Private Google Sheets API with a service account.
-4. Local preview data so the UI remains reviewable offline.
+1. **Apps Script JSON** (`GOOGLE_APPS_SCRIPT_URL`) - preferred; returns `timestamp` plus workbook sections.
+2. **Private Google Sheets API** (service account) - full tab access with real pull timestamps.
+3. **Published Google Sheets CSV** (`GOOGLE_SHEET_ID` only) - fallback when credentials are not configured.
+4. **Local preview data** - offline UI review only.
 
 ## Required Environment Variables
 

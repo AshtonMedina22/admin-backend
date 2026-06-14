@@ -96,10 +96,13 @@ GOOGLE_SERVICE_ACCOUNT_JSON={"type":"service_account",...}
 ## Part 4 - Vercel (when you deploy)
 
 1. Vercel project → **Settings** → **Environment Variables**
-2. Add:
+2. Add (in this order of importance):
    - `GOOGLE_SHEET_ID` = `1WAJWr2omEayubh_Ty6Gv_XIuWQCcBLYA5scLr4Nlv2g`
-   - `GOOGLE_SERVICE_ACCOUNT_JSON` = entire JSON file pasted as one line
+   - `GOOGLE_APPS_SCRIPT_URL` = your deployed Apps Script web app `/exec` URL
+   - `GOOGLE_SERVICE_ACCOUNT_JSON` = entire JSON file pasted as one line (recommended for full Sheets API access)
 3. Redeploy after saving
+
+The dashboard prefers **Apps Script**, then **Sheets API**, then published CSV. Sync timestamps come from the Apps Script `timestamp` field or the actual server pull time - never fabricated offsets.
 
 ---
 

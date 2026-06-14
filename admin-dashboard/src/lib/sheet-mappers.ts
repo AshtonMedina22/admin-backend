@@ -14,7 +14,11 @@ import type { EntityBrand } from "@/data/demo/types";
 import { brandToDisplayCompany } from "@/data/demo/types";
 import { inferEntityBrand } from "@/lib/entity-brand";
 import { DEMO_ORG } from "@/config/demo-identity";
-import { staggerEventTimestamp } from "@/lib/sync-time";
+import {
+  mapCommandCenterMetrics,
+  mapOperationsStreamToEvents,
+  mapRevenueSplitRows,
+} from "@/lib/workbook-dashboard";
 import type { VendorRecord } from "@/data/demo/vendors";
 import { vendorCategoryLabel, vendorsData } from "@/data/demo/vendors";
 import type { DashboardSummary, SheetRecord } from "@/lib/google-sheets";
@@ -42,6 +46,10 @@ function alertToEventStatus(priority: string): GlobalEvent["status"] {
 }
 
 function mapWorkbookMetrics(summary: DashboardSummary): CommandCenterData["metrics"] {
+  if (summary.commandCenterMetrics.length > 0) {
+    return mapCommandCenterMetrics(summary.commandCenterMetrics, summary.syncedAt).metrics;
+  }
+
   const computed = computeCommandCenterMetrics();
   const b2bFromSheet = parseSheetMoney(summary.metrics.solar3kBidValue);
   const retailFromSheet = parseSheetCount(summary.metrics.installsThisMonth);
@@ -95,16 +103,18 @@ function mapWorkbookRevenueSplit(rows: DashboardSummary["revenueByCompany"]): Re
 }
 
 function mapWorkbookEvents(summary: DashboardSummary): GlobalEvent[] {
-  if (summary.alerts.length === 0) return demoCommandCenterData.events;
+  if (summary.operationsEvents.length > 0) {
+    return mapOperationsStreamToEvents(summary.operationsEvents, summary.syncedAt);
+  }
 
-  const syncAnchorMs = Date.parse(summary.syncedAt) || Date.now();
+  if (summary.alerts.length === 0) return demoCommandCenterData.events;
 
   return summary.alerts.map((alert, index) => ({
     id: `wb-evt-${index + 1}`,
     entityBrand: inferEntityBrand(`${alert.alert} ${alert.detail}`),
     message: `${alert.alert} - ${alert.detail} (Action: ${alert.action})`,
     status: alertToEventStatus(alert.priority),
-    timestamp: staggerEventTimestamp(index, syncAnchorMs),
+    timestamp: summary.syncedAt,
   }));
 }
 
@@ -115,7 +125,17 @@ export function mapWorkbookToCommandCenter(summary: DashboardSummary): CommandCe
     updatedAt: summary.syncedAt,
     metrics: mapWorkbookMetrics(summary),
     trends: defaultCommandCenterTrends,
-    revenueSplit: mapWorkbookRevenueSplit(summary.revenueByCompany),
+    revenueSplit:
+      summary.revenueSplitRows.length > 0
+        ? mapRevenueSplitRows(
+            summary.revenueSplitRows.map((row) => ({
+              period: row.period,
+              solar_2sk_direct_hardware_margins: row.solar2sk,
+              solar_3sk_commercial_consulting_and_design_fees: row.solar3k,
+              yellow_star_power_macro_grid_yield_dividends: row.yellowStar,
+            })),
+          )
+        : mapWorkbookRevenueSplit(summary.revenueByCompany),
     events: mapWorkbookEvents(summary),
     kpis: demoCommandCenterData.kpis,
     alerts:
