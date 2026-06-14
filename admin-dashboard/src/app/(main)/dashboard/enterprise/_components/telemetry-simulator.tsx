@@ -1,13 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
-const BASELINE_KW = 48.2;
-const CONSUMPTION_KW = 12.4;
+const BASELINE_GENERATION_KW = 48.2;
+const BASELINE_CONSUMPTION_KW = 12.4;
+const TICK_MS = 2000;
+const GENERATION_MIN_KW = 46.0;
+const GENERATION_MAX_KW = 51.0;
+const GENERATION_VARIANCE_KW = 0.4;
+const CONSUMPTION_VARIANCE_KW = 0.1;
+
+function clamp(value: number, min: number, max: number) {
+  return parseFloat(Math.min(max, Math.max(min, value)).toFixed(1));
+}
+
+function drift(value: number, variance: number, min: number, max: number) {
+  const delta = (Math.random() * 2 - 1) * variance;
+  return clamp(value + delta, min, max);
+}
 
 type TelemetrySimulatorProps = {
   isSimulating: boolean;
@@ -42,27 +56,48 @@ export function TelemetrySimulatorControl({ isSimulating, onSimulatingChange, li
 
 export function useTelemetrySimulation() {
   const [isSimulating, setIsSimulating] = useState(false);
-  const [liveYield, setLiveYield] = useState(BASELINE_KW);
+  const [generationKw, setGenerationKw] = useState(BASELINE_GENERATION_KW);
+  const [consumptionKw, setConsumptionKw] = useState(BASELINE_CONSUMPTION_KW);
   const [efficiency, setEfficiency] = useState(94.6);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const runTelemetryTick = useCallback(() => {
+    setGenerationKw((prev) => drift(prev, GENERATION_VARIANCE_KW, GENERATION_MIN_KW, GENERATION_MAX_KW));
+    setConsumptionKw((prev) => drift(prev, CONSUMPTION_VARIANCE_KW, 11.8, 13.2));
+    setEfficiency((prev) => {
+      const next = prev + (Math.random() * 2 - 1) * 0.15;
+      return parseFloat(Math.min(99.1, Math.max(92, next)).toFixed(2));
+    });
+  }, []);
 
   useEffect(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
     if (!isSimulating) return;
 
-    const interval = setInterval(() => {
-      setLiveYield((prev) => {
-        const variance = (Math.random() - 0.5) * 0.8;
-        return parseFloat(Math.max(40, Math.min(65, prev + variance)).toFixed(1));
-      });
-      setEfficiency((prev) => {
-        const variance = (Math.random() - 0.5) * 0.3;
-        return parseFloat(Math.max(92, Math.min(99.1, prev + variance)).toFixed(2));
-      });
-    }, 3000);
+    runTelemetryTick();
+    intervalRef.current = setInterval(runTelemetryTick, TICK_MS);
 
-    return () => clearInterval(interval);
-  }, [isSimulating]);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isSimulating, runTelemetryTick]);
 
-  const netExport = parseFloat(Math.max(0, liveYield - CONSUMPTION_KW).toFixed(1));
+  const gridExportKw = clamp(generationKw - consumptionKw, 0, GENERATION_MAX_KW);
 
-  return { isSimulating, setIsSimulating, liveYield, efficiency, netExport, consumptionKw: CONSUMPTION_KW };
+  return {
+    isSimulating,
+    setIsSimulating,
+    generationKw,
+    liveYield: generationKw,
+    consumptionKw,
+    netExport: gridExportKw,
+    efficiency,
+  };
 }

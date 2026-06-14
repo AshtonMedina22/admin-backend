@@ -46,8 +46,8 @@ export function TelemetryTab() {
           </CardHeader>
           <CardContent className="grid gap-3">
             <MetricRow label="Current Array Generation" value={`${liveYield.toFixed(1)} kW`} />
-            <MetricRow label="Local Consumption Load" value={`${consumptionKw} kW`} />
-            <MetricRow label="Net Grid Export Feed-In" value={`${netExport} kW (Surplus to Oncor Grid)`} />
+            <MetricRow label="Local Consumption Load" value={`${consumptionKw.toFixed(1)} kW`} />
+            <MetricRow label="Net Grid Export Feed-In" value={`${netExport.toFixed(1)} kW (Surplus to Oncor Grid)`} />
             <MetricRow label="Inverter Efficiency" value={`${efficiency}%`} />
             <MetricRow label="Battery Storage Capacity" value="92.5% (LiFePO4 Core Bank)" />
 
