@@ -13,7 +13,7 @@ import { dashCardClass, dashCardContentClass, dashCardHeaderClass } from "@/lib/
 import { cn } from "@/lib/utils";
 import { useDashboardRole } from "@/stores/rbac/dashboard-role-provider";
 
-const restrictedPaths = ["/dashboard/enterprise", "/dashboard/settings"];
+const restrictedPaths = ["/dashboard/enterprise", "/dashboard/settings", "/dashboard/systems"];
 
 export function RoleRouteGuard({ children }: { children: ReactNode }) {
   const pathname = usePathname();
