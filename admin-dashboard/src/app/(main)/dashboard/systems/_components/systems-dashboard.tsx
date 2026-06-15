@@ -100,7 +100,7 @@ const automationRegistryRows = [
     flow: "Drive folder watch → route generated PDF → entity/project folder → append document ledger row.",
   },
   {
-    platform: "ChatGPT / Claude / Gemini",
+    platform: "AI Drafting Assistants",
     flow: "Draft generation, SOP summarization, AHJ/vendor response polishing, and meeting-note cleanup.",
   },
 ];
