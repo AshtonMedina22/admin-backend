@@ -28,19 +28,19 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="text-[#1B1B3A] hover:bg-[#F7F7FF] hover:text-[#6A00FF] data-[state=open]:bg-[#F7F7FF] data-[state=open]:text-[#6A00FF]"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarFallback className="rounded-lg">{getInitials(profile.name)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{profile.name}</span>
-                <span className="truncate text-muted-foreground text-xs">{profile.roleLabel}</span>
+                <span className="truncate text-[#1B1B3A]/70 text-xs">{profile.roleLabel}</span>
               </div>
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg border-[#1B1B3A]/10 bg-[#FFFFFF] text-[#1B1B3A] shadow-2xl"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -52,8 +52,8 @@ export function NavUser() {
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{profile.name}</span>
-                  <span className="truncate text-muted-foreground text-xs">{profile.company}</span>
-                  <span className="truncate text-muted-foreground text-[11px]">{profile.roleLabel}</span>
+                  <span className="truncate text-[#1B1B3A]/70 text-xs">{profile.company}</span>
+                  <span className="truncate text-[#1B1B3A]/55 text-[11px]">{profile.roleLabel}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -65,7 +65,7 @@ export function NavUser() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled className="text-muted-foreground">
+            <DropdownMenuItem disabled className="text-[#1B1B3A]/55">
               <LogOut />
               End session (demo)
             </DropdownMenuItem>

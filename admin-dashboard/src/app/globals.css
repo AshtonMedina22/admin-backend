@@ -237,3 +237,120 @@ html {
 .disable-transitions * {
   transition: none !important;
 }
+
+@layer components {
+  .dashboard-shell {
+    background:
+      radial-gradient(circle at top right, rgba(0, 245, 212, 0.18), transparent 30rem),
+      radial-gradient(circle at bottom left, rgba(106, 0, 255, 0.13), transparent 28rem),
+      linear-gradient(180deg, #f7f7ff 0%, #ffffff 44%, #f7f7ff 100%);
+    color: #1b1b3a;
+  }
+
+  .dashboard-shell [class*="bg-zinc-950"],
+  .dashboard-shell [class*="bg-neutral-950"] {
+    background-color: #f7f7ff !important;
+  }
+
+  .dashboard-shell [class*="bg-zinc-900"],
+  .dashboard-shell [class*="bg-neutral-900"] {
+    background-color: #ffffff !important;
+  }
+
+  .dashboard-shell [class*="bg-zinc-800"] {
+    background-color: rgba(247, 247, 255, 0.92) !important;
+  }
+
+  .dashboard-shell [class*="border-zinc-900"],
+  .dashboard-shell [class*="border-zinc-800"],
+  .dashboard-shell [class*="border-zinc-700"],
+  .dashboard-shell [class*="border-neutral-800"] {
+    border-color: rgba(27, 27, 58, 0.12) !important;
+  }
+
+  .dashboard-shell .text-muted-foreground,
+  .dashboard-shell [class*="text-zinc-400"],
+  .dashboard-shell [class*="text-zinc-500"],
+  .dashboard-shell [class*="text-slate-400"],
+  .dashboard-shell [class*="text-slate-500"] {
+    color: rgba(27, 27, 58, 0.68) !important;
+  }
+
+  .dashboard-shell [class*="text-zinc-100"],
+  .dashboard-shell [class*="text-zinc-200"],
+  .dashboard-shell [class*="text-zinc-300"],
+  .dashboard-shell [class*="text-slate-100"],
+  .dashboard-shell [class*="text-slate-200"],
+  .dashboard-shell [class*="text-slate-300"] {
+    color: #1b1b3a !important;
+  }
+
+  .dashboard-shell [class*="text-cyan"],
+  .dashboard-shell [class*="text-sky"],
+  .dashboard-shell [class*="text-lime"],
+  .dashboard-shell [class*="text-emerald"] {
+    color: #00f5d4 !important;
+  }
+
+  .dashboard-shell [class*="border-cyan"],
+  .dashboard-shell [class*="border-sky"],
+  .dashboard-shell [class*="border-lime"],
+  .dashboard-shell [class*="border-emerald"] {
+    border-color: #00f5d4 !important;
+  }
+
+  .dashboard-shell [class*="bg-cyan"],
+  .dashboard-shell [class*="bg-sky"],
+  .dashboard-shell [class*="bg-lime"],
+  .dashboard-shell [class*="bg-emerald"] {
+    background-color: rgba(0, 245, 212, 0.12) !important;
+  }
+
+  .dashboard-shell [class*="text-amber"],
+  .dashboard-shell [class*="text-fuchsia"],
+  .dashboard-shell [class*="text-pink"],
+  .dashboard-shell [class*="text-rose"] {
+    color: #b5179e !important;
+  }
+
+  .dashboard-shell [class*="border-amber"],
+  .dashboard-shell [class*="border-fuchsia"],
+  .dashboard-shell [class*="border-pink"],
+  .dashboard-shell [class*="border-rose"] {
+    border-color: #b5179e !important;
+  }
+
+  .dashboard-shell [class*="bg-amber"],
+  .dashboard-shell [class*="bg-fuchsia"],
+  .dashboard-shell [class*="bg-pink"],
+  .dashboard-shell [class*="bg-rose"] {
+    background-color: rgba(181, 23, 158, 0.12) !important;
+  }
+
+  .dashboard-shell [class*="text-indigo"],
+  .dashboard-shell [class*="text-violet"],
+  .dashboard-shell [class*="text-purple"] {
+    color: #6a00ff !important;
+  }
+
+  .dashboard-shell [class*="border-indigo"],
+  .dashboard-shell [class*="border-violet"],
+  .dashboard-shell [class*="border-purple"] {
+    border-color: #6a00ff !important;
+  }
+
+  .dashboard-shell [class*="bg-indigo"],
+  .dashboard-shell [class*="bg-violet"],
+  .dashboard-shell [class*="bg-purple"] {
+    background-color: rgba(106, 0, 255, 0.1) !important;
+  }
+
+  .dashboard-shell table th {
+    color: #1b1b3a;
+    font-weight: 800;
+  }
+
+  .dashboard-shell table td {
+    color: rgba(27, 27, 58, 0.78);
+  }
+}

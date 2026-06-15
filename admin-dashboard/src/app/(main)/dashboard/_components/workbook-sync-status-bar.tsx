@@ -52,8 +52,8 @@ export function WorkbookSyncStatusBar({ source, provider, updatedAt }: WorkbookS
   return (
     <div
       className={cn(
-        "hidden min-w-0 items-center gap-2 rounded-md border px-3 py-2 text-xs md:flex",
-        isLive ? "border-emerald-500/30 bg-emerald-500/10" : "border-border bg-muted/35",
+        "hidden min-w-0 items-center gap-2 rounded-lg border border-[#1B1B3A]/10 bg-zinc-900/40 px-3 py-2 text-xs shadow-[0_0_0_1px_theme(colors.white/0.02)] backdrop-blur-md md:flex",
+        isLive ? "text-zinc-200" : "text-[#1B1B3A]/60",
       )}
     >
       <DatabaseZap className={cn("size-4 shrink-0", isLive ? "text-emerald-600" : "text-muted-foreground")} />
@@ -66,15 +66,20 @@ export function WorkbookSyncStatusBar({ source, provider, updatedAt }: WorkbookS
       </div>
       {isLive ? (
         <span className="relative flex size-2 shrink-0">
-          <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-75" />
-          <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex size-2 rounded-full bg-emerald-400" />
         </span>
       ) : (
         <Badge variant="outline" className="h-5 shrink-0 px-1.5 text-[10px]">
           Preview
         </Badge>
       )}
-      <Button variant="ghost" size="icon" className="size-7 shrink-0" asChild>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="size-7 shrink-0 text-[#1B1B3A]/60 hover:bg-[#F7F7FF] hover:text-[#6A00FF]"
+        asChild
+      >
         <a href={PUBLIC_WORKBOOK_URL} target="_blank" rel="noreferrer" aria-label="Open published workbook">
           <ExternalLink className="size-3.5" />
         </a>
@@ -82,7 +87,7 @@ export function WorkbookSyncStatusBar({ source, provider, updatedAt }: WorkbookS
       <Button
         variant="ghost"
         size="icon"
-        className="size-7 shrink-0"
+        className="size-7 shrink-0 text-[#1B1B3A]/60 hover:bg-[#F7F7FF] hover:text-[#6A00FF]"
         disabled={isRefreshing}
         onClick={handleRefresh}
         aria-label="Refresh workbook sync"

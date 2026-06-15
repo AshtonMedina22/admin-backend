@@ -8,10 +8,14 @@ import {
   openCommercialPipelineBalance,
 } from "@/data/demo/pipeline";
 import { fetchPipelineProjects } from "@/lib/sheet-mappers";
+import { cn } from "@/lib/utils";
 
 import { CommercialPipelineTab } from "./_components/commercial-pipeline-tab";
 import { EngineeringMilestonesTab } from "./_components/engineering-milestones-tab";
 import { TelemetryTab } from "./_components/telemetry-tab";
+
+const enterpriseTabTriggerClass =
+  "gap-2 border border-transparent px-3 py-2 text-[#1B1B3A]/60 transition-all hover:border-cyan-400/20 hover:bg-[#F7F7FF] hover:text-[#1B1B3A] data-[state=active]:border-cyan-400/40 data-[state=active]:bg-[#F7F7FF] data-[state=active]:font-semibold data-[state=active]:text-sky-700 data-[state=active]:shadow-[0_0_18px_rgba(106,0,255,0.16)]";
 
 async function fetchCommercialPipeline() {
   try {
@@ -42,25 +46,24 @@ export default async function Page() {
 
   return (
     <div className="flex flex-col gap-3 md:gap-4">
-      <div className="flex flex-col gap-1 border-b pb-3">
-        <h1 className="font-semibold text-2xl tracking-tight">Enterprise Hub</h1>
-        <p className="max-w-3xl text-muted-foreground text-sm">
-          High-ticket commercial pipeline, infrastructure telemetry, and engineering milestone tracking for Solar 3SK
-          and Yellow Star Power.
+      <div className="flex flex-col gap-1 border-[#1B1B3A]/10 border-b pb-3">
+        <h1 className="font-semibold text-2xl text-[#1B1B3A] tracking-tight">Enterprise Hub</h1>
+        <p className="max-w-3xl text-[#1B1B3A]/60 text-sm">
+          High-ticket commercial pipeline, infrastructure telemetry, and engineering milestone tracking for 3SK and YSP.
         </p>
       </div>
 
-      <Tabs defaultValue="pipeline" className="flex flex-col gap-4">
-        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto p-1 md:w-fit">
-          <TabsTrigger value="pipeline" className="gap-2">
+      <Tabs defaultValue="telemetry" className="flex flex-col gap-4">
+        <TabsList className="h-auto w-full max-w-xl justify-start gap-1 overflow-x-auto rounded-xl border border-[#1B1B3A]/10 bg-[#FFFFFF]/90 p-1 shadow-[0_12px_35px_rgba(27,27,58,0.10)] md:w-fit">
+          <TabsTrigger value="pipeline" className={cn(enterpriseTabTriggerClass)}>
             <Activity className="size-4" />
             Commercial Pipeline
           </TabsTrigger>
-          <TabsTrigger value="telemetry" className="gap-2">
+          <TabsTrigger value="telemetry" className={cn(enterpriseTabTriggerClass)}>
             <RadioTower className="size-4" />
             Telemetry Analytics
           </TabsTrigger>
-          <TabsTrigger value="engineering" className="gap-2">
+          <TabsTrigger value="engineering" className={cn(enterpriseTabTriggerClass)}>
             <Ruler className="size-4" />
             Engineering Milestones
           </TabsTrigger>

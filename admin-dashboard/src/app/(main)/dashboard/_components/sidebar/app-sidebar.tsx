@@ -72,11 +72,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const collapsible = isSynced ? sidebarCollapsible : props.collapsible;
 
   return (
-    <Sidebar {...props} variant={variant} collapsible={collapsible} className="[&_[data-slot=sidebar-group]]:px-1.5 [&_[data-slot=sidebar-header]]:px-2 [&_[data-slot=sidebar-footer]]:gap-1 [&_[data-slot=sidebar-footer]]:px-2">
+    <Sidebar
+      {...props}
+      variant={variant}
+      collapsible={collapsible}
+      className="border-[#1B1B3A]/10 bg-[#F7F7FF] text-[#1B1B3A]/70 [&_[data-slot=sidebar-footer]]:gap-1 [&_[data-slot=sidebar-footer]]:px-2 [&_[data-slot=sidebar-group]]:px-2 [&_[data-slot=sidebar-header]]:px-2"
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild className="text-[#1B1B3A] hover:bg-[#F7F7FF] hover:text-[#6A00FF]">
               <Link prefetch={false} href="/dashboard">
                 <Command />
                 <span className="font-semibold text-base">{APP_CONFIG.name}</span>
