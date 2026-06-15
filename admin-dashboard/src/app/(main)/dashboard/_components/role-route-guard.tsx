@@ -2,45 +2,24 @@
 
 import type { ReactNode } from "react";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { ShieldAlert } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { dashCardClass, dashCardContentClass, dashCardHeaderClass } from "@/lib/dashboard-ui";
-import { cn } from "@/lib/utils";
+import { AccessDeniedPanel } from "@/components/dashboard/access-denied-panel";
+import { isAccessDenied } from "@/lib/rbac/access-policy";
+import { DEMO_ADMIN } from "@/config/demo-identity";
 import { useDashboardRole } from "@/stores/rbac/dashboard-role-provider";
-
-const restrictedPaths = ["/dashboard/enterprise", "/dashboard/settings", "/dashboard/systems"];
 
 export function RoleRouteGuard({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { accessLevel, profile } = useDashboardRole();
+  const { accessLevel, profile, setProfileId } = useDashboardRole();
 
-  const isRestricted =
-    accessLevel === "manager" && restrictedPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
-
-  if (isRestricted) {
+  if (isAccessDenied(accessLevel, pathname)) {
     return (
-      <Card className={cn("mx-auto mt-8 max-w-lg border-amber-500/60 border-l-4", dashCardClass)}>
-        <CardHeader className={dashCardHeaderClass}>
-          <CardTitle className="flex items-center gap-2">
-            <ShieldAlert className="size-5 text-amber-600" />
-            Access restricted
-          </CardTitle>
-          <CardDescription>
-            {profile.name} ({profile.roleLabel}) does not have permission to view this module. Enterprise and Systems
-            settings are scoped to global administrators.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className={dashCardContentClass}>
-          <Button asChild>
-            <Link href="/dashboard/retail">Go to Consumer Retail Hub</Link>
-          </Button>
-        </CardContent>
-      </Card>
+      <AccessDeniedPanel
+        pathname={pathname}
+        profile={profile}
+        onSwitchToAdmin={() => setProfileId(DEMO_ADMIN.id)}
+      />
     );
   }
 

@@ -14,6 +14,7 @@ import { getPreference } from "@/server/server-actions";
 import { DashboardRoleProvider } from "@/stores/rbac/dashboard-role-provider";
 
 import { AccountSwitcher } from "./_components/sidebar/account-switcher";
+import { RoleScopeBanner } from "./_components/role-scope-banner";
 import { SearchDialog } from "./_components/sidebar/search-dialog";
 
 export default async function Layout({ children }: Readonly<{ children: ReactNode }>) {
@@ -61,6 +62,7 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
                 />
                 <SearchDialog />
                 <WorkbookSyncStatusBar {...syncStatus} />
+                <RoleScopeBanner />
               </div>
               <div className="flex shrink-0 items-center">
                 <AccountSwitcher />

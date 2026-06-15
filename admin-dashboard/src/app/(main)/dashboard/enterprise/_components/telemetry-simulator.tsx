@@ -4,8 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { DashImplementationLabel } from "@/components/dashboard/implementation-label";
 import { dashInfoBannerClass } from "@/lib/dashboard-ui";
 import { dashKpiValueClass, entityBrandStyles, statusStyles } from "@/lib/entity-brand";
+import { implementationLabels } from "@/lib/implementation-labels";
 import { cn } from "@/lib/utils";
 
 const BASELINE_GENERATION_KW = 48.2;
@@ -77,11 +79,16 @@ export function TelemetrySimulatorControl({ isSimulating, onSimulatingChange, li
         </span>
       </div>
       <div className={cn(dashInfoBannerClass, "font-mono text-[11px] leading-relaxed")}>
-        <strong>Engineering Implementation Notes:</strong> Production wiring would run this as a scheduled server worker
-        or API route that polls SolarEdge / SCADA endpoints on a controlled interval, queues requests to respect vendor
-        rate limits, validates inverter register payloads, catches offline-device states (e.g., SolarEdge 18x86 PV
-        isolation fault or 18x37/18x38 AC line voltage bounds), and routes normalized alerts into the systems log
-        instead of letting hardware exceptions break the dashboard.
+        <DashImplementationLabel variant={implementationLabels.telemetryPolling.variant} inline>
+          {implementationLabels.telemetryPolling.title}
+        </DashImplementationLabel>
+        <p className="mt-2">
+          Production wiring would run this as a scheduled server worker or API route that polls SolarEdge / SCADA
+          endpoints on a controlled interval, queues requests to respect vendor rate limits, validates inverter register
+          payloads, catches offline-device states (e.g., SolarEdge 18x86 PV isolation fault or 18x37/18x38 AC line
+          voltage bounds), and routes normalized alerts into the systems log instead of letting hardware exceptions
+          break the dashboard.
+        </p>
       </div>
     </div>
   );

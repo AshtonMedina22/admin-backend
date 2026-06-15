@@ -3,6 +3,7 @@
 import { FileCheck } from "lucide-react";
 
 import { AIEscalationButton } from "@/components/ai-escalation-button";
+import { DashImplementationLabel } from "@/components/dashboard/implementation-label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -27,6 +28,7 @@ import {
   entityBrandStyles,
   statusStyles,
 } from "@/lib/entity-brand";
+import { implementationLabels } from "@/lib/implementation-labels";
 import { cn } from "@/lib/utils";
 
 type PermitStatus = "critical" | "warning";
@@ -193,7 +195,7 @@ function AppsScriptPermitAlertCard() {
       <CardHeader className={dashSectionCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
           <FileCheck className={cn("size-5", entityBrandStyles.solar3k.icon)} />
-          Google Apps Script Permit Alert Trigger
+          {implementationLabels.permitEscalation.title}
         </CardTitle>
         <CardDescription>
           Production wiring example: install this as an explicit Apps Script spreadsheet{" "}

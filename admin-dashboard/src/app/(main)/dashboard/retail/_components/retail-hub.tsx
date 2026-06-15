@@ -3,6 +3,7 @@
 import { BatteryCharging, ClockAlert, Package, PackageCheck, ShoppingCart, TicketCheck } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { DashImplementationLabel } from "@/components/dashboard/implementation-label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,6 +27,7 @@ import {
   entityBrandStyles,
   statusStyles,
 } from "@/lib/entity-brand";
+import { implementationLabels } from "@/lib/implementation-labels";
 import { cn } from "@/lib/utils";
 
 const retailTabTriggerClass =
@@ -255,8 +257,10 @@ function WebhookPayloadCard() {
       </CardHeader>
       <CardContent className={dashSectionCardContentClass}>
         <div className="mb-3 rounded-lg border border-border bg-muted/40 p-3 text-xs">
-          <span className="block font-bold text-foreground">Webhook Ingestion Protocol</span>
-          <p className={cn("mt-1 line-clamp-3 font-mono leading-relaxed", dashProseClass)}>
+          <DashImplementationLabel variant={implementationLabels.retailIngestion.variant} inline>
+            {implementationLabels.retailIngestion.title}
+          </DashImplementationLabel>
+          <p className={cn("mt-2 line-clamp-3 font-mono leading-relaxed", dashProseClass)}>
             Middleware validates customer/SKU/shipping fields, rejects duplicate order IDs and malformed rows, then
             appends sanitized fulfillment records to the operations workbook.
           </p>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Lock } from "lucide-react";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -25,8 +25,10 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { filterSidebarByRole } from "@/lib/rbac/filter-sidebar";
+import { isNavItemRestrictedForRole } from "@/lib/rbac/access-policy";
 import { cn } from "@/lib/utils";
 import type { NavGroup, NavMainItem } from "@/navigation/sidebar/sidebar-items";
+import type { DashboardAccessLevel } from "@/stores/rbac/dashboard-role-provider";
 import { useDashboardRole } from "@/stores/rbac/dashboard-role-provider";
 
 interface NavMainProps {
@@ -60,15 +62,29 @@ const IsComingSoon = () => (
   <span className="ml-auto rounded-md bg-gray-200 px-2 py-1 text-xs dark:text-gray-800">Soon</span>
 );
 
+const NavRestrictedBadge = () => (
+  <span
+    className="ml-auto shrink-0 rounded border border-[color-mix(in_oklab,var(--status-critical)_35%,transparent)] bg-[var(--status-critical-bg)] px-1.5 py-0.5 font-mono text-[9px] text-[var(--status-critical-text)] uppercase tracking-wide"
+    title="Global Super Admin required — route shows Access Denied for your current profile"
+  >
+    <Lock className="mr-0.5 inline size-2.5" />
+    Admin
+  </span>
+);
+
 const NavItemExpanded = ({
   item,
   isActive,
   isSubmenuOpen,
+  accessLevel,
 }: {
   item: NavMainItem;
   isActive: (url: string, subItems?: NavMainItem["subItems"]) => boolean;
   isSubmenuOpen: (subItems?: NavMainItem["subItems"]) => boolean;
+  accessLevel: DashboardAccessLevel;
 }) => {
+  const isRestricted = isNavItemRestrictedForRole(item, accessLevel);
+
   return (
     <Collapsible key={item.title} asChild defaultOpen={isSubmenuOpen(item.subItems)} className="group/collapsible">
       <SidebarMenuItem>
@@ -78,13 +94,14 @@ const NavItemExpanded = ({
               disabled={item.comingSoon}
               isActive={isActive(item.url, item.subItems)}
               tooltip={item.title}
-              className={navItemClass}
+              className={cn(navItemClass, isRestricted && "opacity-90")}
             >
               {item.icon && <item.icon className="mt-0.5" />}
               <span className="min-w-0 flex-1">
                 <span className="block truncate">{item.title}</span>
                 <NavSkillChips skills={item.skills} />
               </span>
+              {isRestricted ? <NavRestrictedBadge /> : null}
               {item.comingSoon && <IsComingSoon />}
               <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
@@ -93,15 +110,19 @@ const NavItemExpanded = ({
               asChild
               aria-disabled={item.comingSoon}
               isActive={isActive(item.url)}
-              tooltip={item.title}
-              className={navItemClass}
+              tooltip={isRestricted ? `${item.title} — Access Denied for current profile` : item.title}
+              className={cn(navItemClass, isRestricted && "opacity-90")}
             >
               <Link prefetch={false} href={item.url} target={item.newTab ? "_blank" : undefined}>
                 {item.icon && <item.icon className="mt-0.5" />}
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate">{item.title}</span>
+                  <span className="flex items-center gap-1.5 truncate">
+                    {isRestricted ? <Lock className="size-3 shrink-0 text-[var(--status-critical)]" /> : null}
+                    <span className="truncate">{item.title}</span>
+                  </span>
                   <NavSkillChips skills={item.skills} />
                 </span>
+                {isRestricted ? <NavRestrictedBadge /> : null}
                 {item.comingSoon && <IsComingSoon />}
               </Link>
             </SidebarMenuButton>
@@ -211,18 +232,22 @@ export function NavMain({ items }: NavMainProps) {
                 if (state === "collapsed" && !isMobile) {
                   // If no subItems, just render the button as a link
                   if (!item.subItems) {
+                    const isRestricted = isNavItemRestrictedForRole(item, accessLevel);
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                           asChild
                           aria-disabled={item.comingSoon}
-                          tooltip={item.title}
+                          tooltip={isRestricted ? `${item.title} — Access Denied for current profile` : item.title}
                           isActive={isItemActive(item.url)}
-                          className={navItemClass}
+                          className={cn(navItemClass, isRestricted && "opacity-90")}
                         >
                           <Link prefetch={false} href={item.url} target={item.newTab ? "_blank" : undefined}>
                             {item.icon && <item.icon />}
-                            <span>{item.title}</span>
+                            <span className="flex items-center gap-1 truncate">
+                              {isRestricted ? <Lock className="size-3 text-[var(--status-critical)]" /> : null}
+                              {item.title}
+                            </span>
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -233,7 +258,13 @@ export function NavMain({ items }: NavMainProps) {
                 }
                 // Expanded view
                 return (
-                  <NavItemExpanded key={item.title} item={item} isActive={isItemActive} isSubmenuOpen={isSubmenuOpen} />
+                  <NavItemExpanded
+                    key={item.title}
+                    item={item}
+                    isActive={isItemActive}
+                    isSubmenuOpen={isSubmenuOpen}
+                    accessLevel={accessLevel}
+                  />
                 );
               })}
             </SidebarMenu>

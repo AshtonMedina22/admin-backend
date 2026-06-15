@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { AlertTriangle, MapPinned, Search, ShieldAlert, Users } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { DashImplementationLabel } from "@/components/dashboard/implementation-label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";

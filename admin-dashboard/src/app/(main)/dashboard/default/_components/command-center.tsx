@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner";
 
 import { AIEscalationButton } from "@/components/ai-escalation-button";
+import { DashImplementationLabel } from "@/components/dashboard/implementation-label";
 import { RelativeTime } from "@/components/dashboard/relative-time";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,7 @@ import {
   entityBrandStyles,
   statusStyles,
 } from "@/lib/entity-brand";
+import { implementationLabels } from "@/lib/implementation-labels";
 import { cn } from "@/lib/utils";
 
 import { TelemetrySimulatorControl, useTelemetrySimulation } from "../../enterprise/_components/telemetry-simulator";
@@ -209,9 +211,12 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
+            <DashImplementationLabel variant={implementationLabels.commandCenterSync.variant}>
+              {implementationLabels.commandCenterSync.title}
+            </DashImplementationLabel>
             <CardTitle className="flex items-center gap-2">
               <DatabaseZap className={cn("size-5", entityBrandStyles.solar3k.icon)} />
-              Command Center Workbook Sync Contract
+              Workbook Sync Contract
             </CardTitle>
             <CardDescription>
               Literal backend path for turning workbook rows into the executive dashboard.
