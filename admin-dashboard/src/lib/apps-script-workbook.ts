@@ -104,13 +104,22 @@ function metricRowsFromLegacySummary(payload: WorkbookScriptPayload) {
   if (payload.commandCenterMetrics?.length) return payload.commandCenterMetrics;
 
   return [
-    { metric: "Active B2B Pipeline", value: String(metricValue(payload, "active_b2b_pipeline", demoCommandCenterData.metrics.b2bPipeline)) },
-    { metric: "Live Fleet Yield", value: `${metricValue(payload, "fleet_yield_kw", demoCommandCenterData.metrics.fleetYield)} kW` },
+    {
+      metric: "Active B2B Pipeline",
+      value: String(metricValue(payload, "active_b2b_pipeline", demoCommandCenterData.metrics.b2bPipeline)),
+    },
+    {
+      metric: "Live Fleet Yield",
+      value: `${metricValue(payload, "fleet_yield_mw", demoCommandCenterData.metrics.fleetYield)} MW`,
+    },
     {
       metric: "Combined Portfolio Capacity",
-      value: `${metricValue(payload, "portfolio_capacity_kw", demoCommandCenterData.metrics.portfolioCapacity)} kW`,
+      value: `${metricValue(payload, "portfolio_capacity_mw", demoCommandCenterData.metrics.portfolioCapacity)} MW`,
     },
-    { metric: "DIY Retail Vol (Mo)", value: String(metricValue(payload, "diy_retail_volume", demoCommandCenterData.metrics.retailVolume)) },
+    {
+      metric: "DIY Retail Vol (Mo)",
+      value: String(metricValue(payload, "diy_retail_volume", demoCommandCenterData.metrics.retailVolume)),
+    },
   ];
 }
 
@@ -129,8 +138,12 @@ export function mapScriptPayloadToCommandCenter(payload: WorkbookScriptPayload):
           payload.revenueSplit.map((row) => ({
             period: row.period,
             solar_2sk_direct_hardware_margins: String(row.solar_2sk_direct_hardware_margins ?? ""),
-            solar_3sk_commercial_consulting_and_design_fees: String(row.solar_3sk_commercial_consulting_and_design_fees ?? ""),
-            yellow_star_power_macro_grid_yield_dividends: String(row.yellow_star_power_macro_grid_yield_dividends ?? ""),
+            solar_3sk_commercial_consulting_and_design_fees: String(
+              row.solar_3sk_commercial_consulting_and_design_fees ?? "",
+            ),
+            yellow_star_power_macro_grid_yield_dividends: String(
+              row.yellow_star_power_macro_grid_yield_dividends ?? "",
+            ),
           })),
         )
       : demoCommandCenterData.revenueSplit,

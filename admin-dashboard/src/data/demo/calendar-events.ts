@@ -24,7 +24,7 @@ export const calendarEventsData: CalendarEvent[] = [
     type: "Regulatory Gate",
     time: "09:00 AM",
     location: "Plano Building Inspections",
-    notes: "Reviewing 60kW auto body build zoning variance",
+    notes: "Reviewing 60kW commercial rooftop system variance request.",
   },
   {
     id: "cal-002",
@@ -35,7 +35,7 @@ export const calendarEventsData: CalendarEvent[] = [
     type: "Warehouse Logistics",
     time: "01:30 PM",
     location: "Wylie Hub",
-    notes: "Receiving 42 units of Anenji 3KW Inverter stock at Wylie Hub",
+    notes: "Receiving cargo unit inventory stock at main Wylie warehouse hub.",
   },
   {
     id: "cal-003",
@@ -46,7 +46,18 @@ export const calendarEventsData: CalendarEvent[] = [
     type: "Grid Interconnection",
     time: "03:15 PM",
     location: "Hunt County Asset Expansion",
-    notes: "Testing 60kW macro asset expansion tie-in matrix",
+    notes: "Testing system isolation protocols and point of interconnection matrix.",
+  },
+  {
+    id: "cal-004",
+    title: "Frisco Commercial Plaza Roof Load Walk",
+    entityBrand: "Solar3K",
+    date: "2026-06-26",
+    dayOfMonth: 26,
+    type: "Regulatory Gate",
+    time: "10:45 AM",
+    location: "Frisco Commercial Plaza",
+    notes: "Structural engineer on-site roof load assessment walk for 120kW commercial array",
   },
 ];
 
@@ -76,12 +87,7 @@ export function calendarEventsByDay(): Record<
       }[]
     >
   >((acc, event) => {
-    const brandLabel =
-      event.entityBrand === "Solar2SK"
-        ? "Solar 2SK"
-        : event.entityBrand === "Solar3K"
-          ? "Solar 3SK"
-          : "Yellow Star Power";
+    const brandLabel = event.entityBrand === "Solar2SK" ? "2SK" : event.entityBrand === "Solar3K" ? "3SK" : "YSP";
 
     const variant =
       event.entityBrand === "Solar2SK" ? "default" : event.entityBrand === "Yellow Star" ? "outline" : "secondary";
