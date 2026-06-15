@@ -187,15 +187,15 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
           <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-border">
             <Table className="min-w-[1120px]">
               <TableHeader>
-                <TableRow className="h-9">
-                  <TableHead>Project Asset</TableHead>
-                  <TableHead>Brand</TableHead>
-                  <TableHead className="text-right">Capacity</TableHead>
-                  <TableHead>Phase</TableHead>
-                  <TableHead className="text-right">Contract Value</TableHead>
-                  <TableHead>Tracking</TableHead>
-                  <TableHead>Next Critical Path</TableHead>
-                  <TableHead className="text-right">Automated Actions</TableHead>
+                <TableRow className="h-9 hover:bg-transparent">
+                  <TableHead className="font-semibold text-foreground">Project Asset</TableHead>
+                  <TableHead className="font-semibold text-foreground">Brand</TableHead>
+                  <TableHead className="text-right font-semibold text-foreground">Capacity</TableHead>
+                  <TableHead className="font-semibold text-foreground">Phase</TableHead>
+                  <TableHead className="text-right font-semibold text-foreground">Contract Value</TableHead>
+                  <TableHead className="font-semibold text-foreground">Tracking</TableHead>
+                  <TableHead className="font-semibold text-foreground">Next Critical Path</TableHead>
+                  <TableHead className="text-right font-semibold text-foreground">Automated Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -235,7 +235,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                       <TableCell className="max-w-sm whitespace-normal py-2">
                         <span className="flex items-start gap-2 text-sm">
                           {daysStale >= 31 ? (
-                            <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+                            <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-[var(--status-warning-text)]" />
                           ) : null}
                           {project.nextCriticalPath}
                         </span>
@@ -269,7 +269,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
           </CardDescription>
         </CardHeader>
         <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
-          <div className="rounded-md border border-border bg-muted/40 p-3">
+          <div className="rounded-md border border-border bg-slate-50 p-3">
             <p className={dashProseClass}>
               <strong>Legitimate integration path:</strong> OpenSolar supports API access for projects, systems, pricing,
               workflows, and webhooks, while project lists can also be exported for CSV-based reporting. A deployed
@@ -279,7 +279,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
           </div>
           <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
             {syncSteps.map((step, index) => (
-              <div key={step} className="rounded-lg border border-border bg-muted/40 p-3">
+              <div key={step} className="rounded-lg border border-border bg-slate-50 p-3">
                 <p className={cn("mb-2 font-mono text-xs", entityBrandStyles.solar3k.text)}>0{index + 1}</p>
                 <p className="text-muted-foreground text-xs leading-relaxed">{step}</p>
               </div>

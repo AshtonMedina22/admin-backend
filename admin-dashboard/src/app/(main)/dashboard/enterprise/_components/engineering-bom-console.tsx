@@ -141,13 +141,11 @@ export function EngineeringBomConsole() {
                 <div key={`${log.time}-${log.text}`} className="flex items-start gap-2">
                   <span className="select-none text-muted-foreground">[{log.time}]</span>
                   <span
-                    className={
-                      log.type === "success"
-                        ? "font-semibold text-emerald-700"
-                        : log.type === "warn"
-                          ? "font-medium text-amber-700"
-                          : "text-foreground"
-                    }
+                    className={cn(
+                      log.type === "success" && cn("font-semibold", entityBrandStyles.solar2sk.text),
+                      log.type === "warn" && "font-medium text-[var(--status-warning-text)]",
+                      log.type === "info" && "text-foreground",
+                    )}
                   >
                     {log.text}
                   </span>
