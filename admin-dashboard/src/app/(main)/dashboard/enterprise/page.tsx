@@ -15,8 +15,11 @@ import { CommercialPipelineTab } from "./_components/commercial-pipeline-tab";
 import { EngineeringMilestonesTab } from "./_components/engineering-milestones-tab";
 import { TelemetryTab } from "./_components/telemetry-tab";
 
+const enterpriseTabListClass =
+  "grid h-auto w-full grid-cols-1 gap-2 bg-transparent p-0 shadow-none sm:grid-cols-3 sm:gap-3";
+
 const enterpriseTabTriggerClass =
-  "gap-2 border border-transparent px-3 py-2 text-muted-foreground transition-all hover:border-border hover:bg-muted/40 hover:text-foreground data-[state=active]:border-[color-mix(in_oklab,var(--brand-3sk)_30%,transparent)] data-[state=active]:bg-muted/40 data-[state=active]:font-semibold data-[state=active]:text-[var(--brand-3sk-text)]";
+  "flex h-auto min-h-14 w-full flex-none flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 py-3.5 text-center text-sm font-medium text-muted-foreground shadow-sm transition-all hover:border-[color-mix(in_oklab,var(--brand-3sk)_35%,transparent)] hover:bg-slate-50 hover:text-foreground sm:flex-row sm:items-center sm:justify-start sm:gap-3 sm:text-left data-[state=active]:border-[var(--brand-3sk)] data-[state=active]:border-l-4 data-[state=active]:bg-[var(--brand-3sk-bg)] data-[state=active]:font-semibold data-[state=active]:text-[var(--brand-3sk-text)] data-[state=active]:shadow-md [&_svg]:size-5 [&_svg]:shrink-0";
 
 async function fetchCommercialPipeline() {
   try {
@@ -54,19 +57,34 @@ export default async function Page() {
         </p>
       </div>
 
-      <Tabs defaultValue="telemetry" className="flex flex-col gap-4">
-        <TabsList className="h-auto w-full max-w-xl justify-start gap-1 overflow-x-auto rounded-xl border border-border bg-card p-1 shadow-sm md:w-fit">
-          <TabsTrigger value="pipeline" className={cn(enterpriseTabTriggerClass)}>
-            <Activity className="size-4" />
-            Commercial Pipeline
+      <Tabs defaultValue="telemetry" className="flex flex-col gap-5">
+        <TabsList variant="line" className={cn(enterpriseTabListClass)}>
+          <TabsTrigger value="pipeline" className={cn(enterpriseTabTriggerClass, "after:hidden")}>
+            <Activity />
+            <span className="leading-tight">
+              <span className="block font-semibold text-[13px] sm:text-sm">Commercial Pipeline</span>
+              <span className="mt-0.5 hidden font-normal text-[11px] text-muted-foreground sm:block">
+                B2B deals & OpenSolar sync
+              </span>
+            </span>
           </TabsTrigger>
-          <TabsTrigger value="telemetry" className={cn(enterpriseTabTriggerClass)}>
-            <RadioTower className="size-4" />
-            Telemetry Analytics
+          <TabsTrigger value="telemetry" className={cn(enterpriseTabTriggerClass, "after:hidden")}>
+            <RadioTower />
+            <span className="leading-tight">
+              <span className="block font-semibold text-[13px] sm:text-sm">Telemetry Analytics</span>
+              <span className="mt-0.5 hidden font-normal text-[11px] text-muted-foreground sm:block">
+                SolarEdge & SCADA live data
+              </span>
+            </span>
           </TabsTrigger>
-          <TabsTrigger value="engineering" className={cn(enterpriseTabTriggerClass)}>
-            <Ruler className="size-4" />
-            Engineering Milestones
+          <TabsTrigger value="engineering" className={cn(enterpriseTabTriggerClass, "after:hidden")}>
+            <Ruler />
+            <span className="leading-tight">
+              <span className="block font-semibold text-[13px] sm:text-sm">Engineering Milestones</span>
+              <span className="mt-0.5 hidden font-normal text-[11px] text-muted-foreground sm:block">
+                CAD, permits & BOM allocator
+              </span>
+            </span>
           </TabsTrigger>
         </TabsList>
 
