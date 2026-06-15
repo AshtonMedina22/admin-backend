@@ -70,6 +70,7 @@ export function ThemeBootScript() {
           return value;
         }
 
+        var rawMode = readPreference("theme_mode", DEFAULTS.theme_mode);
         var rawPreset = readPreference("theme_preset", DEFAULTS.theme_preset);
         var rawFont = readPreference("font", DEFAULTS.font);
         var rawContentLayout = readPreference("content_layout", DEFAULTS.content_layout);
@@ -77,16 +78,26 @@ export function ThemeBootScript() {
         var rawSidebarVariant = readPreference("sidebar_variant", DEFAULTS.sidebar_variant);
         var rawSidebarCollapsible = readPreference("sidebar_collapsible", DEFAULTS.sidebar_collapsible);
 
-        var mode = "dark";
-        var resolvedMode = "dark";
+        var mode = rawMode || DEFAULTS.theme_mode;
+        var resolvedMode = mode;
+        if (mode === "system") {
+          resolvedMode =
+            window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
         var preset = rawPreset || DEFAULTS.theme_preset;
         var font = rawFont || DEFAULTS.font;
-        var contentLayout = "full-width";
+        var contentLayout = rawContentLayout || DEFAULTS.content_layout;
         var navbarStyle = rawNavbarStyle || DEFAULTS.navbar_style;
-        var sidebarVariant = "sidebar";
+        var sidebarVariant = rawSidebarVariant || DEFAULTS.sidebar_variant;
         var sidebarCollapsible = rawSidebarCollapsible || DEFAULTS.sidebar_collapsible;
 
-        root.classList.add("dark");
+        if (resolvedMode === "dark") {
+          root.classList.add("dark");
+          root.style.colorScheme = "dark";
+        } else {
+          root.classList.remove("dark");
+          root.style.colorScheme = "light";
+        }
         root.setAttribute("data-theme-mode", mode);
         root.setAttribute("data-theme-preset", preset);
         root.setAttribute("data-font", font);
@@ -94,8 +105,6 @@ export function ThemeBootScript() {
         root.setAttribute("data-navbar-style", navbarStyle);
         root.setAttribute("data-sidebar-variant", sidebarVariant);
         root.setAttribute("data-sidebar-collapsible", sidebarCollapsible);
-
-        root.style.colorScheme = "dark";
 
       } catch (e) {
         console.warn("ThemeBootScript error:", e);

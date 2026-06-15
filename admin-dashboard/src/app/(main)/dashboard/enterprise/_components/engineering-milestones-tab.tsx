@@ -4,6 +4,8 @@ import { ScrollText } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { dashCardClass, dashCardContentClass, dashCardHeaderClass } from "@/lib/dashboard-ui";
+import { entityBrandStyles } from "@/lib/entity-brand";
+import { cn } from "@/lib/utils";
 
 import { EngineeringBomConsole } from "./engineering-bom-console";
 
@@ -30,18 +32,18 @@ export function EngineeringMilestonesTab() {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {milestoneLanes.map((lane) => (
-          <Card key={lane.title} className={dashCardClass}>
+          <Card key={lane.title} className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
             <CardHeader className={dashCardHeaderClass}>
               <CardTitle className="flex items-center gap-2 text-base">
-                <ScrollText className="size-4" />
+                <ScrollText className={cn("size-4", entityBrandStyles.solar3k.icon)} />
                 {lane.title}
               </CardTitle>
             </CardHeader>
             <CardContent className={dashCardContentClass}>
-              <div className="rounded-md border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 p-4">
-                <div className="font-medium">{lane.card}</div>
-                <div className="mt-2 flex items-center gap-2 text-[#1B1B3A]/60 text-sm">
-                  <span className="size-2 rounded-full bg-cyan-300" />
+              <div className="rounded-md border border-border bg-slate-50 p-4">
+                <div className="font-medium text-foreground">{lane.card}</div>
+                <div className="mt-2 flex items-center gap-2 text-muted-foreground text-sm">
+                  <span className="size-2 rounded-full bg-[var(--brand-3sk)]" />
                   {lane.update}
                 </div>
               </div>

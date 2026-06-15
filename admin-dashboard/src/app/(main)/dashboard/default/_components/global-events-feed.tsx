@@ -9,18 +9,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { GlobalEvent, GlobalEventStatus } from "@/data/demo/global-events";
 import { globalEventsData } from "@/data/demo/global-events";
-import { dashCardClass, dashSectionCardContentClass, dashSectionCardHeaderClass } from "@/lib/dashboard-ui";
+import { dashCardClass, dashInfoBannerClass, dashSectionCardContentClass, dashSectionCardHeaderClass } from "@/lib/dashboard-ui";
+import { entityBrandStyles, statusStyles } from "@/lib/entity-brand";
 import { formatSyncRelativeTime } from "@/lib/sync-time";
 import { cn } from "@/lib/utils";
 
-const statusStyles: Record<GlobalEventStatus, string> = {
-  critical:
-    "border-destructive/30 border-l-destructive bg-destructive/5 shadow-[0_0_0_1px_color-mix(in_oklab,var(--destructive)_10%,transparent)] dark:bg-destructive/10",
-  warning:
-    "border-amber-500/25 border-l-amber-500 bg-amber-500/5 shadow-[0_0_0_1px_rgba(245,158,11,0.08)] dark:bg-amber-500/10",
-  success:
-    "border-emerald-500/25 border-l-emerald-500 bg-emerald-500/5 shadow-[0_0_0_1px_rgba(16,185,129,0.08)] dark:bg-emerald-500/10",
-  info: "border-border/60 border-l-muted-foreground/40 bg-muted/10",
+const eventStatusStyles: Record<GlobalEventStatus, string> = {
+  critical: cn(statusStyles.critical, "border-l-2 shadow-none"),
+  warning: cn(statusStyles.warning, "border-l-2 shadow-none"),
+  success: cn(statusStyles.live, "border-l-2 shadow-none"),
+  info: cn(statusStyles.info, "border-l-2 shadow-none"),
 };
 
 const statusIcons: Record<GlobalEventStatus, typeof AlertCircle> = {
@@ -55,7 +53,7 @@ export function GlobalEventsFeed({
   const openIssues = events.filter((e) => e.status === "critical" || e.status === "warning").length;
 
   return (
-    <Card size="sm" className={cn("flex h-full flex-col border-amber-500/70 border-l-4", dashCardClass)}>
+    <Card size="sm" className={cn("flex h-full flex-col", entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <CardTitle className="flex items-center gap-2 leading-none">
@@ -78,7 +76,7 @@ export function GlobalEventsFeed({
           ) : null}
         </CardDescription>
         {workbookConnected ? (
-          <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-emerald-950 text-sm dark:text-emerald-100">
+          <div className={cn(dashInfoBannerClass, "text-sm")}>
             Live workbook pull - event timestamps use each row&apos;s Logged At column when present, otherwise the sync
             pull time.
           </div>
@@ -86,7 +84,7 @@ export function GlobalEventsFeed({
       </CardHeader>
       <CardContent className={cn("min-h-0 flex-1", dashSectionCardContentClass)}>
         <ScrollArea className="h-72 pr-3">
-          <div className="divide-y divide-neutral-800/60">
+          <div className="divide-y divide-border/60">
             {events.map((event) => {
               const StatusIcon = statusIcons[event.status];
               const isIsoTimestamp = !/ago|just now/i.test(event.timestamp);
@@ -94,16 +92,16 @@ export function GlobalEventsFeed({
               return (
                 <div
                   key={event.id}
-                  className={cn("border-l-2 px-0 py-3 first:pt-0 last:pb-0", statusStyles[event.status])}
+                  className={cn("border-l-2 px-0 py-3 first:pt-0 last:pb-0", eventStatusStyles[event.status])}
                 >
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <div className="flex min-w-0 items-center gap-2">
                       <StatusIcon
                         className={cn(
                           "size-3.5 shrink-0",
-                          event.status === "critical" && "text-destructive",
-                          event.status === "warning" && "text-amber-600 dark:text-amber-400",
-                          event.status === "success" && "text-emerald-600 dark:text-emerald-400",
+                          event.status === "critical" && "text-[var(--status-critical)]",
+                          event.status === "warning" && "text-[var(--status-warning-text)]",
+                          event.status === "success" && "text-[var(--status-live)]",
                           event.status === "info" && "text-muted-foreground",
                         )}
                       />
@@ -113,7 +111,13 @@ export function GlobalEventsFeed({
                       />
                       <Badge
                         variant={statusBadgeVariant[event.status]}
-                        className="h-5 whitespace-nowrap px-1.5 text-[10px]"
+                        className={cn(
+                          "h-5 whitespace-nowrap px-1.5 text-[10px]",
+                          event.status === "critical" && statusStyles.critical,
+                          event.status === "warning" && statusStyles.warning,
+                          event.status === "success" && statusStyles.live,
+                          event.status === "info" && statusStyles.info,
+                        )}
                       >
                         {event.status}
                       </Badge>
@@ -129,7 +133,7 @@ export function GlobalEventsFeed({
                       </span>
                     )}
                   </div>
-                  <p className="line-clamp-2 text-sm leading-relaxed">{event.message}</p>
+                  <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{event.message}</p>
                 </div>
               );
             })}

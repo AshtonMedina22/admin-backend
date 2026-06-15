@@ -34,9 +34,9 @@ interface NavMainProps {
 }
 
 const navItemClass =
-  "h-auto min-h-11 items-start rounded-xl py-2 text-[#1B1B3A]/70 transition-colors hover:bg-[#F7F7FF] hover:text-[#1B1B3A] data-active:border-[#6A00FF] data-active:border-r-2 data-active:bg-[#F7F7FF] data-active:text-[#6A00FF]";
+  "h-auto min-h-11 items-start rounded-xl py-2 text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground data-[active=true]:border-l-2 data-[active=true]:border-[var(--brand-3sk)] data-[active=true]:bg-sidebar-accent data-[active=true]:text-[var(--brand-3sk-text)]";
 const navSubItemClass =
-  "text-[#1B1B3A]/70 transition-colors hover:bg-[#F7F7FF] hover:text-[#1B1B3A] data-active:bg-[#F7F7FF] data-active:text-[#6A00FF]";
+  "text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-[var(--brand-3sk-text)]";
 
 const NavSkillChips = ({ skills }: { skills?: string[] }) => {
   if (!skills?.length) return null;
@@ -46,7 +46,7 @@ const NavSkillChips = ({ skills }: { skills?: string[] }) => {
       {skills.map((skill) => (
         <span
           key={skill}
-          className="rounded-full border border-[#1B1B3A]/10 bg-[#FFFFFF] px-1.5 py-0.5 font-mono text-[#1B1B3A]/70 text-[9px] leading-none group-data-[active=true]/menu-button:border-[#6A00FF]/40 group-data-[active=true]/menu-button:text-[#6A00FF]"
+          className="rounded-full border border-sidebar-border bg-background px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground leading-none group-data-[active=true]/menu-button:border-[color-mix(in_oklab,var(--brand-3sk)_40%,transparent)] group-data-[active=true]/menu-button:text-[var(--brand-3sk-text)]"
         >
           {skill}
         </span>
@@ -155,7 +155,7 @@ const NavItemCollapsed = ({
           </SidebarMenuButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-56 space-y-1 rounded-xl border-[#1B1B3A]/10 bg-[#FFFFFF] p-1 text-[#1B1B3A] shadow-2xl"
+          className="w-56 space-y-1 rounded-xl border bg-popover p-1 text-popover-foreground shadow-lg"
           side="right"
           align="start"
         >

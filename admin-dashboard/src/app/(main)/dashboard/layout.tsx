@@ -41,15 +41,15 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
             "[html[data-content-layout=centered]_&>*]:mx-auto",
             "[html[data-content-layout=centered]_&>*]:w-full",
             "[html[data-content-layout=centered]_&>*]:max-w-screen-2xl",
-            "peer-data-[variant=inset]:border peer-data-[variant=inset]:border-[#1B1B3A]/10",
+            "peer-data-[variant=inset]:border",
             "[--dashboard-header-height:--spacing(12)]",
-            "dashboard-shell min-w-0 overflow-x-hidden bg-[#F7F7FF] text-[#1B1B3A]",
+            "min-w-0 overflow-x-hidden bg-background text-foreground",
           )}
         >
           <header
             className={cn(
-              "flex h-12 shrink-0 items-center gap-2 border-[#1B1B3A]/10 border-b bg-[#F7F7FF]/95 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12",
-              "[html[data-navbar-style=sticky]_&]:sticky [html[data-navbar-style=sticky]_&]:top-0 [html[data-navbar-style=sticky]_&]:z-50 [html[data-navbar-style=sticky]_&]:overflow-hidden [html[data-navbar-style=sticky]_&]:rounded-t-[inherit] [html[data-navbar-style=sticky]_&]:bg-[#F7F7FF]/85 [html[data-navbar-style=sticky]_&]:backdrop-blur-md",
+              "flex h-12 shrink-0 items-center gap-2 border-b bg-background/95 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12",
+              "[html[data-navbar-style=sticky]_&]:sticky [html[data-navbar-style=sticky]_&]:top-0 [html[data-navbar-style=sticky]_&]:z-50 [html[data-navbar-style=sticky]_&]:overflow-hidden [html[data-navbar-style=sticky]_&]:rounded-t-[inherit] [html[data-navbar-style=sticky]_&]:backdrop-blur-md",
             )}
           >
             <div className="flex w-full items-center justify-between gap-2 px-4 lg:px-6">
@@ -67,7 +67,7 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
               </div>
             </div>
           </header>
-          <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden bg-[#F7F7FF] p-3 has-data-[content-padding=false]:p-0 md:p-5">
+          <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden p-3 md:p-4 has-data-[content-padding=false]:p-0">
             <RoleRouteGuard>{children}</RoleRouteGuard>
           </div>
         </SidebarInset>

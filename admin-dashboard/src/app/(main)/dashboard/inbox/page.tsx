@@ -9,6 +9,14 @@ import {
   dashPageClass,
   dashPageHeaderClass,
 } from "@/lib/dashboard-ui";
+import {
+  dashCodeBlockClass,
+  dashCodeBlockSmClass,
+  dashKpiValueClass,
+  dashProseClass,
+  entityBrandStyles,
+  statusStyles,
+} from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
 const draftQueue = [
@@ -71,10 +79,10 @@ HUMAN STEP: Builder Ops reviews the draft before Gmail API send.`;
 
 function DraftQueueCard() {
   return (
-    <Card className={cn("border-cyan-500/60 border-l-4", dashCardClass)}>
+    <Card className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
-          <MailCheck className="size-5 text-cyan-400" />
+          <MailCheck className={cn("size-5", entityBrandStyles.solar3k.icon)} />
           Gmail Draft Queue
         </CardTitle>
         <CardDescription>
@@ -83,20 +91,20 @@ function DraftQueueCard() {
       </CardHeader>
       <CardContent className={cn("grid gap-3", dashCardContentClass)}>
         {draftQueue.map((item) => (
-          <div key={item.title} className="rounded-xl border border-[#1B1B3A]/10 bg-[#F7F7FF] p-4">
+          <div key={item.title} className="rounded-xl border border-border bg-muted/40 p-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <h2 className="font-semibold text-sm text-zinc-100">{item.title}</h2>
+                <h2 className="font-semibold text-foreground text-sm">{item.title}</h2>
                 <p className="mt-1 text-muted-foreground text-xs">{item.source}</p>
               </div>
-              <Badge variant="outline" className="border-cyan-500/30 bg-cyan-950/30 font-mono text-cyan-300">
+              <Badge variant="outline" className={cn("font-mono", statusStyles.info)}>
                 {item.status}
               </Badge>
             </div>
-            <div className="mt-3 grid gap-2 font-mono text-[#1B1B3A]/60 text-[11px] md:grid-cols-[9rem_1fr]">
-              <span className="text-zinc-200">Trigger</span>
+            <div className="mt-3 grid gap-2 font-mono text-[11px] text-muted-foreground md:grid-cols-[9rem_1fr]">
+              <span className="text-foreground">Trigger</span>
               <span>{item.trigger}</span>
-              <span className="text-zinc-200">Row fields</span>
+              <span className="text-foreground">Row fields</span>
               <span>{item.fields}</span>
             </div>
           </div>
@@ -108,10 +116,10 @@ function DraftQueueCard() {
 
 function GmailApiProofCard() {
   return (
-    <Card className={cn("border-emerald-500/60 border-l-4", dashCardClass)}>
+    <Card className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
-          <ShieldCheck className="size-5 text-emerald-400" />
+          <ShieldCheck className={cn("size-5", entityBrandStyles.solar2sk.icon)} />
           Gmail API Draft Worker
         </CardTitle>
         <CardDescription>
@@ -119,19 +127,19 @@ function GmailApiProofCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className={cn("grid gap-4 lg:grid-cols-[0.9fr_1.3fr]", dashCardContentClass)}>
-        <div className="space-y-3 rounded-xl border border-[#1B1B3A]/10 bg-[#1B1B3A]/95 p-4 font-mono text-[#F7F7FF]/75 text-xs leading-relaxed">
+        <div className={cn(dashCodeBlockSmClass, "space-y-3 text-xs leading-relaxed")}>
           <p>
-            <strong className="text-zinc-200">Flow:</strong> Sheet row / app event → server route validates row metadata
+            <strong className="text-slate-100">Flow:</strong> Sheet row / app event → server route validates row metadata
             → OAuth-authenticated Gmail client creates a draft → draft ID is written back to the workbook for audit and
             approval tracking.
           </p>
           <p>
-            <strong className="text-zinc-200">Accuracy guardrail:</strong> Gmail drafts require user OAuth consent or
+            <strong className="text-slate-100">Accuracy guardrail:</strong> Gmail drafts require user OAuth consent or
             Google Workspace domain-wide delegation. A plain service account by itself cannot create drafts inside a
             user mailbox.
           </p>
         </div>
-        <pre className="max-h-[26rem] overflow-auto rounded-xl border border-[#1B1B3A]/10 bg-[#1B1B3A] p-4 font-mono text-[10px] text-emerald-200 leading-relaxed">
+        <pre className={cn(dashCodeBlockClass, "max-h-[26rem] text-[10px]")}>
           <code>{gmailDraftWorker}</code>
         </pre>
       </CardContent>
@@ -141,10 +149,10 @@ function GmailApiProofCard() {
 
 function AiDraftingCard() {
   return (
-    <Card className={cn("border-fuchsia-500/50 border-l-4", dashCardClass)}>
+    <Card className={cn(entityBrandStyles.systems.accentBar, dashCardClass)}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
-          <Bot className="size-5 text-fuchsia-300" />
+          <Bot className={cn("size-5", entityBrandStyles.systems.icon)} />
           AI Draft Generation Contract
         </CardTitle>
         <CardDescription>
@@ -152,10 +160,10 @@ function AiDraftingCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className={cn("grid gap-4 lg:grid-cols-[1fr_1fr]", dashCardContentClass)}>
-        <pre className="overflow-auto rounded-xl border border-[#1B1B3A]/10 bg-[#1B1B3A] p-4 font-mono text-[10px] text-fuchsia-200 leading-relaxed">
+        <pre className={cn(dashCodeBlockClass, "overflow-auto text-[10px]")}>
           <code>{aiDraftPromptContract}</code>
         </pre>
-        <div className="rounded-xl border border-[#1B1B3A]/10 bg-[#F7F7FF] p-4 text-muted-foreground text-xs leading-relaxed">
+        <div className={cn("rounded-xl border border-border bg-muted/40 p-4 text-xs leading-relaxed", dashProseClass)}>
           <p>
             The AI layer should never send email directly. It receives only normalized row fields, drafts concise copy,
             preserves IDs/dates/names, and hands the message to a human approval queue before Gmail draft creation or
@@ -184,7 +192,7 @@ export default function InboxPage() {
             <CardDescription className="flex items-center gap-2 text-xs">
               <MailCheck className="size-4" /> Drafts Waiting Review
             </CardDescription>
-            <CardTitle className="font-mono text-2xl tabular-nums">3</CardTitle>
+            <CardTitle className={dashKpiValueClass}>3</CardTitle>
           </CardHeader>
           <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
             Vendor, AHJ, and calendar reminder drafts generated from workbook metadata.
@@ -195,7 +203,7 @@ export default function InboxPage() {
             <CardDescription className="flex items-center gap-2 text-xs">
               <Bot className="size-4" /> AI-Assisted Drafts
             </CardDescription>
-            <CardTitle className="font-mono text-2xl tabular-nums">2</CardTitle>
+            <CardTitle className={dashKpiValueClass}>2</CardTitle>
           </CardHeader>
           <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
             Controlled prompt output awaiting human approval before any Gmail action.
@@ -206,7 +214,7 @@ export default function InboxPage() {
             <CardDescription className="flex items-center gap-2 text-xs">
               <Send className="size-4" /> Gmail API Path
             </CardDescription>
-            <CardTitle className="font-mono text-2xl tabular-nums">OAuth</CardTitle>
+            <CardTitle className={dashKpiValueClass}>OAuth</CardTitle>
           </CardHeader>
           <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
             Server-only Google client creates drafts; workbook stores draft IDs for audit.

@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { inventoryData } from "@/data/demo/inventory";
 import { dashCardClass, dashCardContentClass, dashCardHeaderClass } from "@/lib/dashboard-ui";
+import { dashCodeBlockSmClass, dashProseClass, entityBrandStyles, statusStyles } from "@/lib/entity-brand";
+import { cn } from "@/lib/utils";
 
 type LogLine = {
   text: string;
@@ -95,12 +97,12 @@ export function EngineeringBomConsole() {
   }
 
   return (
-    <Card className={dashCardClass}>
+    <Card className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
       <CardHeader className={dashCardHeaderClass}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <CardTitle className="flex items-center gap-2 text-base">
-              <Layers className="size-4 text-emerald-600" />
+              <Layers className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
               Cross-Company Material Allocator
             </CardTitle>
             <CardDescription>
@@ -109,7 +111,7 @@ export function EngineeringBomConsole() {
             </CardDescription>
           </div>
           <Button
-            className="border border-cyan-400/30 bg-sky-50 text-sky-700 hover:bg-sky-100 hover:text-sky-800"
+            className={cn("border", statusStyles.info, "hover:bg-muted/50")}
             disabled={status === "running"}
             onClick={runDiagnostics}
           >
@@ -128,23 +130,23 @@ export function EngineeringBomConsole() {
         </div>
       </CardHeader>
       <CardContent className={dashCardContentClass}>
-        <div className="flex h-48 flex-col justify-end overflow-y-auto rounded-lg border border-[#1B1B3A]/10 bg-[#FFFFFF]/90 p-4 font-mono text-xs shadow-inner">
+        <div className="flex h-48 flex-col justify-end overflow-y-auto rounded-lg border border-border bg-slate-50 p-4 font-mono text-xs shadow-inner">
           {logs.length === 0 ? (
-            <div className="py-10 text-center text-zinc-600">
+            <div className="py-10 text-center text-muted-foreground">
               Console listener idle. Click blueprint cross-check to initiate supply array validation.
             </div>
           ) : (
             <div className="space-y-2">
               {logs.map((log) => (
                 <div key={`${log.time}-${log.text}`} className="flex items-start gap-2">
-                  <span className="select-none text-zinc-500">[{log.time}]</span>
+                  <span className="select-none text-muted-foreground">[{log.time}]</span>
                   <span
                     className={
                       log.type === "success"
-                        ? "font-semibold text-emerald-400"
+                        ? "font-semibold text-emerald-700"
                         : log.type === "warn"
-                          ? "font-medium text-amber-400"
-                          : "text-zinc-300"
+                          ? "font-medium text-amber-700"
+                          : "text-foreground"
                     }
                   >
                     {log.text}
@@ -154,19 +156,19 @@ export function EngineeringBomConsole() {
             </div>
           )}
         </div>
-        <div className="mt-3 rounded-lg border border-[#1B1B3A]/10 bg-[#FFFFFF]/90 p-3 font-mono text-[#1B1B3A]/60 text-xs leading-relaxed">
-          <div className="mb-2">
-            <strong className="text-zinc-200">BOM Parser Script Contract:</strong> Production wiring would export or
-            retrieve OpenSolar project/system component rows, normalize manufacturer/model/SKU strings, compare required
-            quantities against the 2SK inventory workbook tab, reserve matching units, and append an audit row for every
-            allocation decision.
-          </div>
-          <pre className="overflow-x-auto rounded-md border border-emerald-500/20 bg-emerald-950/20 p-3 text-[11px] text-emerald-200 leading-relaxed">
+        <div className="mt-3 rounded-md border border-border bg-muted/40 p-3">
+          <p className={dashProseClass}>
+            <strong>BOM Parser Script Contract:</strong> Production wiring would export or retrieve OpenSolar
+            project/system component rows, normalize manufacturer/model/SKU strings, compare required quantities against
+            the 2SK inventory workbook tab, reserve matching units, and append an audit row for every allocation
+            decision.
+          </p>
+          <pre className={cn("mt-2", dashCodeBlockSmClass)}>
             <code>{BOM_PARSER_CONTRACT}</code>
           </pre>
         </div>
         {status === "complete" ? (
-          <div className="mt-3 flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2.5 text-emerald-300 text-xs">
+          <div className={cn("mt-3 flex items-center gap-2 p-2.5 text-xs", statusStyles.live)}>
             <CheckCircle2 className="size-4 shrink-0" />
             Operational verification confirmed: inventory allocations locked onto active project pipeline hooks.
           </div>

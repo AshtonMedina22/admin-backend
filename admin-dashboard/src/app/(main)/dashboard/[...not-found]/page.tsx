@@ -12,7 +12,7 @@ export default function DashboardNotFoundPage() {
       <Card className={`${dashCardClass} mx-auto mt-8 w-full max-w-2xl`}>
         <CardHeader className={dashCardHeaderClass}>
           <CardTitle className="flex items-center gap-2 text-xl">
-            <RouteOff className="size-5 text-cyan-300" />
+            <RouteOff className="size-5 text-[var(--brand-2sk)]" />
             Routing Exception
           </CardTitle>
           <CardDescription className="text-base leading-relaxed">
@@ -20,11 +20,11 @@ export default function DashboardNotFoundPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className={`${dashCardContentClass} flex flex-col gap-4`}>
-          <p className="text-[#1B1B3A]/60 text-sm leading-relaxed">
+          <p className="text-muted-foreground text-sm leading-relaxed">
             Valid workbook tabs include Command Center metrics, Retail Ops, Solar3K Bids, Contractors &amp; Vendors, and
             Website &amp; Systems. Check the sidebar for registered module routes or return to the Command Center.
           </p>
-          <Button asChild className="w-fit border border-cyan-400/30 bg-sky-50 text-sky-700 hover:bg-sky-100">
+          <Button asChild className="w-fit">
             <Link href="/dashboard" prefetch={false}>
               Return to Command Center
             </Link>

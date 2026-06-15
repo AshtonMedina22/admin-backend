@@ -20,28 +20,23 @@ export function AccountSwitcher() {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="flex max-w-[min(100%,14rem)] items-center gap-2 rounded-lg border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 px-2 py-1.5 text-left text-[#1B1B3A] transition-colors hover:bg-[#F7F7FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00F5D4] sm:max-w-xs"
+          className="flex max-w-[min(100%,14rem)] items-center gap-2 rounded-lg border bg-background px-2 py-1.5 text-left text-foreground transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:max-w-xs"
         >
           <Avatar className="size-8 shrink-0 rounded-lg">
             <AvatarFallback>{getInitials(profile.name)}</AvatarFallback>
           </Avatar>
           <div className="hidden min-w-0 flex-1 sm:grid">
             <span className="truncate font-semibold text-sm">Act as: {profile.name}</span>
-            <span className="truncate text-[#1B1B3A]/70 text-xs">{profile.roleLabel}</span>
+            <span className="truncate text-muted-foreground text-xs">{profile.roleLabel}</span>
           </div>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="min-w-64 space-y-1 rounded-lg border-[#1B1B3A]/10 bg-[#FFFFFF] text-[#1B1B3A] shadow-2xl"
-        side="bottom"
-        align="end"
-        sideOffset={4}
-      >
-        <p className="px-2 py-1.5 text-[#1B1B3A]/70 text-xs">Switch RBAC profile for demo review</p>
+      <DropdownMenuContent className="min-w-64 space-y-1" side="bottom" align="end" sideOffset={4}>
+        <p className="px-2 py-1.5 text-muted-foreground text-xs">Switch RBAC profile for demo review</p>
         {dashboardProfiles.map((user) => (
           <DropdownMenuItem
             key={user.id}
-            className={cn("p-0 focus:bg-[#F7F7FF] focus:text-[#1B1B3A]", user.id === profile.id && "bg-[#F7F7FF]")}
+            className={cn("p-0", user.id === profile.id && "bg-accent/50")}
             aria-current={user.id === profile.id ? "true" : undefined}
             onClick={() => setProfileId(user.id)}
           >
@@ -51,13 +46,13 @@ export function AccountSwitcher() {
               </Avatar>
               <div className="grid min-w-0 flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-[#1B1B3A]/70 text-xs">
+                <span className="truncate text-muted-foreground text-xs">
                   {user.roleLabel} · {user.company}
                 </span>
               </div>
               <span
                 className={cn(
-                  "mr-1 flex size-5 items-center justify-center rounded-full text-[#6A00FF] opacity-0",
+                  "mr-1 flex size-5 items-center justify-center rounded-full text-[var(--brand-3sk)] opacity-0",
                   user.id === profile.id && "opacity-100",
                 )}
               >

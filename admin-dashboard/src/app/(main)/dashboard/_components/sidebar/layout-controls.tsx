@@ -101,16 +101,16 @@ export function LayoutControls() {
       <PopoverTrigger asChild>
         <Button
           size="icon"
-          className="border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 text-[#1B1B3A]/80 hover:bg-[#F7F7FF] hover:text-[#6A00FF]"
+          className="border border-border bg-background/80 text-muted-foreground hover:bg-sidebar-accent hover:text-[var(--brand-3sk-text)]"
         >
           <Settings />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="border-[#1B1B3A]/10 bg-[#FFFFFF] text-[#1B1B3A] shadow-2xl">
+      <PopoverContent align="end" className="border-border bg-popover text-foreground shadow-lg">
         <div className="flex flex-col gap-5">
           <div className="space-y-1.5">
             <h4 className="font-medium text-sm leading-none">Preferences</h4>
-            <p className="text-[#1B1B3A]/70 text-xs">Customize your dashboard layout preferences.</p>
+            <p className="text-muted-foreground text-xs">Customize your dashboard layout preferences.</p>
           </div>
           <div className="space-y-3 **:data-[slot=toggle-group]:w-full **:data-[slot=toggle-group-item]:flex-1 **:data-[slot=toggle-group-item]:text-xs">
             <div className="space-y-1">

@@ -33,6 +33,15 @@ import {
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
 } from "@/lib/dashboard-ui";
+import {
+  dashCodeBlockClass,
+  dashKpiValueClass,
+  dashProseClass,
+  entityAccentBarForLabel,
+  entityBadgeClassForLabel,
+  entityBrandStyles,
+  statusStyles,
+} from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
 import { TelemetrySimulatorControl, useTelemetrySimulation } from "../../enterprise/_components/telemetry-simulator";
@@ -61,28 +70,6 @@ function entityLabel(value: string) {
   if (lower.includes("3sk") || lower.includes("3k")) return "3SK";
   if (lower.includes("2sk")) return "2SK";
   return "Shared";
-}
-
-function entityAccent(value: string) {
-  const label = entityLabel(value);
-  if (label === "2SK") return "border-lime-500 border-l-2";
-  if (label === "3SK") return "border-cyan-500 border-l-2";
-  if (label === "YSP") return "border-amber-500 border-l-2";
-  return "border-l-4 border-slate-400/70";
-}
-
-function entityBadgeClass(value: string) {
-  const label = entityLabel(value);
-  if (label === "2SK") return "border-lime-500/20 bg-lime-950/20 text-lime-300";
-  if (label === "3SK") return "border-cyan-500/20 bg-cyan-950/30 text-cyan-300";
-  if (label === "YSP") return "border-amber-500/20 bg-amber-950/30 text-amber-300";
-  return "border-border bg-muted/30 text-muted-foreground";
-}
-
-function metricValueClass(entity: MetricCardConfig["entity"]) {
-  if (entity === "2SK") return "text-lime-300";
-  if (entity === "3SK") return "text-cyan-300";
-  return "text-amber-300";
 }
 
 function utilityAuthorityFor(company: string, projectName: string) {
@@ -117,9 +104,9 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
         "Production wiring: Google Sheets API and Apps Script webhooks ingest workbook rows, normalize company fields, and reconcile multi-company balances before the KPI render pass.",
       trend: trends.b2bPipeline,
       icon: TrendingUp,
-      iconClassName: "text-cyan-500",
+      iconClassName: entityBrandStyles.solar3k.icon,
       entity: "3SK",
-      accentClassName: "border-cyan-500 border-l-2",
+      accentClassName: entityBrandStyles.solar3k.accentBar,
     },
     {
       title: "Live Fleet Yield",
@@ -129,9 +116,9 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
         "Production wiring: a scheduled SolarEdge / SCADA polling worker batches inverter register reads, rate-limits API calls, and maps generation samples into YSP fleet-yield metrics.",
       trend: trends.fleetYield,
       icon: Activity,
-      iconClassName: "text-amber-500",
+      iconClassName: entityBrandStyles.yellowStar.icon,
       entity: "YSP",
-      accentClassName: "border-amber-500 border-l-2",
+      accentClassName: entityBrandStyles.yellowStar.accentBar,
     },
     {
       title: "Combined Portfolio",
@@ -141,9 +128,9 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
         "Production wiring: workbook and telemetry rows are cleaned, type-cast, entity-mapped, and rolled into MW-scale executive capacity metrics for portfolio review.",
       trend: trends.portfolioCapacity,
       icon: Zap,
-      iconClassName: "text-amber-500",
+      iconClassName: entityBrandStyles.yellowStar.icon,
       entity: "YSP",
-      accentClassName: "border-amber-500 border-l-2",
+      accentClassName: entityBrandStyles.yellowStar.accentBar,
     },
     {
       title: "DIY Retail Vol (Mo)",
@@ -153,9 +140,9 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
         "Production wiring: WooCommerce order webhooks post JSON payloads into middleware, which validates SKUs, deduplicates orders, and writes sanitized fulfillment rows to the operations workbook.",
       trend: trends.retailVolume,
       icon: ShoppingCart,
-      iconClassName: "text-lime-500",
+      iconClassName: entityBrandStyles.solar2sk.icon,
       entity: "2SK",
-      accentClassName: "border-lime-500 border-l-2",
+      accentClassName: entityBrandStyles.solar2sk.accentBar,
     },
   ];
 }
@@ -164,14 +151,14 @@ function TelemetryMatrixCard() {
   const telemetry = useTelemetrySimulation();
 
   return (
-    <Card size="sm" className={cn("h-full border-amber-500/70 border-l-4", dashCardClass)}>
+    <Card size="sm" className={cn("h-full", entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
             <CardTitle>Live Interconnection Telemetry</CardTitle>
             <CardDescription>SolarEdge polling loop for YSP grid export status.</CardDescription>
           </div>
-          <Badge variant="outline" className={entityBadgeClass("YSP")}>
+          <Badge variant="outline" className={entityBadgeClassForLabel("YSP")}>
             YSP
           </Badge>
         </div>
@@ -183,17 +170,17 @@ function TelemetryMatrixCard() {
           liveYield={telemetry.liveYield}
         />
         <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-md border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 p-3">
-            <p className="text-[#1B1B3A]/60 text-[11px] uppercase">Generation</p>
-            <p className="font-mono font-semibold text-amber-600 text-lg">{telemetry.liveYield.toFixed(1)} kW</p>
+          <div className="rounded-md border border-border bg-slate-50 p-3">
+            <p className="text-[11px] text-muted-foreground uppercase">Generation</p>
+            <p className={cn(dashKpiValueClass, "text-lg text-amber-600")}>{telemetry.liveYield.toFixed(1)} kW</p>
           </div>
-          <div className="rounded-md border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 p-3">
-            <p className="text-[#1B1B3A]/60 text-[11px] uppercase">Consumption</p>
-            <p className="font-mono font-semibold text-lg">{telemetry.consumptionKw.toFixed(1)} kW</p>
+          <div className="rounded-md border border-border bg-slate-50 p-3">
+            <p className="text-[11px] text-muted-foreground uppercase">Consumption</p>
+            <p className={cn(dashKpiValueClass, "text-lg")}>{telemetry.consumptionKw.toFixed(1)} kW</p>
           </div>
-          <div className="rounded-md border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 p-3">
-            <p className="text-[#1B1B3A]/60 text-[11px] uppercase">Grid Export</p>
-            <p className="font-mono font-semibold text-emerald-600 text-lg">{telemetry.netExport.toFixed(1)} kW</p>
+          <div className="rounded-md border border-border bg-slate-50 p-3">
+            <p className="text-[11px] text-muted-foreground uppercase">Grid Export</p>
+            <p className={cn(dashKpiValueClass, "text-lg text-emerald-600")}>{telemetry.netExport.toFixed(1)} kW</p>
           </div>
         </div>
       </CardContent>
@@ -224,12 +211,12 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
   ];
 
   return (
-    <Card size="sm" className={cn("border-cyan-500/70 border-l-4", dashCardClass)}>
+    <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
             <CardTitle className="flex items-center gap-2">
-              <DatabaseZap className="size-5 text-cyan-400" />
+              <DatabaseZap className={cn("size-5", entityBrandStyles.solar3k.icon)} />
               Command Center Workbook Sync Contract
             </CardTitle>
             <CardDescription>
@@ -240,7 +227,7 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
             variant={workbookConnected ? "default" : "outline"}
             className={cn(
               "h-6 px-2 font-mono text-[10px]",
-              workbookConnected && "bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/15",
+              workbookConnected && statusStyles.live,
             )}
           >
             {workbookConnected ? "Live provider active" : "Preview fallback active"}
@@ -248,32 +235,38 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
         </div>
       </CardHeader>
       <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
-        <div className="grid gap-2 rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-[#F7F7FF]/75 text-xs leading-relaxed">
+        <div className={cn("grid gap-2", dashCodeBlockClass)}>
           <p>
-            <strong className="text-zinc-200">Production flow:</strong>{" "}
-            <span className="text-cyan-300">Google Sheet tab update</span> →{" "}
-            <span className="text-cyan-300">Apps Script endpoint / scheduled pull</span> →{" "}
-            <span className="text-cyan-300">Next.js server fetch</span> →{" "}
-            <span className="text-cyan-300">mapScriptPayloadToCommandCenter()</span> → KPI cards + event stream.
+            <strong className="text-slate-100">Production flow:</strong>{" "}
+            <span className="text-[var(--brand-3sk)]">Google Sheet tab update</span> →{" "}
+            <span className="text-[var(--brand-3sk)]">Apps Script endpoint / scheduled pull</span> →{" "}
+            <span className="text-[var(--brand-3sk)]">Next.js server fetch</span> →{" "}
+            <span className="text-[var(--brand-3sk)]">mapScriptPayloadToCommandCenter()</span> → KPI cards + event
+            stream.
           </p>
           <p>
-            <strong className="text-zinc-200">Current repository path:</strong>{" "}
-            <span className="text-cyan-300">fetchWorkbookCommandCenter()</span> calls{" "}
-            <span className="text-cyan-300">fetchWorkbookScriptPayloadOrNull()</span>, falls through to Sheets API /
+            <strong className="text-slate-100">Current repository path:</strong>{" "}
+            <span className="text-[var(--brand-3sk)]">fetchWorkbookCommandCenter()</span> calls{" "}
+            <span className="text-[var(--brand-3sk)]">fetchWorkbookScriptPayloadOrNull()</span>, falls through to Sheets API /
             published workbook providers when needed, and preserves the dashboard with local demo data if every live
             provider fails.
           </p>
         </div>
         <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
           {syncSteps.map((step, index) => (
-            <div key={step.label} className="rounded-lg border border-[#1B1B3A]/10 bg-[#F7F7FF] p-3">
+            <div key={step.label} className="rounded-lg border border-border bg-muted/40 p-3">
               <div className="mb-2 flex items-center gap-2">
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-cyan-500/30 bg-sky-50 font-mono text-[10px] text-cyan-300">
+                <span
+                  className={cn(
+                    "flex size-5 shrink-0 items-center justify-center rounded-full border font-mono text-[10px]",
+                    entityBrandStyles.solar3k.badge,
+                  )}
+                >
                   {index + 1}
                 </span>
                 <p className="font-semibold text-xs">{step.label}</p>
               </div>
-              <p className="font-mono text-[11px] text-zinc-500 leading-relaxed">{step.detail}</p>
+              <p className={cn(dashProseClass, "font-mono text-[11px] text-muted-foreground")}>{step.detail}</p>
             </div>
           ))}
         </div>
@@ -284,7 +277,7 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
 
 function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["projects"] }) {
   return (
-    <Card size="sm" className={cn("border-indigo-500/70 border-l-4", dashCardClass)}>
+    <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -293,10 +286,7 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
               Commercial, retail, and grid workstreams with utility-aware action drafts.
             </CardDescription>
           </div>
-          <Badge
-            variant="outline"
-            className="border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300"
-          >
+          <Badge variant="outline" className={cn("h-6", entityBrandStyles.solar3k.badge)}>
             AI escalation lane
           </Badge>
         </div>
@@ -305,7 +295,7 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
         <div className="overflow-hidden rounded-md border border-border/60">
           <Table className="min-w-[760px]">
             <TableHeader>
-              <TableRow className="h-9 border-neutral-800/60 hover:bg-transparent">
+              <TableRow className="h-9 border-border/60 hover:bg-transparent">
                 <TableHead>Project</TableHead>
                 <TableHead>Entity</TableHead>
                 <TableHead>Stage</TableHead>
@@ -326,11 +316,11 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
                 return (
                   <TableRow
                     key={project.id}
-                    className={cn("h-11 border-neutral-800/60 hover:bg-muted/30", entityAccent(entity))}
+                    className={cn("h-11 border-border/60 hover:bg-muted/30", entityAccentBarForLabel(entity))}
                   >
                     <TableCell className="max-w-[220px] truncate py-2 font-medium">{project.customer}</TableCell>
                     <TableCell className="py-2">
-                      <Badge variant="outline" className={cn("h-6", entityBadgeClass(entity))}>
+                      <Badge variant="outline" className={cn("h-6", entityBadgeClassForLabel(entity))}>
                         {entity}
                       </Badge>
                     </TableCell>
@@ -407,7 +397,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
             <h1 className="font-semibold text-xl tracking-tight md:text-3xl">Executive Control Tower</h1>
             <Badge
               variant="outline"
-              className="h-6 border-amber-500/30 bg-amber-500/10 px-2 font-mono text-[10px] text-amber-700 dark:text-amber-300"
+              className={cn("h-6 px-2 font-mono text-[10px]", entityBrandStyles.yellowStar.badge)}
             >
               Proof-of-capability demo
             </Badge>
@@ -421,8 +411,8 @@ export function CommandCenter({ data }: CommandCenterProps) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 text-xs">
-          <div className="flex items-center gap-2 rounded-md border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 px-2.5 py-1.5">
-            <DatabaseZap className="size-4 text-cyan-300" />
+          <div className="flex items-center gap-2 rounded-md border border-border bg-slate-50 px-2.5 py-1.5">
+            <DatabaseZap className={cn("size-4", entityBrandStyles.solar3k.icon)} />
             <span className="font-medium">
               {data.source === "workbook" ? "Google Sheets live sync" : "Preview fallback"}
             </span>
@@ -462,21 +452,16 @@ export function CommandCenter({ data }: CommandCenterProps) {
                     </CardDescription>
                     <Badge
                       variant="outline"
-                      className={cn("h-5 shrink-0 px-1.5 text-[10px]", entityBadgeClass(metric.entity))}
+                      className={cn("h-5 shrink-0 px-1.5 text-[10px]", entityBadgeClassForLabel(metric.entity))}
                     >
                       {metric.entity}
                     </Badge>
                   </div>
-                  <CardTitle
-                    className={cn(
-                      "whitespace-nowrap font-bold font-mono text-xl tabular-nums tracking-tight md:text-3xl",
-                      metricValueClass(metric.entity),
-                    )}
-                  >
+                  <CardTitle className={cn(dashKpiValueClass, "whitespace-nowrap md:text-3xl")}>
                     {metric.value}
                   </CardTitle>
                 </div>
-                <span className="rounded-full border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 p-2 shadow-sm">
+                <span className="rounded-full border border-border bg-slate-50 p-2 shadow-sm">
                   <Icon className={`size-4 ${metric.iconClassName}`} />
                 </span>
               </CardHeader>
@@ -485,12 +470,12 @@ export function CommandCenter({ data }: CommandCenterProps) {
                   <p className="line-clamp-2 text-[11px] text-muted-foreground leading-snug">{metric.caption}</p>
                   <Badge
                     variant="outline"
-                    className="shrink-0 whitespace-nowrap border-emerald-500/30 bg-emerald-500/10 text-[10px] text-emerald-600"
+                    className={cn("shrink-0 whitespace-nowrap text-[10px]", statusStyles.live)}
                   >
                     {metric.trend}
                   </Badge>
                 </div>
-                <p className="mt-2 border-[#1B1B3A]/10 border-t pt-2 font-mono text-[10px] text-zinc-500 leading-relaxed">
+                <p className="mt-2 border-border border-t pt-2 font-mono text-[10px] text-muted-foreground leading-relaxed">
                   {metric.technicalNote}
                 </p>
               </CardContent>

@@ -36,7 +36,7 @@ export function RoleRouteGuard({ children }: { children: ReactNode }) {
           </CardDescription>
         </CardHeader>
         <CardContent className={dashCardContentClass}>
-          <Button asChild className="border border-cyan-400/30 bg-sky-50 text-sky-700 hover:bg-sky-100">
+          <Button asChild>
             <Link href="/dashboard/retail">Go to Consumer Retail Hub</Link>
           </Button>
         </CardContent>

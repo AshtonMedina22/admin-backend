@@ -7,12 +7,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { totalMonthlySpend, urgentAlertsCount } from "@/data/demo/systems";
 import {
+  dashAlertBannerClass,
   dashCardClass,
   dashCardContentClass,
   dashCardHeaderClass,
   dashPageClass,
   dashPageHeaderClass,
 } from "@/lib/dashboard-ui";
+import {
+  dashCodeBlockClass,
+  dashCodeBlockSmClass,
+  dashKpiValueClass,
+  dashProseClass,
+  entityBrandStyles,
+  statusStyles,
+} from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
 export type DomainMonitorRow = {
@@ -195,7 +204,7 @@ export const defaultAccessRows: AccessRow[] = [
 
 function GoogleCloudServiceAccountScopeMap() {
   return (
-    <Card className={cn("border-cyan-500/60 border-l-4", dashCardClass)}>
+    <Card className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle>Google Cloud Service Account / OAuth Scope Map</CardTitle>
         <CardDescription>
@@ -204,23 +213,25 @@ function GoogleCloudServiceAccountScopeMap() {
         </CardDescription>
       </CardHeader>
       <CardContent className={cn("space-y-4", dashCardContentClass)}>
-        <div className="grid gap-2 rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-[#F7F7FF]/75 text-xs leading-relaxed md:grid-cols-[10rem_1fr]">
-          <span className="text-zinc-200">Auth path</span>
+        <div className={cn(dashCodeBlockSmClass, "grid gap-2 text-xs leading-relaxed md:grid-cols-[10rem_1fr]")}>
+          <span className="text-slate-100">Auth path</span>
           <span>
             Service account for shared Sheets/Drive assets, delegated OAuth for user mailbox/calendar actions →
             least-privilege Google scopes → server-only credentials in Vercel environment variables → backend API routes
             and scheduled workers.
           </span>
-          <span className="text-zinc-200">Env keys</span>
-          <span className="text-cyan-300">
+          <span className="text-slate-100">Env keys</span>
+          <span className={entityBrandStyles.solar3k.text}>
             GOOGLE_CLIENT_EMAIL · GOOGLE_PRIVATE_KEY · GOOGLE_SHEET_ID · OPS_CALENDAR_ID
           </span>
         </div>
         <div className="grid gap-3 md:grid-cols-2">
           {oauthScopeMap.map((item) => (
-            <div key={item.scope} className="rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A]/60 p-3">
-              <p className="font-semibold text-sm text-zinc-200">{item.label}</p>
-              <code className="mt-1 block break-all font-mono text-[11px] text-cyan-300">{item.scope}</code>
+            <div key={item.scope} className="rounded-lg border border-border bg-muted/40 p-3">
+              <p className="font-semibold text-foreground text-sm">{item.label}</p>
+              <code className={cn("mt-1 block break-all font-mono text-[11px]", entityBrandStyles.solar3k.text)}>
+                {item.scope}
+              </code>
               <p className="mt-2 text-muted-foreground text-xs leading-relaxed">{item.use}</p>
             </div>
           ))}
@@ -232,7 +243,7 @@ function GoogleCloudServiceAccountScopeMap() {
 
 function WebsiteMaintenanceRunbook() {
   return (
-    <Card className={cn("border-amber-500/60 border-l-4", dashCardClass)}>
+    <Card className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle>Website Maintenance Runbook</CardTitle>
         <CardDescription>
@@ -242,8 +253,10 @@ function WebsiteMaintenanceRunbook() {
       <CardContent className={dashCardContentClass}>
         <ol className="grid gap-2 text-muted-foreground text-xs leading-relaxed md:grid-cols-5">
           {websiteMaintenanceSteps.map((step, index) => (
-            <li key={step} className="rounded-lg border border-[#1B1B3A]/10 bg-[#F7F7FF] p-3">
-              <span className="mb-2 block font-mono text-amber-300 tabular-nums">0{index + 1}</span>
+            <li key={step} className="rounded-lg border border-border bg-muted/40 p-3">
+              <span className={cn("mb-2 block font-mono tabular-nums", entityBrandStyles.yellowStar.text)}>
+                0{index + 1}
+              </span>
               {step}
             </li>
           ))}
@@ -255,7 +268,7 @@ function WebsiteMaintenanceRunbook() {
 
 function AutomationPlatformRegistry() {
   return (
-    <Card className={cn("border-fuchsia-500/50 border-l-4", dashCardClass)}>
+    <Card className={cn(entityBrandStyles.systems.accentBar, dashCardClass)}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle>Automation Platform Registry</CardTitle>
         <CardDescription>
@@ -265,9 +278,9 @@ function AutomationPlatformRegistry() {
       <CardContent className={dashCardContentClass}>
         <div className="grid gap-3 md:grid-cols-3">
           {automationRegistryRows.map((row) => (
-            <div key={row.platform} className="rounded-lg border border-[#1B1B3A]/10 bg-[#F7F7FF] p-3">
-              <p className="font-semibold text-sm text-zinc-100">{row.platform}</p>
-              <p className="mt-2 font-mono text-[#1B1B3A]/60 text-[11px] leading-relaxed">{row.flow}</p>
+            <div key={row.platform} className="rounded-lg border border-border bg-muted/40 p-3">
+              <p className="font-semibold text-foreground text-sm">{row.platform}</p>
+              <p className={cn("mt-2 font-mono text-[11px] leading-relaxed", dashProseClass)}>{row.flow}</p>
             </div>
           ))}
         </div>
@@ -301,18 +314,18 @@ function DomainMonitors({ domainMonitors }: { domainMonitors: DomainMonitorRow[]
             </div>
           </CardHeader>
           <CardContent className={cn("grid gap-2 text-sm", dashCardContentClass)}>
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 px-3 py-2">
-              <span className="text-[#1B1B3A]/60">SSL Handshake Status</span>
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-slate-50 px-3 py-2">
+              <span className="text-muted-foreground">SSL Handshake Status</span>
               <Badge variant={domain.critical ? "destructive" : "outline"} className="font-mono">
                 {domain.ssl}
               </Badge>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 px-3 py-2">
-              <span className="text-[#1B1B3A]/60">Expiration / Renewal</span>
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-slate-50 px-3 py-2">
+              <span className="text-muted-foreground">Expiration / Renewal</span>
               <span className="font-medium font-mono">{domain.renewal}</span>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 px-3 py-2">
-              <span className="text-[#1B1B3A]/60">Assigned Administrator Handle</span>
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-slate-50 px-3 py-2">
+              <span className="text-muted-foreground">Assigned Administrator Handle</span>
               <span className="font-medium font-mono">{domain.admin}</span>
             </div>
           </CardContent>
@@ -333,7 +346,7 @@ function SubscriptionLedger({ subscriptions }: { subscriptions: SubscriptionRow[
         <CardDescription>Dense monthly software spend ledger across corporate operating systems.</CardDescription>
       </CardHeader>
       <CardContent className={cn("grid gap-4", dashCardContentClass)}>
-        <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-[#1B1B3A]/10">
+        <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-border">
           <Table className="min-w-[860px]">
             <TableHeader>
               <TableRow>
@@ -357,7 +370,7 @@ function SubscriptionLedger({ subscriptions }: { subscriptions: SubscriptionRow[
             </TableBody>
           </Table>
         </div>
-        <div className="rounded-md border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 p-4 font-medium font-mono text-[#1B1B3A]/70">
+        <div className="rounded-md border border-border bg-slate-50 p-4 font-medium font-mono text-muted-foreground">
           Aggregated Global Tool Burn Rate: ${monthlyTotal.toFixed(2)} / month (${annualTotal.toLocaleString()}.00 /
           year).
         </div>
@@ -376,7 +389,7 @@ function AccessControls({ accessRows }: { accessRows: AccessRow[] }) {
         </CardDescription>
       </CardHeader>
       <CardContent className={dashCardContentClass}>
-        <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-[#1B1B3A]/10">
+        <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-border">
           <Table className="min-w-[860px]">
             <TableHeader>
               <TableRow>
@@ -413,7 +426,7 @@ function GoogleWorkspaceArchitectureSpec() {
         <>
           Production wiring protects Google quotas by checking Apps Script webhook payloads first, then authenticated
           Sheets API reads, then published CSV fallback. A deployed version would add timed revalidation or tag-based
-          cache invalidation around <span className="font-mono text-cyan-400">lib/google-sheets.ts</span> so workbook
+          cache invalidation around <span className={cn("font-mono", entityBrandStyles.solar3k.icon)}>lib/google-sheets.ts</span> so workbook
           pulls stay fast without hammering Google endpoints.
         </>
       ),
@@ -423,11 +436,11 @@ function GoogleWorkspaceArchitectureSpec() {
       body: (
         <>
           Acts as our core operational parser inside{" "}
-          <span className="font-mono text-cyan-400">lib/google-sheets.ts</span>. The backend receives raw, unvalidated
+          <span className={cn("font-mono", entityBrandStyles.solar3k.icon)}>lib/google-sheets.ts</span>. The backend receives raw, unvalidated
           string arrays from the Google Sheets API spreadsheet rows, strips out whitespace trailing anomalies, checks
           row integrity values, and maps strings into strongly typed JSON data models for the{" "}
-          <span className="font-mono text-lime-400">2SK</span>, <span className="font-mono text-cyan-400">3SK</span>,
-          and <span className="font-mono text-amber-400">YSP</span> views.
+          <span className={entityBrandStyles.solar2sk.text}>2SK</span>, <span className={entityBrandStyles.solar3k.text}>3SK</span>,
+          and <span className={entityBrandStyles.yellowStar.text}>YSP</span> views.
         </>
       ),
     },
@@ -437,7 +450,7 @@ function GoogleWorkspaceArchitectureSpec() {
         <>
           Enforces data safety guardrails across the platform. All server-side connection queries are isolated inside
           robust
-          <span className="font-mono text-cyan-400"> try/catch </span>exception loops. If a workbook formula breaks or a
+          <span className={cn("font-mono", entityBrandStyles.solar3k.icon)}> try/catch </span>exception loops. If a workbook formula breaks or a
           network timeout happens, route-level handlers fall through to the next provider, raise a targeted validation
           warning, and keep the dashboard online instead of returning a generic 500 crash.
         </>
@@ -446,12 +459,12 @@ function GoogleWorkspaceArchitectureSpec() {
   ];
 
   return (
-    <section className="mt-6 space-y-4 border-[#1B1B3A]/10 border-t pt-6">
+    <section className="mt-6 space-y-4 border-border border-t pt-6">
       <div>
-        <h2 className="font-semibold text-base text-zinc-200">
+        <h2 className="font-semibold text-base text-foreground">
           Google Workspace Production Data Architecture & System Guardrails
         </h2>
-        <p className="mt-0.5 font-mono text-[11px] text-zinc-500">
+        <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">
           Technical implementation strategies protecting cloud synchronization pathways.
         </p>
       </div>
@@ -460,10 +473,10 @@ function GoogleWorkspaceArchitectureSpec() {
         {specs.map((spec) => (
           <div
             key={spec.title}
-            className="space-y-2 rounded-xl border border-[#1B1B3A]/10 bg-zinc-900/40 p-5 backdrop-blur-md"
+            className="space-y-2 rounded-xl border border-border bg-muted/40 p-5"
           >
-            <h3 className="font-bold font-mono text-cyan-400 text-xs">{spec.title}</h3>
-            <p className="font-mono text-[#1B1B3A]/60 text-xs leading-relaxed">{spec.body}</p>
+            <h3 className={cn("font-bold font-mono text-xs", entityBrandStyles.solar3k.text)}>{spec.title}</h3>
+            <p className={cn("font-mono text-xs leading-relaxed", dashProseClass)}>{spec.body}</p>
           </div>
         ))}
       </div>
@@ -473,12 +486,12 @@ function GoogleWorkspaceArchitectureSpec() {
 
 function InfrastructureStatusLog() {
   return (
-    <Card className={cn("border-amber-500/60 border-l-4", dashCardClass)}>
+    <Card className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle className="text-base">Infrastructure Status Log</CardTitle>
       </CardHeader>
       <CardContent className={dashCardContentClass}>
-        <p className="font-mono text-amber-200 text-sm leading-relaxed">
+        <p className={cn(dashAlertBannerClass, "font-mono text-sm leading-relaxed")}>
           DreamHost Server Status: 1 Domain Flagged URGENT (solar2sk.com SSL handshake exception)
         </p>
       </CardContent>
@@ -495,7 +508,7 @@ function SystemsKpiStrip({ monthlySpend, urgentAlerts }: { monthlySpend: number;
             <DollarSign className="size-4" />
             Monthly SaaS Burn Rate
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">${monthlySpend.toFixed(0)}</CardTitle>
+          <CardTitle className={dashKpiValueClass}>${monthlySpend.toFixed(0)}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           DreamHost, Vercel, Zapier, DocuSign, and QuickBooks - low-overhead automated stack
@@ -507,19 +520,19 @@ function SystemsKpiStrip({ monthlySpend, urgentAlerts }: { monthlySpend: number;
             <Globe2 className="size-4" />
             Domain Monitors
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">4</CardTitle>
+          <CardTitle className={dashKpiValueClass}>4</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Multi-tenant WordPress and Next.js property health
         </CardContent>
       </Card>
-      <Card size="sm" className={cn(dashCardClass, urgentAlerts > 0 ? "border-amber-500/40" : undefined)}>
+      <Card size="sm" className={cn(dashCardClass, urgentAlerts > 0 ? entityBrandStyles.yellowStar.accentBar : undefined)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <AlertTriangle className="size-4" />
             Urgent Infrastructure Alerts
           </CardDescription>
-          <CardTitle className={cn("font-mono text-2xl tabular-nums", urgentAlerts > 0 && "text-amber-600")}>
+          <CardTitle className={cn(dashKpiValueClass, urgentAlerts > 0 && entityBrandStyles.yellowStar.text)}>
             {urgentAlerts}
           </CardTitle>
         </CardHeader>
@@ -571,10 +584,10 @@ export function SystemsDashboard({
           </CardHeader>
           <CardContent className={cn("space-y-3", dashCardContentClass)}>
             <div className="grid gap-2 text-sm">
-              <div className="grid gap-1 rounded-md border border-[#1B1B3A]/10 px-3 py-2 md:grid-cols-[11rem_1fr] md:items-center">
+              <div className="grid gap-1 rounded-md border border-border px-3 py-2 md:grid-cols-[11rem_1fr] md:items-center">
                 <span className="font-medium">Published Workbook</span>
                 <div className="grid gap-1">
-                  <code className="w-fit select-all rounded border border-[#1B1B3A]/10/80 bg-[#1B1B3A]/95 px-2 py-1 font-mono text-[11px] text-cyan-300/90">
+                  <code className={cn("w-fit select-all rounded border px-2 py-1 font-mono text-[11px]", dashCodeBlockSmClass, "inline-block")}>
                     YSP_Operations HTML export → server parser
                   </code>
                   <p className="text-muted-foreground text-xs">
@@ -583,10 +596,10 @@ export function SystemsDashboard({
                   </p>
                 </div>
               </div>
-              <div className="grid gap-1 rounded-md border border-[#1B1B3A]/10 px-3 py-2 md:grid-cols-[11rem_1fr] md:items-center">
+              <div className="grid gap-1 rounded-md border border-border px-3 py-2 md:grid-cols-[11rem_1fr] md:items-center">
                 <span className="font-medium">Apps Script Webhook</span>
                 <div className="grid gap-1">
-                  <code className="w-fit select-all rounded border border-[#1B1B3A]/10/80 bg-[#1B1B3A]/95 px-2 py-1 font-mono text-[11px] text-cyan-300/90">
+                  <code className={cn("w-fit select-all rounded border px-2 py-1 font-mono text-[11px]", dashCodeBlockSmClass, "inline-block")}>
                     doPost(JSON) → normalize event → append row
                   </code>
                   <p className="text-muted-foreground text-xs">
@@ -595,10 +608,10 @@ export function SystemsDashboard({
                   </p>
                 </div>
               </div>
-              <div className="grid gap-1 rounded-md border border-[#1B1B3A]/10 px-3 py-2 md:grid-cols-[11rem_1fr] md:items-center">
+              <div className="grid gap-1 rounded-md border border-border px-3 py-2 md:grid-cols-[11rem_1fr] md:items-center">
                 <span className="font-medium">Sheets API Fallback</span>
                 <div className="grid gap-1">
-                  <code className="w-fit select-all rounded border border-[#1B1B3A]/10/80 bg-[#1B1B3A]/95 px-2 py-1 font-mono text-[11px] text-cyan-300/90">
+                  <code className={cn("w-fit select-all rounded border px-2 py-1 font-mono text-[11px]", dashCodeBlockSmClass, "inline-block")}>
                     service account → slug map → sheet tab range
                   </code>
                   <p className="text-muted-foreground text-xs">
@@ -608,7 +621,7 @@ export function SystemsDashboard({
                 </div>
               </div>
             </div>
-            <pre className="overflow-x-auto rounded-md border border-[#1B1B3A]/10/80 bg-[#1B1B3A]/95 p-3 font-mono text-[11px] text-cyan-300/90 leading-relaxed">
+            <pre className={cn(dashCodeBlockSmClass, "text-[11px]")}>
               {`Data path: dashboard route → fetchPublishedSectionTable() → Apps Script payload fallback → fetchSheet(slug) → typed UI rows`}
             </pre>
           </CardContent>

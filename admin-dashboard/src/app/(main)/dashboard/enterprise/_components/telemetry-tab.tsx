@@ -6,7 +6,15 @@ import { EntityBrandBadge } from "@/components/dashboard/entity-brand-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { activeTelemetryAssets, aggregateEnvironmentalImpact } from "@/data/demo/telemetry";
-import { dashCardClass, dashCardContentClass, dashCardHeaderClass } from "@/lib/dashboard-ui";
+import { dashCardClass, dashCardContentClass, dashCardHeaderClass, dashAlertBannerClass } from "@/lib/dashboard-ui";
+import {
+  dashCodeBlockClass,
+  dashCodeBlockSmClass,
+  dashKpiValueClass,
+  dashProseClass,
+  entityBrandStyles,
+  statusStyles,
+} from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
 import { TelemetrySimulatorControl, useTelemetrySimulation } from "./telemetry-simulator";
@@ -80,9 +88,9 @@ export async function fetchSolarEdgeTelemetry(siteId: string) {
 
 function MetricRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-md border border-[#1B1B3A]/10 bg-[#FFFFFF]/80 px-3 py-2">
-      <span className="text-[#1B1B3A]/60 text-sm">{label}</span>
-      <span className="font-medium text-[#1B1B3A] text-sm tabular-nums">{value}</span>
+    <div className="flex items-center justify-between gap-4 rounded-md border border-border bg-slate-50 px-3 py-2">
+      <span className="text-muted-foreground text-sm">{label}</span>
+      <span className={cn(dashKpiValueClass, "text-sm")}>{value}</span>
     </div>
   );
 }
@@ -114,7 +122,7 @@ export function TelemetryTab() {
                 </div>
                 <CardDescription>YSP Operations</CardDescription>
               </div>
-              <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-300">
+              <Badge className={cn("hover:bg-[var(--status-live-bg)]", statusStyles.live)}>
                 <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
                 ACTIVE GENERATING
               </Badge>
@@ -127,12 +135,12 @@ export function TelemetryTab() {
             <MetricRow label="Inverter Efficiency" value={`${efficiency}%`} />
             <MetricRow label="Battery Storage Capacity" value="92.5% (LiFePO4 Core Bank)" />
 
-            <div className="mt-2 rounded-md border border-[#1B1B3A]/10 bg-[#F7F7FF]/70 p-3 text-sm">
-              <div className="mb-2 flex items-center gap-2 font-medium">
+            <div className="mt-2 rounded-md border border-border bg-muted/40 p-3 text-sm">
+              <div className="mb-2 flex items-center gap-2 font-medium text-foreground">
                 <Cpu className="size-4" />
                 Hardware Data
               </div>
-              <p className="text-[#1B1B3A]/60">Array Matrix: 4x SolarEdge SE100K Units</p>
+              <p className="text-muted-foreground">Array Matrix: 4x SolarEdge SE100K Units</p>
             </div>
           </CardContent>
         </Card>
@@ -147,7 +155,7 @@ export function TelemetryTab() {
                 </div>
                 <CardDescription>3SK Client Operations</CardDescription>
               </div>
-              <Badge className="bg-amber-500/15 text-amber-700 hover:bg-amber-500/15 dark:text-amber-300">
+              <Badge className={cn("hover:bg-[var(--status-warning-bg)]", statusStyles.warning)}>
                 <AlertTriangle className="size-3 animate-pulse" />
                 SYSTEM FAULT
               </Badge>
@@ -161,24 +169,24 @@ export function TelemetryTab() {
               value="-45.1 kW (System drawing from grid to cover business facility load)"
             />
 
-            <div className="mt-2 rounded-md border border-[#1B1B3A]/10 bg-[#F7F7FF]/70 p-3 text-sm">
-              <div className="mb-2 flex items-center gap-2 font-medium">
+            <div className="mt-2 rounded-md border border-border bg-muted/40 p-3 text-sm">
+              <div className="mb-2 flex items-center gap-2 font-medium text-foreground">
                 <Cpu className="size-4" />
                 Hardware Data & Telemetry Error Output
               </div>
-              <p className="text-[#1B1B3A]/60">
+              <p className="text-muted-foreground">
                 SolarEdge SE100K-USR4 | SN: 7F003821-99C | Core Temp: 22.8°C | Last Ping: 18 minutes ago (Stale).
               </p>
             </div>
 
-            <pre className="overflow-x-auto rounded-md border border-amber-500/20 bg-amber-950/20 p-3 font-mono text-amber-200 text-xs">
+            <pre className={cn(dashAlertBannerClass, "font-mono text-xs")}>
               {`[ERR-CODE: 18x2] - Utility Isolation Timeout Fault. Check Oncor Interconnection Circuit Line Balance Status.`}
             </pre>
           </CardContent>
         </Card>
       </div>
 
-      <Card className={cn("border-cyan-500 border-l-4", dashCardClass)}>
+      <Card className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardTitle>SolarEdge Telemetry API Wiring Spec</CardTitle>
           <CardDescription>
@@ -187,36 +195,39 @@ export function TelemetryTab() {
           </CardDescription>
         </CardHeader>
         <CardContent className={cn("grid gap-3", dashCardContentClass)}>
-          <div className="grid gap-2 rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-cyan-400/90 text-xs leading-relaxed">
+          <div className={cn("grid gap-2", dashCodeBlockClass)}>
             <p>
-              <strong className="text-zinc-200">Accuracy check:</strong> SolarEdge exposes site overview/current power,
+              <strong className="text-slate-100">Accuracy check:</strong> SolarEdge exposes site overview/current power,
               power-flow, inventory, inverter technical data, meter/sensor data, and environmental-benefits endpoints.
               API keys belong on a server route or scheduled worker, not in browser JavaScript.
             </p>
             <p>
-              <strong className="text-zinc-200">Production path:</strong> poll{" "}
-              <span className="text-cyan-300">/site/&lt;siteId&gt;/currentPowerFlow</span>,{" "}
-              <span className="text-cyan-300">/overview</span>, <span className="text-cyan-300">/inventory</span>,
-              inverter technical-data endpoints, and <span className="text-cyan-300">/envBenefits</span>; normalize
+              <strong className="text-slate-100">Production path:</strong> poll{" "}
+              <span className="text-[var(--brand-3sk)]">/site/&lt;siteId&gt;/currentPowerFlow</span>,{" "}
+              <span className="text-[var(--brand-3sk)]">/overview</span>,{" "}
+              <span className="text-[var(--brand-3sk)]">/inventory</span>, inverter technical-data endpoints, and{" "}
+              <span className="text-[var(--brand-3sk)]">/envBenefits</span>; normalize
               units into one typed dashboard payload; cache/revalidate server-side; then render only sanitized telemetry
               records in this tab.
             </p>
           </div>
-          <pre className="max-h-96 overflow-x-auto rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-4 font-mono text-[11px] text-cyan-200 leading-relaxed">
+          <pre className={cn("max-h-96", dashCodeBlockClass)}>
             <code>{SOLAREDGE_TELEMETRY_CODE}</code>
           </pre>
-          <div className="rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-[#F7F7FF]/75 text-xs leading-relaxed">
-            <strong className="text-zinc-200">Server fetch contract:</strong> SolarEdge Monitoring API examples use an
-            API key in the query string, so the key must live in a backend route, server action, or scheduled worker.
-            The dashboard should only receive the normalized payload after endpoint responses are validated and cached.
+          <div className="rounded-md border border-border bg-muted/40 p-3">
+            <p className={dashProseClass}>
+              <strong>Server fetch contract:</strong> SolarEdge Monitoring API examples use an API key in the query
+              string, so the key must live in a backend route, server action, or scheduled worker. The dashboard should
+              only receive the normalized payload after endpoint responses are validated and cached.
+            </p>
           </div>
-          <pre className="max-h-80 overflow-x-auto rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-4 font-mono text-[11px] text-cyan-200 leading-relaxed">
+          <pre className={cn("max-h-80", dashCodeBlockClass)}>
             <code>{SOLAREDGE_FETCH_CODE}</code>
           </pre>
         </CardContent>
       </Card>
 
-      <Card className={cn("border-emerald-500 border-l-4", dashCardClass)}>
+      <Card className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardTitle>Normalized Live Data Mock Payload</CardTitle>
           <CardDescription>
@@ -227,36 +238,44 @@ export function TelemetryTab() {
         <CardContent className={cn("grid gap-3", dashCardContentClass)}>
           <div className="grid gap-3 lg:grid-cols-2">
             {activeTelemetryAssets.map((asset) => (
-              <div key={asset.inverterId} className="rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3">
+              <div key={asset.inverterId} className={cn("rounded-lg border border-border", dashCodeBlockSmClass)}>
                 <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <p className="font-semibold text-sm">{asset.associatedAsset}</p>
-                    <p className="font-mono text-[#1B1B3A]/60 text-xs">
+                    <p className="font-semibold text-slate-100 text-sm">{asset.associatedAsset}</p>
+                    <p className="font-mono text-slate-400 text-xs">
                       {asset.hardware.model} · SN {asset.hardware.serialNumber}
                     </p>
                   </div>
-                  <Badge variant="outline" className="font-mono text-xs">
+                  <Badge variant="outline" className={cn("font-mono text-xs", entityBrandStyles.solar3k.badge)}>
                     {asset.entityCompany}
                   </Badge>
                 </div>
-                <div className="grid gap-2 font-mono text-xs">
-                  <MetricRow label="PV generation" value={`${asset.currentPowerFlowKw.pvGeneration.toFixed(1)} kW`} />
-                  <MetricRow
-                    label="Facility load"
-                    value={`${asset.currentPowerFlowKw.consumptionLoad.toFixed(1)} kW`}
-                  />
-                  <MetricRow label="Grid feed / draw" value={`${asset.currentPowerFlowKw.gridFeedIn.toFixed(1)} kW`} />
-                  <MetricRow label="Lifetime energy" value={formatEnergy(asset.telemetryLogs.lifetimeEnergyWh)} />
-                  <MetricRow label="Status" value={asset.systemStatus.replaceAll("_", " ")} />
+                <div className="grid gap-2 font-mono text-xs text-slate-100">
+                  {[
+                    ["PV generation", `${asset.currentPowerFlowKw.pvGeneration.toFixed(1)} kW`],
+                    ["Facility load", `${asset.currentPowerFlowKw.consumptionLoad.toFixed(1)} kW`],
+                    ["Grid feed / draw", `${asset.currentPowerFlowKw.gridFeedIn.toFixed(1)} kW`],
+                    ["Lifetime energy", formatEnergy(asset.telemetryLogs.lifetimeEnergyWh)],
+                    ["Status", asset.systemStatus.replaceAll("_", " ")],
+                  ].map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="flex items-center justify-between gap-4 rounded-md border border-slate-700 bg-slate-900/50 px-3 py-2"
+                    >
+                      <span className="text-slate-400">{label}</span>
+                      <span className="font-semibold tabular-nums">{value}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
           </div>
-          <div className="rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-[#F7F7FF]/75 text-xs leading-relaxed">
-            <strong className="text-zinc-200">Environmental rollup:</strong>{" "}
-            {aggregateEnvironmentalImpact.co2SavedLbs.toLocaleString()} lbs CO₂ avoided ·{" "}
-            {aggregateEnvironmentalImpact.equivalentTreesPlanted.toLocaleString()} tree-equivalent offset ·{" "}
-            {aggregateEnvironmentalImpact.lightBulbDaysPowered.toLocaleString()} light-bulb days powered.
+          <div className="rounded-md border border-border bg-muted/40 p-3">
+            <p className={dashProseClass}>
+              <strong>Environmental rollup:</strong> {aggregateEnvironmentalImpact.co2SavedLbs.toLocaleString()} lbs CO₂
+              avoided · {aggregateEnvironmentalImpact.equivalentTreesPlanted.toLocaleString()} tree-equivalent offset ·{" "}
+              {aggregateEnvironmentalImpact.lightBulbDaysPowered.toLocaleString()} light-bulb days powered.
+            </p>
           </div>
         </CardContent>
       </Card>

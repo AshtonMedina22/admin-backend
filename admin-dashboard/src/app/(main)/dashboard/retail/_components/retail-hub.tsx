@@ -18,7 +18,18 @@ import {
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
 } from "@/lib/dashboard-ui";
+import {
+  dashCodeBlockSmClass,
+  dashKpiValueClass,
+  dashProseClass,
+  entityAccentBarForLabel,
+  entityBrandStyles,
+  statusStyles,
+} from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
+
+const retailTabTriggerClass =
+  "gap-2 border border-transparent px-3 py-2 text-muted-foreground transition-all hover:border-border hover:bg-muted/40 hover:text-foreground data-[state=active]:border-[color-mix(in_oklab,var(--brand-2sk)_30%,transparent)] data-[state=active]:bg-muted/40 data-[state=active]:font-semibold data-[state=active]:text-[var(--brand-2sk-text)]";
 
 export type RetailLogisticsOrder = {
   orderId: string;
@@ -99,49 +110,49 @@ function KpiStrip({
   const stats = fulfillmentStats(orders);
   return (
     <div className={cn(dashKpiGridClass, "grid-cols-1 md:grid-cols-2 lg:grid-cols-4")}>
-      <Card size="sm" className={cn("border-lime-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <Package className="size-4 text-lime-500" />
+            <Package className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
             Open Order Backlog
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">{Math.max(45, totalBacklogUnits)}</CardTitle>
+          <CardTitle className={dashKpiValueClass}>{Math.max(45, totalBacklogUnits)}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Active WooCommerce orders across 2SK hardware fulfillment.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn("border-lime-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <PackageCheck className="size-4 text-lime-500" />
+            <PackageCheck className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
             Awaiting Warehouse Pull
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">{stats.awaitingPull}</CardTitle>
+          <CardTitle className={dashKpiValueClass}>{stats.awaitingPull}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Wylie warehouse pull queue for inverter and kit SKUs.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn("border-lime-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <BatteryCharging className="size-4 text-lime-500" />
+            <BatteryCharging className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
             Battery Kits Inbound
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">{Math.max(8, pendingBatteryShipments)}</CardTitle>
+          <CardTitle className={dashKpiValueClass}>{Math.max(8, pendingBatteryShipments)}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           48V LiFePO4 battery blocks pending freight reconciliation.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn("border-amber-500 border-l-4 bg-amber-500/5", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.yellowStar.accentBar, "bg-muted/40", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <ClockAlert className="size-4 text-amber-500" />
+            <ClockAlert className={cn("size-4", entityBrandStyles.yellowStar.icon)} />
             Transit Fulfillment Delays
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">{stats.transitDelay}</CardTitle>
+          <CardTitle className={cn(dashKpiValueClass, entityBrandStyles.yellowStar.text)}>{stats.transitDelay}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Orders blocked by pallet weight, LTL timing, or inventory hold.
@@ -154,10 +165,10 @@ function KpiStrip({
 function FulfillmentBadge({ stage }: { stage: string }) {
   const lower = stage.toLowerCase();
   const className = lower.includes("hold")
-    ? "border-amber-500/20 bg-amber-950/30 text-amber-400"
+    ? statusStyles.warning
     : lower.includes("packed") || lower.includes("picked")
-      ? "border-cyan-500/20 bg-cyan-950/30 text-cyan-300"
-      : "border-lime-500/20 bg-lime-950/20 text-lime-300";
+      ? statusStyles.live
+      : statusStyles.info;
   return (
     <Badge variant="outline" className={cn("h-6 font-normal", className)}>
       {stage}
@@ -167,7 +178,7 @@ function FulfillmentBadge({ stage }: { stage: string }) {
 
 function ZapierFulfillmentZapCard() {
   return (
-    <Card size="sm" className={cn("border-lime-500 border-l-2", dashCardClass)}>
+    <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <CardTitle>Zapier → Apps Script Fulfillment Zap</CardTitle>
         <CardDescription>
@@ -177,18 +188,18 @@ function ZapierFulfillmentZapCard() {
       <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
         <div className="grid gap-2">
           {fulfillmentZapSteps.map((step, index) => (
-            <div key={step} className="rounded-lg border border-[#1B1B3A]/10 bg-[#F7F7FF] p-3">
-              <p className="font-mono text-[10px] text-lime-300">STEP {index + 1}</p>
-              <p className="mt-1 text-[#1B1B3A]/60 text-xs leading-relaxed">{step}</p>
+            <div key={step} className="rounded-lg border border-border bg-muted/40 p-3">
+              <p className={cn("font-mono text-[10px]", entityBrandStyles.solar2sk.text)}>STEP {index + 1}</p>
+              <p className={cn("mt-1 text-xs", dashProseClass)}>{step}</p>
             </div>
           ))}
         </div>
-        <div className="rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-[#F7F7FF]/75 text-xs leading-relaxed">
-          <strong className="text-zinc-200">Accuracy note:</strong> WooCommerce can trigger Zapier on order-created
+        <div className={cn(dashCodeBlockSmClass, "text-xs leading-relaxed")}>
+          <strong className="text-slate-100">Accuracy note:</strong> WooCommerce can trigger Zapier on order-created
           events, Zapier can filter/format fields, and Webhooks by Zapier can POST a JSON payload into an Apps Script
           web app endpoint. The Apps Script then owns Sheet writes, dedupe policy, and optional Gmail/MailApp alerts.
         </div>
-        <pre className="max-h-80 overflow-x-auto rounded-md border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-[11px] text-lime-300 leading-relaxed">
+        <pre className={cn(dashCodeBlockSmClass, "max-h-80")}>
           <code>{FULFILLMENT_APPS_SCRIPT}</code>
         </pre>
       </CardContent>
@@ -199,7 +210,7 @@ function ZapierFulfillmentZapCard() {
 function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
-      <Card size="sm" className={cn("border-lime-500 border-l-2 xl:col-span-8", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, "xl:col-span-8", dashCardClass)}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle>2SK Fulfillment Matrix</CardTitle>
           <CardDescription>
@@ -207,10 +218,10 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
           </CardDescription>
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
-          <div className="block w-full overflow-x-auto rounded-md border border-[#1B1B3A]/10">
+          <div className="block w-full overflow-x-auto rounded-md border border-border">
             <Table className="min-w-[640px]">
               <TableHeader>
-                <TableRow className="h-9 border-[#1B1B3A]/10">
+                <TableRow className="h-9 border-border/60">
                   <TableHead>Order ID</TableHead>
                   <TableHead>Customer</TableHead>
                   <TableHead>Hardware Allocated</TableHead>
@@ -220,8 +231,11 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
               </TableHeader>
               <TableBody>
                 {orders.map((order) => (
-                  <TableRow key={order.orderId} className="h-11 border-[#1B1B3A]/10 border-lime-500 border-l-2">
-                    <TableCell className="py-2 font-medium font-mono text-lime-300 tabular-nums">
+                  <TableRow
+                    key={order.orderId}
+                    className={cn("h-11 border-border/60 hover:bg-muted/30", entityAccentBarForLabel("2SK"))}
+                  >
+                    <TableCell className={cn("py-2 font-medium font-mono tabular-nums", entityBrandStyles.solar2sk.text)}>
                       {order.orderId}
                     </TableCell>
                     <TableCell className="max-w-[10rem] whitespace-normal py-2">{order.customerName}</TableCell>
@@ -241,7 +255,7 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
       </Card>
 
       <div className="grid gap-4 xl:col-span-4">
-        <Card size="sm" className={cn("border-lime-500 border-l-2", dashCardClass)}>
+        <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
           <CardHeader className={dashSectionCardHeaderClass}>
             <CardTitle>Order Webhook Payload Monitor</CardTitle>
             <CardDescription>
@@ -250,15 +264,15 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
             </CardDescription>
           </CardHeader>
           <CardContent className={dashSectionCardContentClass}>
-            <div className="mb-3 space-y-1 rounded-xl border border-[#1B1B3A]/10 bg-zinc-900/40 p-4 text-[#1B1B3A]/60 text-xs">
-              <span className="block font-bold text-zinc-200">Webhook Ingestion Protocol</span>
-              <p className="font-mono text-[#1B1B3A]/60 leading-relaxed">
+            <div className="mb-3 space-y-1 rounded-xl border border-border bg-muted/40 p-4 text-xs">
+              <span className="block font-bold text-foreground">Webhook Ingestion Protocol</span>
+              <p className={cn("font-mono leading-relaxed", dashProseClass)}>
                 Production wiring would receive WooCommerce order.created webhook payloads through middleware, validate
                 customer/SKU/shipping fields, strip duplicates and malformed rows, then append sanitized fulfillment
                 records to the Google Sheets operations workbook through an Apps Script execution endpoint.
               </p>
             </div>
-            <pre className="max-h-64 overflow-x-auto rounded-md border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-[11px] text-lime-300 leading-relaxed md:p-4 md:text-xs">
+            <pre className={cn(dashCodeBlockSmClass, "max-h-64 md:text-xs")}>
               {JSON.stringify(webhookPayload, null, 2)}
             </pre>
           </CardContent>
@@ -285,8 +299,7 @@ function SupportTickets({ tickets }: { tickets: SupportTicket[] }) {
               </div>
               <Badge
                 className={cn(
-                  ticket.priority === "High" &&
-                    "bg-amber-500/15 text-amber-700 hover:bg-amber-500/15 dark:text-amber-300",
+                  ticket.priority === "High" && statusStyles.warning,
                 )}
                 variant={ticket.priority === "High" ? "default" : "outline"}
               >
@@ -295,8 +308,8 @@ function SupportTickets({ tickets }: { tickets: SupportTicket[] }) {
             </div>
           </CardHeader>
           <CardContent className={cn("space-y-3 text-sm", dashCardContentClass)}>
-            <p className="text-[#1B1B3A]/60 leading-relaxed">{ticket.message}</p>
-            <p className="text-[#1B1B3A]/65 text-xs">
+            <p className={cn(dashProseClass, "leading-relaxed")}>{ticket.message}</p>
+            <p className="text-muted-foreground text-xs">
               Assigned to {ticket.assignedTo} · Opened {ticket.createdAt}
             </p>
           </CardContent>
@@ -329,18 +342,12 @@ export function RetailHub({
       />
 
       <Tabs defaultValue="orders" className="flex flex-col gap-4">
-        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-xl border border-[#1B1B3A]/10 bg-[#FFFFFF]/90 p-1 shadow-[0_12px_35px_rgba(27,27,58,0.10)] md:w-fit">
-          <TabsTrigger
-            value="orders"
-            className="gap-2 border border-transparent px-3 py-2 text-[#1B1B3A]/60 transition-all hover:border-lime-400/20 hover:bg-[#F7F7FF] hover:text-[#1B1B3A] data-[state=active]:border-lime-400/40 data-[state=active]:bg-[#F7F7FF] data-[state=active]:font-semibold data-[state=active]:text-lime-700"
-          >
+        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-xl border border-border bg-card p-1 shadow-sm md:w-fit">
+          <TabsTrigger value="orders" className={cn(retailTabTriggerClass)}>
             <ShoppingCart className="size-4" />
             WooCommerce Order Management
           </TabsTrigger>
-          <TabsTrigger
-            value="support"
-            className="gap-2 border border-transparent px-3 py-2 text-[#1B1B3A]/60 transition-all hover:border-lime-400/20 hover:bg-[#F7F7FF] hover:text-[#1B1B3A] data-[state=active]:border-lime-400/40 data-[state=active]:bg-[#F7F7FF] data-[state=active]:font-semibold data-[state=active]:text-lime-700"
-          >
+          <TabsTrigger value="support" className={cn(retailTabTriggerClass)}>
             <TicketCheck className="size-4" />
             DIY Technical Support Tickets
           </TabsTrigger>

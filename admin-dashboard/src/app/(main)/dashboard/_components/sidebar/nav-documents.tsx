@@ -36,7 +36,7 @@ export function NavDocuments({
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild className="text-[#1B1B3A]/80 hover:bg-[#F7F7FF] hover:text-[#6A00FF]">
+            <SidebarMenuButton asChild className="text-muted-foreground hover:bg-sidebar-accent hover:text-[var(--brand-3sk-text)]">
               <a href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>
@@ -46,14 +46,14 @@ export function NavDocuments({
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction
                   showOnHover
-                  className="rounded-sm text-[#1B1B3A]/70 hover:text-[#6A00FF] data-[state=open]:bg-[#F7F7FF]"
+                  className="rounded-sm text-muted-foreground hover:text-[var(--brand-3sk-text)] data-[state=open]:bg-sidebar-accent"
                 >
                   <Ellipsis />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-28 rounded-lg border-[#1B1B3A]/10 bg-[#FFFFFF] text-[#1B1B3A] shadow-2xl"
+                className="w-28 rounded-lg border-border bg-popover text-foreground shadow-lg"
                 side={isMobile ? "bottom" : "right"}
                 align={isMobile ? "end" : "start"}
               >
@@ -75,8 +75,8 @@ export function NavDocuments({
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton className="text-[#1B1B3A]/70 hover:bg-[#F7F7FF] hover:text-[#6A00FF]">
-            <Ellipsis className="text-[#1B1B3A]/70" />
+          <SidebarMenuButton className="text-muted-foreground hover:bg-sidebar-accent hover:text-[var(--brand-3sk-text)]">
+            <Ellipsis className="text-muted-foreground" />
             <span>More</span>
           </SidebarMenuButton>
         </SidebarMenuItem>

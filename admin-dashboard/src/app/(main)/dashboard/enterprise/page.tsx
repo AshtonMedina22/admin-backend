@@ -7,6 +7,7 @@ import {
   isCommercialPipeline,
   openCommercialPipelineBalance,
 } from "@/data/demo/pipeline";
+import { dashPageClass, dashPageHeaderClass } from "@/lib/dashboard-ui";
 import { fetchPipelineProjects } from "@/lib/sheet-mappers";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +16,7 @@ import { EngineeringMilestonesTab } from "./_components/engineering-milestones-t
 import { TelemetryTab } from "./_components/telemetry-tab";
 
 const enterpriseTabTriggerClass =
-  "gap-2 border border-transparent px-3 py-2 text-[#1B1B3A]/60 transition-all hover:border-cyan-400/20 hover:bg-[#F7F7FF] hover:text-[#1B1B3A] data-[state=active]:border-cyan-400/40 data-[state=active]:bg-[#F7F7FF] data-[state=active]:font-semibold data-[state=active]:text-sky-700 data-[state=active]:shadow-[0_0_18px_rgba(106,0,255,0.16)]";
+  "gap-2 border border-transparent px-3 py-2 text-muted-foreground transition-all hover:border-border hover:bg-muted/40 hover:text-foreground data-[state=active]:border-[color-mix(in_oklab,var(--brand-3sk)_30%,transparent)] data-[state=active]:bg-muted/40 data-[state=active]:font-semibold data-[state=active]:text-[var(--brand-3sk-text)]";
 
 async function fetchCommercialPipeline() {
   try {
@@ -45,16 +46,16 @@ export default async function Page() {
   const pipeline = await fetchCommercialPipeline();
 
   return (
-    <div className="flex flex-col gap-3 md:gap-4">
-      <div className="flex flex-col gap-1 border-[#1B1B3A]/10 border-b pb-3">
-        <h1 className="font-semibold text-2xl text-[#1B1B3A] tracking-tight">Enterprise Hub</h1>
-        <p className="max-w-3xl text-[#1B1B3A]/60 text-sm">
+    <div className={dashPageClass}>
+      <div className={dashPageHeaderClass}>
+        <h1 className="font-semibold text-2xl text-foreground tracking-tight">Enterprise Hub</h1>
+        <p className="max-w-3xl text-muted-foreground text-sm">
           High-ticket commercial pipeline, infrastructure telemetry, and engineering milestone tracking for 3SK and YSP.
         </p>
       </div>
 
       <Tabs defaultValue="telemetry" className="flex flex-col gap-4">
-        <TabsList className="h-auto w-full max-w-xl justify-start gap-1 overflow-x-auto rounded-xl border border-[#1B1B3A]/10 bg-[#FFFFFF]/90 p-1 shadow-[0_12px_35px_rgba(27,27,58,0.10)] md:w-fit">
+        <TabsList className="h-auto w-full max-w-xl justify-start gap-1 overflow-x-auto rounded-xl border border-border bg-card p-1 shadow-sm md:w-fit">
           <TabsTrigger value="pipeline" className={cn(enterpriseTabTriggerClass)}>
             <Activity className="size-4" />
             Commercial Pipeline

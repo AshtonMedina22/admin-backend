@@ -16,6 +16,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import type { RevenueSplitMonth } from "@/data/demo/revenue-split";
 import { revenueSplitData } from "@/data/demo/revenue-split";
 import { dashCardClass, dashSectionCardContentClass, dashSectionCardHeaderClass } from "@/lib/dashboard-ui";
+import { dashCodeBlockClass, entityBrandStyles, statusStyles } from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
 const chartConfig = {
@@ -32,7 +33,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
   const pendingCount = data.filter((row) => row.status === "pending_reconciliation").length;
 
   return (
-    <Card size="sm" className={cn("@container/card border-indigo-500/70 border-l-4", dashCardClass)}>
+    <Card size="sm" className={cn("@container/card", entityBrandStyles.solar3k.accentBar, dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -44,7 +45,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
           {pendingCount > 0 ? (
             <Badge
               variant="secondary"
-              className="h-6 shrink-0 whitespace-nowrap border-amber-500/30 bg-amber-500/10 px-2 font-mono text-[10px] text-amber-800 dark:text-amber-200"
+              className={cn("h-6 shrink-0 whitespace-nowrap px-2 font-mono text-[10px]", statusStyles.warning)}
             >
               {pendingCount} period{pendingCount === 1 ? "" : "s"} pending reconciliation
             </Badge>
@@ -55,22 +56,13 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
           )}
         </div>
         <div className="flex flex-wrap gap-1.5 pt-2">
-          <Badge
-            variant="outline"
-            className="whitespace-nowrap border-lime-500/30 bg-lime-500/10 text-lime-700 dark:text-lime-300"
-          >
+          <Badge variant="outline" className={cn("whitespace-nowrap", entityBrandStyles.solar2sk.badge)}>
             2SK
           </Badge>
-          <Badge
-            variant="outline"
-            className="whitespace-nowrap border-cyan-500/30 bg-sky-50 text-cyan-700 dark:text-cyan-300"
-          >
+          <Badge variant="outline" className={cn("whitespace-nowrap", entityBrandStyles.solar3k.badge)}>
             3SK
           </Badge>
-          <Badge
-            variant="outline"
-            className="whitespace-nowrap border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300"
-          >
+          <Badge variant="outline" className={cn("whitespace-nowrap", entityBrandStyles.yellowStar.badge)}>
             YSP
           </Badge>
           {data.map((row) => (
@@ -81,7 +73,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
                   className={cn(
                     "h-6 px-2 font-mono text-[10px]",
                     row.status === "pending_reconciliation"
-                      ? "cursor-help whitespace-nowrap border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200"
+                      ? cn("cursor-help whitespace-nowrap", statusStyles.warning)
                       : "cursor-help whitespace-nowrap",
                   )}
                 >
@@ -100,7 +92,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
       <CardContent className={dashSectionCardContentClass}>
         <ChartContainer config={chartConfig} className="aspect-auto h-56 w-full overflow-hidden md:h-72">
           <BarChart data={data} margin={{ top: 8, right: 4, left: -8 }}>
-            <CartesianGrid vertical={false} stroke="#18181b" strokeOpacity={1} />
+            <CartesianGrid vertical={false} className="stroke-border" />
             <XAxis
               dataKey="month"
               tickLine={false}
@@ -115,10 +107,10 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
               className="whitespace-nowrap font-mono"
             />
             <ChartTooltip
-              cursor={{ fill: "#18181b", opacity: 0.45 }}
+              cursor={{ fill: "var(--border)", opacity: 0.45 }}
               content={
                 <ChartTooltipContent
-                  className="min-w-48 border border-[#1B1B3A]/10 bg-[#1B1B3A] text-zinc-100 shadow-lg"
+                  className={cn(dashCodeBlockClass, "min-w-48 border border-border shadow-lg")}
                   indicator="dot"
                   labelFormatter={(_, payload) => {
                     const row = payload?.[0]?.payload as RevenueSplitMonth | undefined;

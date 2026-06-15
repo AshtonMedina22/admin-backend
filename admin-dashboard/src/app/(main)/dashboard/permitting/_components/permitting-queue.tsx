@@ -16,6 +16,16 @@ import {
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
 } from "@/lib/dashboard-ui";
+import {
+  dashCodeBlockClass,
+  dashCodeBlockSmClass,
+  dashKpiValueClass,
+  dashProseClass,
+  entityAccentBarForLabel,
+  entityBadgeClassForLabel,
+  entityBrandStyles,
+  statusStyles,
+} from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
 type PermitStatus = "critical" | "warning";
@@ -60,24 +70,6 @@ const PERMITTING_QUEUE: PermittingRow[] = [
   },
 ];
 
-function brandBadgeClass(brand: string) {
-  if (brand === "2SK") return "border-lime-500/30 bg-lime-500/10 text-lime-700 dark:text-lime-300";
-  if (brand === "3SK") return "border-cyan-500/30 bg-sky-50 text-cyan-700 dark:text-cyan-300";
-  return "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300";
-}
-
-function rowAccentClass(brand: string) {
-  if (brand === "2SK") return "border-l-4 border-lime-500";
-  if (brand === "3SK") return "border-l-4 border-cyan-500";
-  return "border-l-4 border-amber-500";
-}
-
-function riskTextClass(status: PermitStatus) {
-  return status === "critical"
-    ? "border border-rose-500/20 bg-rose-950/30 text-rose-400"
-    : "border border-amber-500/20 bg-amber-950/30 text-amber-400";
-}
-
 const PERMIT_STATUS_FORMULA = `=IFS(
   DaysStale > 30, "ESCALATE",
   DaysStale > 14, "FOLLOW_UP",
@@ -116,7 +108,7 @@ const PERMIT_ALERT_SCRIPT = `function onPermitStatusEdit(e) {
 
 function PermitStatusFormulaCard() {
   return (
-    <Card size="sm" className={cn("border-amber-500 border-l-4", dashCardClass)}>
+    <Card size="sm" className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <CardTitle>Permit Status Formula / Conditional Formatting Rule</CardTitle>
         <CardDescription>
@@ -125,23 +117,23 @@ function PermitStatusFormulaCard() {
       </CardHeader>
       <CardContent className={cn("grid gap-4 md:grid-cols-[1fr_1.15fr]", dashSectionCardContentClass)}>
         <div className="space-y-3">
-          <div className="rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-[#F7F7FF]/75 text-xs leading-relaxed">
+          <div className={cn(dashCodeBlockSmClass, "text-xs leading-relaxed")}>
             <p>
-              <strong className="text-zinc-200">Workbook setup:</strong> calculate{" "}
-              <span className="text-cyan-300">DaysStale</span> from
-              <span className="text-cyan-300"> TODAY() - SubmittedDate</span>, then use the status output as the source
+              <strong className="text-slate-100">Workbook setup:</strong> calculate{" "}
+              <span className={entityBrandStyles.solar3k.text}>DaysStale</span> from
+              <span className={entityBrandStyles.solar3k.text}> TODAY() - SubmittedDate</span>, then use the status output as the source
               column for conditional formatting, filters, and Apps Script escalation checks.
             </p>
           </div>
           <ul className="space-y-2 text-muted-foreground text-xs leading-relaxed">
             {CONDITIONAL_FORMATTING_RULES.map((rule) => (
-              <li key={rule} className="rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A]/60 px-3 py-2">
+              <li key={rule} className="rounded-lg border border-border bg-muted/40 px-3 py-2">
                 {rule}
               </li>
             ))}
           </ul>
         </div>
-        <pre className="overflow-x-auto rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-4 font-mono text-[11px] text-amber-200 leading-relaxed">
+        <pre className={cn(dashCodeBlockClass, "text-[11px]")}>
           <code>{PERMIT_STATUS_FORMULA}</code>
         </pre>
       </CardContent>
@@ -151,10 +143,10 @@ function PermitStatusFormulaCard() {
 
 function AppsScriptPermitAlertCard() {
   return (
-    <Card size="sm" className={cn("border-cyan-500 border-l-4", dashCardClass)}>
+    <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
-          <FileCheck className="size-5 text-cyan-400" />
+          <FileCheck className={cn("size-5", entityBrandStyles.solar3k.icon)} />
           Google Apps Script Permit Alert Trigger
         </CardTitle>
         <CardDescription>
@@ -164,20 +156,20 @@ function AppsScriptPermitAlertCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className={cn("space-y-3", dashSectionCardContentClass)}>
-        <div className="grid gap-2 rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-[#F7F7FF]/75 text-xs leading-relaxed">
+        <div className={cn(dashCodeBlockSmClass, "grid gap-2 text-xs leading-relaxed")}>
           <p>
-            <strong className="text-zinc-200">Configuration:</strong> Apps Script trigger → Event source:{" "}
-            <span className="text-cyan-300">From spreadsheet</span> → Event type:{" "}
-            <span className="text-cyan-300">On edit</span> → Handler:{" "}
-            <span className="text-cyan-300">onPermitStatusEdit</span>.
+            <strong className="text-slate-100">Configuration:</strong> Apps Script trigger → Event source:{" "}
+            <span className={entityBrandStyles.solar3k.text}>From spreadsheet</span> → Event type:{" "}
+            <span className={entityBrandStyles.solar3k.text}>On edit</span> → Handler:{" "}
+            <span className={entityBrandStyles.solar3k.text}>onPermitStatusEdit</span>.
           </p>
           <p>
             The handler checks the edited column, detects blocked/stale/rejected permit states, pulls the
             asset/AHJ/permit fields from the same row, and sends a targeted operations alert via{" "}
-            <span className="text-cyan-300">MailApp</span>.
+            <span className={entityBrandStyles.solar3k.text}>MailApp</span>.
           </p>
         </div>
-        <pre className="max-h-80 overflow-x-auto rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-4 font-mono text-[11px] text-cyan-200 leading-relaxed">
+        <pre className={cn(dashCodeBlockClass, "max-h-80 text-[11px]")}>
           <code>{PERMIT_ALERT_SCRIPT}</code>
         </pre>
       </CardContent>
@@ -196,28 +188,28 @@ export function PermittingQueue() {
       </div>
 
       <div className={cn(dashKpiGrid3Class, "grid-cols-1 md:grid-cols-3")}>
-        <Card size="sm" className={cn("border-red-500 border-l-4", dashCardClass)}>
+        <Card size="sm" className={cn(entityBrandStyles.systems.accentBar, dashCardClass)}>
           <CardHeader className={dashCardHeaderClass}>
             <CardDescription className="text-xs">Stale Permit Applications</CardDescription>
-            <CardTitle className="font-mono text-xl tabular-nums md:text-2xl">3</CardTitle>
+            <CardTitle className={dashKpiValueClass}>3</CardTitle>
           </CardHeader>
           <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
             Projects exceeding municipal or utility review thresholds.
           </CardContent>
         </Card>
-        <Card size="sm" className={cn("border-amber-500 border-l-4", dashCardClass)}>
+        <Card size="sm" className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
           <CardHeader className={dashCardHeaderClass}>
             <CardDescription className="text-xs">Average AHJ Cycle Time</CardDescription>
-            <CardTitle className="font-mono text-xl tabular-nums md:text-2xl">28.4 Days</CardTitle>
+            <CardTitle className={dashKpiValueClass}>28.4 Days</CardTitle>
           </CardHeader>
           <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
             Rolling permit, interconnection, and PTO review duration.
           </CardContent>
         </Card>
-        <Card size="sm" className={cn("border-indigo-500 border-l-4", dashCardClass)}>
+        <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
           <CardHeader className={dashCardHeaderClass}>
             <CardDescription className="text-xs">Escalation Drafts Dispatched</CardDescription>
-            <CardTitle className="font-mono text-xl tabular-nums md:text-2xl">14</CardTitle>
+            <CardTitle className={dashKpiValueClass}>14</CardTitle>
           </CardHeader>
           <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
             Authority follow-up drafts generated from stalled permit metadata.
@@ -225,7 +217,7 @@ export function PermittingQueue() {
         </Card>
       </div>
 
-      <Card size="sm" className={cn("border-indigo-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle className="flex items-center gap-2">
             <FileCheck className="size-5" />
@@ -237,13 +229,13 @@ export function PermittingQueue() {
           </CardDescription>
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
-          <div className="mb-3 rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-[#F7F7FF]/75 text-xs leading-relaxed">
-            <strong className="text-zinc-200">AI Automation Layer:</strong> Production wiring would pass AHJ name,
+          <div className={cn(dashCodeBlockSmClass, "mb-3 text-xs leading-relaxed")}>
+            <strong className="text-slate-100">AI Automation Layer:</strong> Production wiring would pass AHJ name,
             permit number, days delayed, missing requirements, and brand context into a controlled prompt/template
             service, generate a professional escalation draft, and keep a human approval step before sending through
             email or CRM automation.
           </div>
-          <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-[#1B1B3A]/10">
+          <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-border">
             <Table className="min-w-[720px]">
               <TableHeader>
                 <TableRow className="h-9">
@@ -257,10 +249,10 @@ export function PermittingQueue() {
               </TableHeader>
               <TableBody>
                 {PERMITTING_QUEUE.map((row) => (
-                  <TableRow key={row.permit} className={cn("h-11", rowAccentClass(row.brand))}>
+                  <TableRow key={row.permit} className={cn("h-11 hover:bg-muted/30", entityAccentBarForLabel(row.brand))}>
                     <TableCell className="max-w-[12rem] whitespace-normal py-2 font-medium">{row.asset}</TableCell>
                     <TableCell className="py-2">
-                      <Badge variant="outline" className={cn("h-6", brandBadgeClass(row.brand))}>
+                      <Badge variant="outline" className={cn("h-6", entityBadgeClassForLabel(row.brand))}>
                         {row.brand}
                       </Badge>
                     </TableCell>
@@ -270,7 +262,7 @@ export function PermittingQueue() {
                       <span
                         className={cn(
                           "rounded px-2 py-0.5 font-mono font-semibold text-xs tabular-nums",
-                          riskTextClass(row.status),
+                          row.status === "critical" ? statusStyles.critical : statusStyles.warning,
                         )}
                       >
                         {row.daysStale}d

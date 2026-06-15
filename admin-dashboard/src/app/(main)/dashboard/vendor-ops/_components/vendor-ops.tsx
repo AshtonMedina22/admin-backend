@@ -16,6 +16,7 @@ import {
   vendorsData,
 } from "@/data/demo/vendors";
 import {
+  dashAlertBannerClass,
   dashCardClass,
   dashCardContentClass,
   dashCardHeaderClass,
@@ -23,6 +24,13 @@ import {
   dashPageClass,
   dashPageHeaderClass,
 } from "@/lib/dashboard-ui";
+import {
+  dashCodeBlockClass,
+  dashKpiValueClass,
+  dashProseClass,
+  entityBrandStyles,
+  statusStyles,
+} from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
 const vendorComplianceSteps = [
@@ -97,12 +105,12 @@ function compliancePrefix(status: ComplianceStatus): string {
 function tradeTagClass(specialty: string) {
   const normalized = specialty.toLowerCase();
   if (normalized.includes("electrical") || normalized.includes("interconnection")) {
-    return "border-cyan-500/20 bg-cyan-950/30 text-cyan-300";
+    return entityBrandStyles.solar3k.badge;
   }
   if (normalized.includes("regulatory") || normalized.includes("zoning")) {
-    return "border-amber-500/20 bg-amber-950/30 text-amber-300";
+    return entityBrandStyles.yellowStar.badge;
   }
-  return "border-lime-500/20 bg-lime-950/20 text-lime-300";
+  return entityBrandStyles.solar2sk.badge;
 }
 
 function assignmentLabel(vendor: VendorRecord) {
@@ -120,37 +128,37 @@ function VendorKpiStrip({
 }) {
   return (
     <div className={cn(dashKpiGrid3Class, "grid-cols-1 md:grid-cols-3")}>
-      <Card size="sm" className={cn("border-emerald-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <Users className="size-4 text-emerald-500" />
+            <Users className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
             Active Subcontractor Crews
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">12</CardTitle>
+          <CardTitle className={dashKpiValueClass}>12</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Roof, electrical, and permit partner crews available for field execution.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn("border-emerald-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <MapPinned className="size-4 text-emerald-500" />
+            <MapPinned className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
             Live Field Assignments
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">{Math.max(6, activeAssignments)}</CardTitle>
+          <CardTitle className={dashKpiValueClass}>{Math.max(6, activeAssignments)}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Active sites, permit audits, and interconnection dispatch lanes.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn("border-amber-500 border-l-4 bg-amber-500/5", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.yellowStar.accentBar, "bg-muted/40", dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <ShieldAlert className="size-4 text-amber-500" />
+            <ShieldAlert className={cn("size-4", entityBrandStyles.yellowStar.icon)} />
             Compliance Renewal Alerts
           </CardDescription>
-          <CardTitle className="font-mono text-2xl text-amber-600 tabular-nums">
+          <CardTitle className={cn(dashKpiValueClass, entityBrandStyles.yellowStar.text)}>
             {Math.max(1, complianceRisks)}
           </CardTitle>
         </CardHeader>
@@ -164,7 +172,7 @@ function VendorKpiStrip({
 
 function VendorComplianceAutomationCard() {
   return (
-    <Card className={cn("border-emerald-500/70 border-l-4", dashCardClass)}>
+    <Card className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
       <CardHeader className={dashCardHeaderClass}>
         <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
           <div className="space-y-1">
@@ -174,31 +182,33 @@ function VendorComplianceAutomationCard() {
               status updates.
             </CardDescription>
           </div>
-          <Badge variant="outline" className="w-fit border-emerald-500/30 bg-emerald-950/30 font-mono text-emerald-300">
+          <Badge variant="outline" className={cn("w-fit font-mono", statusStyles.live)}>
             Sheets → Apps Script → Gmail → Drive
           </Badge>
         </div>
       </CardHeader>
       <CardContent className={cn("grid gap-4 md:grid-cols-[0.95fr_1.35fr]", dashCardContentClass)}>
         <div className="space-y-3">
-          <div className="rounded-xl border border-[#1B1B3A]/10 bg-[#F7F7FF] p-3">
-            <p className="font-mono text-[11px] text-emerald-300 uppercase tracking-[0.2em]">Workflow contract</p>
+          <div className="rounded-xl border border-border bg-muted/40 p-3">
+            <p className={cn("font-mono text-[11px] uppercase tracking-[0.2em]", entityBrandStyles.solar2sk.text)}>
+              Workflow contract
+            </p>
             <ol className="mt-3 space-y-2 text-muted-foreground text-xs leading-relaxed">
               {vendorComplianceSteps.map((step, index) => (
                 <li key={step} className="flex gap-2">
-                  <span className="font-mono text-emerald-400 tabular-nums">{index + 1}.</span>
+                  <span className={cn("font-mono tabular-nums", entityBrandStyles.solar2sk.text)}>{index + 1}.</span>
                   <span>{step}</span>
                 </li>
               ))}
             </ol>
           </div>
-          <p className="text-muted-foreground text-xs leading-relaxed">
+          <p className={cn(dashProseClass, "text-xs")}>
             Accurate implementation pattern: install a time-driven Apps Script trigger, read the vendor registry from
             Sheets, create Gmail drafts instead of auto-sending, include the row-level Drive folder URL, and write the
             resulting renewal status back to the compliance ledger for auditability.
           </p>
         </div>
-        <pre className="max-h-[23rem] overflow-auto rounded-xl border border-[#1B1B3A]/10 bg-black p-4 text-[10px] text-zinc-300 leading-relaxed shadow-inner">
+        <pre className={cn(dashCodeBlockClass, "max-h-[23rem] text-[10px]")}>
           <code>{vendorComplianceScript}</code>
         </pre>
       </CardContent>
@@ -246,10 +256,10 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
         complianceRisks={complianceRisks}
       />
 
-      <Card className={cn("border-amber-500/60 border-l-4", dashCardClass)}>
-        <CardContent className={cn("flex items-start gap-3", dashCardContentClass)}>
-          <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600" />
-          <p className="text-amber-200 text-xs leading-relaxed md:text-sm">
+      <Card className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
+        <CardContent className={cn(dashAlertBannerClass, "flex items-start gap-3 border-0", dashCardContentClass)}>
+          <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+          <p className="text-xs leading-relaxed md:text-sm">
             Critical Path Blockage: 3SK Frisco Commercial Plaza cannot transition to structural assembly until North
             Texas Structural PE Group uploads verified load assessment blueprints. North TX Racking Crews general
             liability certificate expires in 14 days.
@@ -270,7 +280,7 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
           <div className="relative max-w-sm">
             <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              className="border-[#1B1B3A]/10 bg-[#FFFFFF]/80 pl-8 text-[#1B1B3A] placeholder:text-[#1B1B3A]/65"
+              className="border-border bg-slate-50 pl-8 text-foreground placeholder:text-muted-foreground"
               placeholder="Filter vendors, regions, or compliance..."
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -278,7 +288,7 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
           </div>
         </CardHeader>
         <CardContent className={dashCardContentClass}>
-          <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-[#1B1B3A]/10">
+          <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-border">
             <Table className="min-w-[720px]">
               <TableHeader>
                 <TableRow>
@@ -291,7 +301,7 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
               </TableHeader>
               <TableBody>
                 {filteredVendors.map((vendor) => (
-                  <TableRow key={vendor.id} className="border-[#1B1B3A]/10">
+                  <TableRow key={vendor.id} className="border-border/60">
                     <TableCell className="max-w-[12rem] whitespace-normal py-2 font-medium">{vendor.name}</TableCell>
                     <TableCell className="py-2">
                       <span

@@ -16,6 +16,14 @@ import {
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
 } from "@/lib/dashboard-ui";
+import {
+  dashCodeBlockClass,
+  dashKpiValueClass,
+  dashProseClass,
+  entityAccentBarForLabel,
+  entityBrandStyles,
+  statusStyles,
+} from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
 function formatCurrency(value: number) {
@@ -64,12 +72,12 @@ function utilityAuthority(project: PipelineProject) {
 function phaseBadgeClass(project: PipelineProject) {
   const phase = `${project.pipelineStage} ${project.pipelinePhase}`.toLowerCase();
   if (phase.includes("hold") || phase.includes("awaiting")) {
-    return "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300";
+    return statusStyles.warning;
   }
   if (phase.includes("executed") || phase.includes("approved")) {
-    return "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
+    return statusStyles.live;
   }
-  return "border-cyan-500/30 bg-sky-50 text-cyan-700 dark:text-cyan-300";
+  return statusStyles.info;
 }
 
 function shouldShowEscalation(project: PipelineProject) {
@@ -100,13 +108,13 @@ function PipelineKpiStrip({
 
   return (
     <div className={cn(dashKpiGrid3Class, "grid-cols-1 gap-3 md:grid-cols-3")}>
-      <Card size="sm" className={cn("border-cyan-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <Sigma className="size-4 text-cyan-500" />
+            <Sigma className={cn("size-4", entityBrandStyles.solar3k.icon)} />
             Open B2B Pipeline Value
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">{formatCurrency(openPipelineBalance)}</CardTitle>
+          <CardTitle className={dashKpiValueClass}>{formatCurrency(openPipelineBalance)}</CardTitle>
         </CardHeader>
         <CardContent className={cn("grid gap-1.5 text-xs", dashCardContentClass)}>
           <div className="flex justify-between gap-3">
@@ -119,25 +127,25 @@ function PipelineKpiStrip({
           </div>
         </CardContent>
       </Card>
-      <Card size="sm" className={cn("border-cyan-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <Gauge className="size-4 text-cyan-500" />
+            <Gauge className={cn("size-4", entityBrandStyles.solar3k.icon)} />
             Active Consulting MW Capacity
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">{activeCapacityMw(projects).toFixed(2)} MW</CardTitle>
+          <CardTitle className={dashKpiValueClass}>{activeCapacityMw(projects).toFixed(2)} MW</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           {activeProjects} active 3SK commercial and utility engineering workstreams.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn("border-amber-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
-            <FileWarning className="size-4 text-amber-500" />
+            <FileWarning className={cn("size-4", entityBrandStyles.yellowStar.icon)} />
             SLA Milestone Alerts
           </CardDescription>
-          <CardTitle className="font-mono text-2xl tabular-nums">{alerts}</CardTitle>
+          <CardTitle className={dashKpiValueClass}>{alerts}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Architectural, utility, or municipal checks requiring owner-visible follow-up.
@@ -164,7 +172,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
     <div className="flex flex-col gap-3">
       <PipelineKpiStrip openPipelineBalance={openPipelineBalance} activeProjects={activeProjects} projects={projects} />
 
-      <Card size="sm" className={cn("border-cyan-500 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle className="flex items-center gap-2">
             <Briefcase className="size-5" />
@@ -176,7 +184,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
           </CardDescription>
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
-          <div className="scrollbar-none block w-full overflow-x-auto rounded-md border">
+          <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-border">
             <Table className="min-w-[1120px]">
               <TableHeader>
                 <TableRow className="h-9">
@@ -196,16 +204,16 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                   const authority = utilityAuthority(project);
                   const permit = permitNumber(project, index);
                   return (
-                    <TableRow key={project.id} className="h-11 border-cyan-500/70 border-l-4">
+                    <TableRow
+                      key={project.id}
+                      className={cn("h-11", entityAccentBarForLabel(escalationBrand(project)))}
+                    >
                       <TableCell className="max-w-xs whitespace-normal py-2 font-medium">
                         <div>{formatProjectAssetLabel(project)}</div>
                         <div className="mt-1 font-mono text-[11px] text-muted-foreground">{project.id}</div>
                       </TableCell>
                       <TableCell className="py-2">
-                        <EntityBrandBadge
-                          brand={project.entityBrand}
-                          className="border-cyan-500/30 bg-sky-50 text-cyan-700 dark:text-cyan-300"
-                        />
+                        <EntityBrandBadge brand={project.entityBrand} />
                       </TableCell>
                       <TableCell className="py-2 text-right font-mono tabular-nums">
                         {project.systemSizeKw} kW
@@ -252,7 +260,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
         </CardContent>
       </Card>
 
-      <Card size="sm" className={cn("border-cyan-500/70 border-l-4", dashCardClass)}>
+      <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle>OpenSolar / Proposal Sync Automation</CardTitle>
           <CardDescription>
@@ -261,21 +269,23 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
           </CardDescription>
         </CardHeader>
         <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
-          <div className="rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-3 font-mono text-[#F7F7FF]/75 text-xs leading-relaxed">
-            <strong className="text-zinc-200">Legitimate integration path:</strong> OpenSolar supports API access for
-            projects, systems, pricing, workflows, and webhooks, while project lists can also be exported for CSV-based
-            reporting. A deployed connector would use API access when enabled, or parse a controlled CSV export when API
-            access is unavailable.
+          <div className="rounded-md border border-border bg-muted/40 p-3">
+            <p className={dashProseClass}>
+              <strong>Legitimate integration path:</strong> OpenSolar supports API access for projects, systems, pricing,
+              workflows, and webhooks, while project lists can also be exported for CSV-based reporting. A deployed
+              connector would use API access when enabled, or parse a controlled CSV export when API access is
+              unavailable.
+            </p>
           </div>
           <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
             {syncSteps.map((step, index) => (
-              <div key={step} className="rounded-lg border border-[#1B1B3A]/10 bg-[#F7F7FF] p-3">
-                <p className="mb-2 font-mono text-cyan-300 text-xs">0{index + 1}</p>
-                <p className="text-[#1B1B3A]/60 text-xs leading-relaxed">{step}</p>
+              <div key={step} className="rounded-lg border border-border bg-muted/40 p-3">
+                <p className={cn("mb-2 font-mono text-xs", entityBrandStyles.solar3k.text)}>0{index + 1}</p>
+                <p className="text-muted-foreground text-xs leading-relaxed">{step}</p>
               </div>
             ))}
           </div>
-          <pre className="overflow-x-auto rounded-lg border border-[#1B1B3A]/10 bg-[#1B1B3A] p-4 font-mono text-[11px] text-cyan-200 leading-relaxed">
+          <pre className={dashCodeBlockClass}>
             {`type OpenSolarPipelineRow = {
   projectId: string;
   customerName: string;

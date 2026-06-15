@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { dashInfoBannerClass } from "@/lib/dashboard-ui";
+import { dashKpiValueClass, statusStyles } from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
 const BASELINE_GENERATION_KW = 2482.0;
@@ -31,7 +33,7 @@ type TelemetrySimulatorProps = {
 
 export function TelemetrySimulatorControl({ isSimulating, onSimulatingChange, liveYield }: TelemetrySimulatorProps) {
   return (
-    <div className="grid gap-3 rounded-xl border border-[#1B1B3A]/10 bg-[#FFFFFF]/90 p-4 shadow-[0_12px_35px_rgba(27,27,58,0.10)] backdrop-blur-md">
+    <div className="grid gap-3 rounded-xl border border-border bg-card p-4 shadow-sm backdrop-blur-md">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Switch
@@ -44,12 +46,13 @@ export function TelemetrySimulatorControl({ isSimulating, onSimulatingChange, li
             <Label htmlFor="solaredge-sim" className="font-medium text-sm">
               Simulate SolarEdge / SCADA Polling Loop
             </Label>
-            <p className="text-[#1B1B3A]/60 text-xs">
+            <p className="text-muted-foreground text-xs">
               Live grid telemetry:{" "}
               <span
                 className={cn(
-                  "font-mono font-semibold tabular-nums",
-                  isSimulating ? "text-emerald-400" : "text-zinc-100",
+                  dashKpiValueClass,
+                  "text-base",
+                  isSimulating ? "text-emerald-600" : "text-foreground",
                 )}
               >
                 {liveYield.toFixed(1)} kW
@@ -61,18 +64,19 @@ export function TelemetrySimulatorControl({ isSimulating, onSimulatingChange, li
         <span
           className={cn(
             "inline-flex items-center gap-1.5 rounded border px-2 py-1 font-mono text-xs uppercase tracking-wider",
-            isSimulating
-              ? "border-emerald-500/30 bg-emerald-950/40 text-emerald-400"
-              : "border-[#1B1B3A]/10 bg-[#FFFFFF] text-[#1B1B3A]/65",
+            isSimulating ? statusStyles.live : "border-border bg-muted/40 text-muted-foreground",
           )}
         >
           <span
-            className={cn("size-1.5 rounded-full", isSimulating ? "animate-pulse bg-emerald-400" : "bg-zinc-600")}
+            className={cn(
+              "size-1.5 rounded-full",
+              isSimulating ? "animate-pulse bg-[var(--status-live)]" : "bg-muted-foreground",
+            )}
           />
           {isSimulating ? "Streaming loop active" : "Stream paused"}
         </span>
       </div>
-      <div className="rounded-lg border border-[#1B1B3A]/10 bg-[#FFFFFF]/90 p-3 font-mono text-cyan-300 text-xs leading-relaxed">
+      <div className={cn(dashInfoBannerClass, "font-mono text-xs leading-relaxed")}>
         <strong>Engineering Implementation Notes:</strong> Production wiring would run this as a scheduled server worker
         or API route that polls SolarEdge / SCADA endpoints on a controlled interval, queues requests to respect vendor
         rate limits, validates inverter register payloads, catches offline-device states (e.g., [ERR-CODE: 18x2]), and

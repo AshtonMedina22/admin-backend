@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { RelativeTime } from "@/components/dashboard/relative-time";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { statusStyles } from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 import type { WorkbookSyncStatus } from "@/lib/workbook-sync-types";
 import { workbookProviderLabel } from "@/lib/workbook-sync-types";
@@ -52,11 +53,11 @@ export function WorkbookSyncStatusBar({ source, provider, updatedAt }: WorkbookS
   return (
     <div
       className={cn(
-        "hidden min-w-0 items-center gap-2 rounded-lg border border-[#1B1B3A]/10 bg-zinc-900/40 px-3 py-2 text-xs shadow-[0_0_0_1px_theme(colors.white/0.02)] backdrop-blur-md md:flex",
-        isLive ? "text-zinc-200" : "text-[#1B1B3A]/60",
+        "hidden min-w-0 items-center gap-2 rounded-lg border px-3 py-2 text-xs md:flex",
+        isLive ? statusStyles.live : "border-border bg-muted/40 text-muted-foreground",
       )}
     >
-      <DatabaseZap className={cn("size-4 shrink-0", isLive ? "text-emerald-600" : "text-muted-foreground")} />
+      <DatabaseZap className={cn("size-4 shrink-0", isLive ? "text-[var(--status-live)]" : "text-muted-foreground")} />
       <div className="flex min-w-0 flex-col leading-snug">
         <span className="truncate font-medium">{isLive ? "Google Sheets live sync" : "Demo preview mode"}</span>
         <span className="truncate text-muted-foreground">
@@ -66,20 +67,15 @@ export function WorkbookSyncStatusBar({ source, provider, updatedAt }: WorkbookS
       </div>
       {isLive ? (
         <span className="relative flex size-2 shrink-0">
-          <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex size-2 rounded-full bg-emerald-400" />
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--status-live)] opacity-75" />
+          <span className="relative inline-flex size-2 rounded-full bg-[var(--status-live)]" />
         </span>
       ) : (
         <Badge variant="outline" className="h-5 shrink-0 px-1.5 text-[10px]">
           Preview
         </Badge>
       )}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="size-7 shrink-0 text-[#1B1B3A]/60 hover:bg-[#F7F7FF] hover:text-[#6A00FF]"
-        asChild
-      >
+      <Button variant="ghost" size="icon" className="size-7 shrink-0" asChild>
         <a href={PUBLIC_WORKBOOK_URL} target="_blank" rel="noreferrer" aria-label="Open published workbook">
           <ExternalLink className="size-3.5" />
         </a>
@@ -87,7 +83,7 @@ export function WorkbookSyncStatusBar({ source, provider, updatedAt }: WorkbookS
       <Button
         variant="ghost"
         size="icon"
-        className="size-7 shrink-0 text-[#1B1B3A]/60 hover:bg-[#F7F7FF] hover:text-[#6A00FF]"
+        className="size-7 shrink-0"
         disabled={isRefreshing}
         onClick={handleRefresh}
         aria-label="Refresh workbook sync"
