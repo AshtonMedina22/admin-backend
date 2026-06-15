@@ -45,22 +45,30 @@ export default async function Page() {
       <div className="flex flex-col gap-1 border-b pb-3">
         <h1 className="font-semibold text-2xl tracking-tight">Enterprise Hub</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
-          High-ticket commercial pipeline, infrastructure telemetry, and engineering milestone tracking for Solar 3SK
-          and Yellow Star Power.
+          High-ticket commercial pipeline, infrastructure telemetry, and engineering milestone tracking for 3SK and YSP.
         </p>
       </div>
 
-      <Tabs defaultValue="pipeline" className="flex flex-col gap-4">
-        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto p-1 md:w-fit">
-          <TabsTrigger value="pipeline" className="gap-2">
+      <Tabs defaultValue="telemetry" className="flex flex-col gap-4">
+        <TabsList className="h-auto w-full max-w-xl justify-start gap-1 overflow-x-auto rounded-lg border border-zinc-800/80 bg-zinc-900/60 p-1 md:w-fit">
+          <TabsTrigger
+            value="pipeline"
+            className="gap-2 border border-transparent px-3 py-2 text-zinc-500 transition-all hover:bg-zinc-800/60 hover:text-zinc-200 data-[state=active]:border-zinc-700 data-[state=active]:bg-zinc-800 data-[state=active]:font-semibold data-[state=active]:text-zinc-100 data-[state=active]:shadow-[0_0_10px_rgba(255,255,255,0.05)]"
+          >
             <Activity className="size-4" />
             Commercial Pipeline
           </TabsTrigger>
-          <TabsTrigger value="telemetry" className="gap-2">
+          <TabsTrigger
+            value="telemetry"
+            className="gap-2 border border-transparent px-3 py-2 text-zinc-500 transition-all hover:bg-zinc-800/60 hover:text-zinc-200 data-[state=active]:border-zinc-700 data-[state=active]:bg-zinc-800 data-[state=active]:font-semibold data-[state=active]:text-zinc-100 data-[state=active]:shadow-[0_0_10px_rgba(255,255,255,0.05)]"
+          >
             <RadioTower className="size-4" />
             Telemetry Analytics
           </TabsTrigger>
-          <TabsTrigger value="engineering" className="gap-2">
+          <TabsTrigger
+            value="engineering"
+            className="gap-2 border border-transparent px-3 py-2 text-zinc-500 transition-all hover:bg-zinc-800/60 hover:text-zinc-200 data-[state=active]:border-zinc-700 data-[state=active]:bg-zinc-800 data-[state=active]:font-semibold data-[state=active]:text-zinc-100 data-[state=active]:shadow-[0_0_10px_rgba(255,255,255,0.05)]"
+          >
             <Ruler className="size-4" />
             Engineering Milestones
           </TabsTrigger>
