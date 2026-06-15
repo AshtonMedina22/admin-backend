@@ -25,12 +25,18 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { filterSidebarByRole } from "@/lib/rbac/filter-sidebar";
+import { cn } from "@/lib/utils";
 import type { NavGroup, NavMainItem } from "@/navigation/sidebar/sidebar-items";
 import { useDashboardRole } from "@/stores/rbac/dashboard-role-provider";
 
 interface NavMainProps {
   readonly items: readonly NavGroup[];
 }
+
+const navItemClass =
+  "text-zinc-500 transition-colors hover:bg-zinc-900/80 hover:text-zinc-200 data-active:border-cyan-400 data-active:border-r-2 data-active:bg-cyan-500/10 data-active:text-cyan-400";
+const navSubItemClass =
+  "text-zinc-500 transition-colors hover:bg-zinc-900/80 hover:text-zinc-200 data-active:bg-cyan-500/10 data-active:text-cyan-400";
 
 const IsComingSoon = () => (
   <span className="ml-auto rounded-md bg-gray-200 px-2 py-1 text-xs dark:text-gray-800">Soon</span>
@@ -54,6 +60,7 @@ const NavItemExpanded = ({
               disabled={item.comingSoon}
               isActive={isActive(item.url, item.subItems)}
               tooltip={item.title}
+              className={navItemClass}
             >
               {item.icon && <item.icon />}
               <span>{item.title}</span>
@@ -66,6 +73,7 @@ const NavItemExpanded = ({
               aria-disabled={item.comingSoon}
               isActive={isActive(item.url)}
               tooltip={item.title}
+              className={navItemClass}
             >
               <Link prefetch={false} href={item.url} target={item.newTab ? "_blank" : undefined}>
                 {item.icon && <item.icon />}
@@ -80,7 +88,12 @@ const NavItemExpanded = ({
             <SidebarMenuSub>
               {item.subItems.map((subItem) => (
                 <SidebarMenuSubItem key={subItem.title}>
-                  <SidebarMenuSubButton aria-disabled={subItem.comingSoon} isActive={isActive(subItem.url)} asChild>
+                  <SidebarMenuSubButton
+                    aria-disabled={subItem.comingSoon}
+                    isActive={isActive(subItem.url)}
+                    asChild
+                    className={navSubItemClass}
+                  >
                     <Link prefetch={false} href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
                       {subItem.icon && <subItem.icon />}
                       <span>{subItem.title}</span>
@@ -124,7 +137,7 @@ const NavItemCollapsed = ({
               <SidebarMenuSubButton
                 key={subItem.title}
                 asChild
-                className="focus-visible:ring-0"
+                className={cn("focus-visible:ring-0", navSubItemClass)}
                 aria-disabled={subItem.comingSoon}
                 isActive={isActive(subItem.url)}
               >
@@ -177,6 +190,7 @@ export function NavMain({ items }: NavMainProps) {
                           aria-disabled={item.comingSoon}
                           tooltip={item.title}
                           isActive={isItemActive(item.url)}
+                          className={navItemClass}
                         >
                           <Link prefetch={false} href={item.url} target={item.newTab ? "_blank" : undefined}>
                             {item.icon && <item.icon />}
