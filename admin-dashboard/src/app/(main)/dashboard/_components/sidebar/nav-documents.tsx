@@ -36,7 +36,7 @@ export function NavDocuments({
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild className="text-slate-700 hover:bg-sky-50 hover:text-sky-600">
               <a href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>
@@ -44,13 +44,16 @@ export function NavDocuments({
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuAction showOnHover className="rounded-sm data-[state=open]:bg-accent">
+                <SidebarMenuAction
+                  showOnHover
+                  className="rounded-sm text-slate-600 hover:text-sky-600 data-[state=open]:bg-sky-50"
+                >
                   <Ellipsis />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-24 rounded-lg"
+                className="w-28 rounded-lg border-[#dbe5ee] bg-[#ffffff] text-slate-950 shadow-2xl"
                 side={isMobile ? "bottom" : "right"}
                 align={isMobile ? "end" : "start"}
               >
@@ -72,8 +75,8 @@ export function NavDocuments({
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton className="text-sidebar-foreground/70">
-            <Ellipsis className="text-sidebar-foreground/70" />
+          <SidebarMenuButton className="text-slate-600 hover:bg-sky-50 hover:text-sky-600">
+            <Ellipsis className="text-slate-600" />
             <span>More</span>
           </SidebarMenuButton>
         </SidebarMenuItem>

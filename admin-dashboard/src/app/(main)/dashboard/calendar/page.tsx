@@ -16,6 +16,20 @@ function eventVariant(brand: string): CalendarEvent["variant"] {
   return "secondary";
 }
 
+const calendarCopyOverrides: Record<string, string> = {
+  "bulk inbound freight pallet arrival": "Receiving cargo unit inventory stock at main Wylie warehouse hub.",
+  "city of plano permit hearing": "Reviewing 60kW commercial rooftop system variance request.",
+  "frisco commercial plaza load walk":
+    "Structural engineer on-site roof load assessment walk for 120kW commercial array.",
+  "frisco commercial plaza roof load walk":
+    "Structural engineer on-site roof load assessment walk for 120kW commercial array.",
+  "oncor on-site utility field inspection": "Testing system isolation protocols and point of interconnection matrix.",
+};
+
+function normalizedCalendarNotes(event: string, notes: string) {
+  return calendarCopyOverrides[event.trim().toLowerCase()] || notes;
+}
+
 async function fetchCalendarEvents(): Promise<Record<number, CalendarEvent[]>> {
   try {
     const rows = await fetchPublishedFirstTable("Calendar");
@@ -24,15 +38,17 @@ async function fetchCalendarEvents(): Promise<Record<number, CalendarEvent[]>> {
       if (!day) return acc;
 
       const brand = record.brand || "";
+      const event = record.event || "";
+      const notes = normalizedCalendarNotes(event, record.notes || event);
       acc[day] = [
         ...(acc[day] || []),
         {
           brand,
-          event: record.event || "",
+          event,
           type: record.type || "Operations Milestone",
           time: record.time || "",
-          notes: record.notes || record.event || "",
-          text: record.notes || record.event || "",
+          notes,
+          text: notes,
           variant: eventVariant(brand),
         },
       ];
@@ -51,15 +67,17 @@ async function fetchCalendarEvents(): Promise<Record<number, CalendarEvent[]>> {
       if (!day) return acc;
 
       const brand = record.brand || "";
+      const event = record.event || record.item || "";
+      const notes = normalizedCalendarNotes(event, record.notes || event);
       acc[day] = [
         ...(acc[day] || []),
         {
           brand,
-          event: record.event || record.item || "",
+          event,
           type: record.type || "Operations Milestone",
           time: record.time || "",
-          notes: record.notes || record.event || record.item || "",
-          text: record.notes || record.event || record.item || "",
+          notes,
+          text: notes,
           variant: eventVariant(brand),
         },
       ];
