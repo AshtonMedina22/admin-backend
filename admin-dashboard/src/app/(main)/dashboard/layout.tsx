@@ -2,14 +2,14 @@ import type { ReactNode } from "react";
 
 import { cookies } from "next/headers";
 
-import { AppSidebar } from "@/app/(main)/dashboard/_components/sidebar/app-sidebar";
 import { RoleRouteGuard } from "@/app/(main)/dashboard/_components/role-route-guard";
+import { AppSidebar } from "@/app/(main)/dashboard/_components/sidebar/app-sidebar";
 import { WorkbookSyncStatusBar } from "@/app/(main)/dashboard/_components/workbook-sync-status-bar";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { SIDEBAR_COLLAPSIBLE_VALUES, SIDEBAR_VARIANT_VALUES } from "@/lib/preferences/layout";
-import { getWorkbookSyncStatus } from "@/lib/workbook-sync-status";
 import { cn } from "@/lib/utils";
+import { getWorkbookSyncStatus } from "@/lib/workbook-sync-status";
 import { getPreference } from "@/server/server-actions";
 import { DashboardRoleProvider } from "@/stores/rbac/dashboard-role-provider";
 
@@ -41,15 +41,15 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
             "[html[data-content-layout=centered]_&>*]:mx-auto",
             "[html[data-content-layout=centered]_&>*]:w-full",
             "[html[data-content-layout=centered]_&>*]:max-w-screen-2xl",
-            "peer-data-[variant=inset]:border",
+            "peer-data-[variant=inset]:border peer-data-[variant=inset]:border-zinc-900",
             "[--dashboard-header-height:--spacing(12)]",
-            "min-w-0 overflow-x-hidden",
+            "dashboard-shell min-w-0 overflow-x-hidden bg-[#0b0b0d] text-slate-100",
           )}
         >
           <header
             className={cn(
-              "flex h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12",
-              "[html[data-navbar-style=sticky]_&]:sticky [html[data-navbar-style=sticky]_&]:top-0 [html[data-navbar-style=sticky]_&]:z-50 [html[data-navbar-style=sticky]_&]:overflow-hidden [html[data-navbar-style=sticky]_&]:rounded-t-[inherit] [html[data-navbar-style=sticky]_&]:bg-background/50 [html[data-navbar-style=sticky]_&]:backdrop-blur-md",
+              "flex h-12 shrink-0 items-center gap-2 border-[#2a2a2d] border-b bg-[#0b0b0d]/95 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12",
+              "[html[data-navbar-style=sticky]_&]:sticky [html[data-navbar-style=sticky]_&]:top-0 [html[data-navbar-style=sticky]_&]:z-50 [html[data-navbar-style=sticky]_&]:overflow-hidden [html[data-navbar-style=sticky]_&]:rounded-t-[inherit] [html[data-navbar-style=sticky]_&]:bg-[#0b0b0d]/85 [html[data-navbar-style=sticky]_&]:backdrop-blur-md",
             )}
           >
             <div className="flex w-full items-center justify-between gap-2 px-4 lg:px-6">
@@ -67,7 +67,7 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
               </div>
             </div>
           </header>
-          <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden p-3 md:p-4 has-data-[content-padding=false]:p-0">
+          <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden bg-[#0b0b0d] p-3 has-data-[content-padding=false]:p-0 md:p-5">
             <RoleRouteGuard>{children}</RoleRouteGuard>
           </div>
         </SidebarInset>

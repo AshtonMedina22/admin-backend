@@ -137,16 +137,20 @@ export function SearchDialog() {
       <Button
         onClick={() => handleOpenChange(true)}
         variant="link"
-        className="px-0! font-normal text-muted-foreground hover:no-underline"
+        className="px-0! font-normal text-slate-400 hover:text-cyan-200 hover:no-underline"
       >
         <Search data-icon="inline-start" />
         Search
-        <kbd className="inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-medium text-[10px]">
+        <kbd className="inline-flex h-5 select-none items-center gap-1 rounded border border-[#2a2a2d] bg-[#101113] px-1.5 font-medium text-[10px] text-slate-300">
           <span className="text-xs">⌘</span>J
         </kbd>
       </Button>
-      <CommandDialog open={open} onOpenChange={handleOpenChange}>
-        <Command>
+      <CommandDialog
+        open={open}
+        onOpenChange={handleOpenChange}
+        className="border border-[#2a2a2d] bg-[#101113] text-slate-100 shadow-2xl"
+      >
+        <Command className="border border-[#2a2a2d] bg-[#101113] text-slate-100">
           <CommandInput placeholder="Search dashboards, users, and more…" value={query} onValueChange={setQuery} />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
