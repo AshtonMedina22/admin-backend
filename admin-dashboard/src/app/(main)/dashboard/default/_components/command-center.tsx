@@ -32,6 +32,7 @@ import {
   dashPageHeaderClass,
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
+  dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockClass,
@@ -61,7 +62,6 @@ type MetricCardConfig = {
   icon: LucideIcon;
   iconClassName: string;
   entity: "2SK" | "3SK" | "YSP";
-  accentClassName: string;
 };
 
 function entityLabel(value: string) {
@@ -106,7 +106,6 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
       icon: TrendingUp,
       iconClassName: entityBrandStyles.solar3k.icon,
       entity: "3SK",
-      accentClassName: entityBrandStyles.solar3k.accentBar,
     },
     {
       title: "Live Fleet Yield",
@@ -118,7 +117,6 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
       icon: Activity,
       iconClassName: entityBrandStyles.yellowStar.icon,
       entity: "YSP",
-      accentClassName: entityBrandStyles.yellowStar.accentBar,
     },
     {
       title: "Combined Portfolio",
@@ -130,7 +128,6 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
       icon: Zap,
       iconClassName: entityBrandStyles.yellowStar.icon,
       entity: "YSP",
-      accentClassName: entityBrandStyles.yellowStar.accentBar,
     },
     {
       title: "DIY Retail Vol (Mo)",
@@ -142,7 +139,6 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
       icon: ShoppingCart,
       iconClassName: entityBrandStyles.solar2sk.icon,
       entity: "2SK",
-      accentClassName: entityBrandStyles.solar2sk.accentBar,
     },
   ];
 }
@@ -151,7 +147,7 @@ function TelemetryMatrixCard() {
   const telemetry = useTelemetrySimulation();
 
   return (
-    <Card size="sm" className={cn("h-full", entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
+    <Card size="sm" className={cn("h-full", dashSurfaceCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -172,9 +168,7 @@ function TelemetryMatrixCard() {
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-md border border-border bg-slate-50 p-3">
             <p className="text-[11px] text-muted-foreground uppercase">Generation</p>
-            <p className={cn(dashKpiValueClass, "text-lg", entityBrandStyles.yellowStar.text)}>
-              {telemetry.liveYield.toFixed(1)} kW
-            </p>
+            <p className={cn(dashKpiValueClass, "text-lg")}>{telemetry.liveYield.toFixed(1)} kW</p>
           </div>
           <div className="rounded-md border border-border bg-slate-50 p-3">
             <p className="text-[11px] text-muted-foreground uppercase">Consumption</p>
@@ -182,9 +176,7 @@ function TelemetryMatrixCard() {
           </div>
           <div className="rounded-md border border-border bg-slate-50 p-3">
             <p className="text-[11px] text-muted-foreground uppercase">Microgrid Output</p>
-            <p className={cn(dashKpiValueClass, "text-lg", entityBrandStyles.solar2sk.text)}>
-              {telemetry.netExport.toFixed(1)} kW
-            </p>
+            <p className={cn(dashKpiValueClass, "text-lg")}>{telemetry.netExport.toFixed(1)} kW</p>
           </div>
         </div>
       </CardContent>
@@ -213,7 +205,7 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
   ];
 
   return (
-    <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+    <Card size="sm" className={dashSurfaceCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -240,16 +232,16 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
         <div className={cn("grid gap-2", dashCodeBlockClass)}>
           <p>
             <strong className="text-foreground">Production flow:</strong>{" "}
-            <span className={entityBrandStyles.solar3k.text}>server cache</span> -&gt;{" "}
-            <span className={entityBrandStyles.solar3k.text}>Google Sheets API</span> -&gt;{" "}
-            <span className={entityBrandStyles.solar3k.text}>Apps Script JSON fallback</span> -&gt;{" "}
-            <span className={entityBrandStyles.solar3k.text}>published workbook snapshot</span> -&gt; typed KPI cards +
+            <span className="font-mono text-foreground">server cache</span> -&gt;{" "}
+            <span className="font-mono text-foreground">Google Sheets API</span> -&gt;{" "}
+            <span className="font-mono text-foreground">Apps Script JSON fallback</span> -&gt;{" "}
+            <span className="font-mono text-foreground">published workbook snapshot</span> -&gt; typed KPI cards +
             event stream.
           </p>
           <p>
             <strong className="text-foreground">Current repository path:</strong>{" "}
-            <span className={entityBrandStyles.solar3k.text}>fetchWorkbookCommandCenter()</span> checks a short
-            in-memory cache, calls <span className={entityBrandStyles.solar3k.text}>fetchDashboardSummary()</span> via
+            <span className="font-mono text-foreground">fetchWorkbookCommandCenter()</span> checks a short
+            in-memory cache, calls <span className="font-mono text-foreground">fetchDashboardSummary()</span> via
             the Sheets API, falls through to Apps Script / published workbook providers when needed, and preserves the
             dashboard with local demo data if every live provider fails.
           </p>
@@ -279,7 +271,7 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
 
 function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["projects"] }) {
   return (
-    <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+    <Card size="sm" className={dashSurfaceCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -445,7 +437,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
             <Card
               key={metric.title}
               size="sm"
-              className={cn(dashCardClass, "overflow-hidden shadow-sm", metric.accentClassName)}
+              className={cn(dashSurfaceCardClass, "overflow-hidden shadow-sm")}
             >
               <CardHeader
                 className={cn(

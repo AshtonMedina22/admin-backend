@@ -107,10 +107,6 @@ export function entityBadgeClassForLabel(label: string) {
   return "border-border bg-muted/30 text-muted-foreground";
 }
 
-export function entityAccentBarForLabel(label: string) {
-  const lower = label.toLowerCase();
-  if (lower.includes("yellow") || lower.includes("ysp")) return entityBrandStyles.yellowStar.accentBar;
-  if (lower.includes("3sk") || lower.includes("3k")) return entityBrandStyles.solar3k.accentBar;
-  if (lower.includes("2sk")) return entityBrandStyles.solar2sk.accentBar;
-  return "border-l-4 border-slate-300";
+export function entityAccentBarForLabel(_label: string) {
+  return "";
 }

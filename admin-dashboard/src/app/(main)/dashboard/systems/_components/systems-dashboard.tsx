@@ -13,12 +13,14 @@ import {
   dashCardHeaderClass,
   dashPageClass,
   dashPageHeaderClass,
+  dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockClass,
   dashCodeBlockSmClass,
   dashKpiValueClass,
   dashProseClass,
+  dashSectionTitleClass,
   entityBrandStyles,
   statusStyles,
 } from "@/lib/entity-brand";
@@ -204,7 +206,7 @@ export const defaultAccessRows: AccessRow[] = [
 
 function GoogleCloudServiceAccountScopeMap() {
   return (
-    <Card className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle>Google Cloud Service Account / OAuth Scope Map</CardTitle>
         <CardDescription>
@@ -214,14 +216,14 @@ function GoogleCloudServiceAccountScopeMap() {
       </CardHeader>
       <CardContent className={cn("space-y-4", dashCardContentClass)}>
         <div className={cn(dashCodeBlockSmClass, "grid gap-2 text-xs leading-relaxed md:grid-cols-[10rem_1fr]")}>
-          <span className="text-slate-100">Auth path</span>
+          <span className="text-foreground">Auth path</span>
           <span>
             Service account for shared Sheets/Drive assets, delegated OAuth for user mailbox/calendar actions →
             least-privilege Google scopes → server-only credentials in Vercel environment variables → backend API routes
             and scheduled workers.
           </span>
-          <span className="text-slate-100">Env keys</span>
-          <span className={entityBrandStyles.solar3k.text}>
+          <span className="text-foreground">Env keys</span>
+          <span className="font-mono text-foreground">
             GOOGLE_CLIENT_EMAIL · GOOGLE_PRIVATE_KEY · GOOGLE_SHEET_ID · OPS_CALENDAR_ID
           </span>
         </div>
@@ -229,7 +231,7 @@ function GoogleCloudServiceAccountScopeMap() {
           {oauthScopeMap.map((item) => (
             <div key={item.scope} className="rounded-lg border border-border bg-muted/40 p-3">
               <p className="font-semibold text-foreground text-sm">{item.label}</p>
-              <code className={cn("mt-1 block break-all font-mono text-[11px]", entityBrandStyles.solar3k.text)}>
+              <code className="mt-1 block break-all font-mono text-[11px] text-muted-foreground">
                 {item.scope}
               </code>
               <p className="mt-2 text-muted-foreground text-xs leading-relaxed">{item.use}</p>
@@ -243,7 +245,7 @@ function GoogleCloudServiceAccountScopeMap() {
 
 function WebsiteMaintenanceRunbook() {
   return (
-    <Card className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle>Website Maintenance Runbook</CardTitle>
         <CardDescription>
@@ -254,7 +256,7 @@ function WebsiteMaintenanceRunbook() {
         <ol className="grid gap-2 text-muted-foreground text-xs leading-relaxed md:grid-cols-5">
           {websiteMaintenanceSteps.map((step, index) => (
             <li key={step} className="rounded-lg border border-border bg-muted/40 p-3">
-              <span className={cn("mb-2 block font-mono tabular-nums", entityBrandStyles.yellowStar.text)}>
+              <span className="mb-2 block font-mono text-muted-foreground text-xs tabular-nums">
                 0{index + 1}
               </span>
               {step}
@@ -268,7 +270,7 @@ function WebsiteMaintenanceRunbook() {
 
 function AutomationPlatformRegistry() {
   return (
-    <Card className={cn(entityBrandStyles.systems.accentBar, dashCardClass)}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle>Automation Platform Registry</CardTitle>
         <CardDescription>
@@ -475,7 +477,7 @@ function GoogleWorkspaceArchitectureSpec() {
             key={spec.title}
             className="space-y-2 rounded-xl border border-border bg-muted/40 p-5"
           >
-            <h3 className={cn("font-bold font-mono text-xs", entityBrandStyles.solar3k.text)}>{spec.title}</h3>
+            <h3 className={cn("text-xs", dashSectionTitleClass)}>{spec.title}</h3>
             <p className={cn("font-mono text-xs leading-relaxed", dashProseClass)}>{spec.body}</p>
           </div>
         ))}
@@ -486,7 +488,7 @@ function GoogleWorkspaceArchitectureSpec() {
 
 function InfrastructureStatusLog() {
   return (
-    <Card className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle className="text-base">Infrastructure Status Log</CardTitle>
       </CardHeader>
@@ -502,7 +504,7 @@ function InfrastructureStatusLog() {
 function SystemsKpiStrip({ monthlySpend, urgentAlerts }: { monthlySpend: number; urgentAlerts: number }) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <Card size="sm" className={dashCardClass}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <DollarSign className="size-4" />
@@ -514,7 +516,7 @@ function SystemsKpiStrip({ monthlySpend, urgentAlerts }: { monthlySpend: number;
           DreamHost, Vercel, Zapier, DocuSign, and QuickBooks - low-overhead automated stack
         </CardContent>
       </Card>
-      <Card size="sm" className={dashCardClass}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <Globe2 className="size-4" />
@@ -526,15 +528,13 @@ function SystemsKpiStrip({ monthlySpend, urgentAlerts }: { monthlySpend: number;
           Multi-tenant WordPress and Next.js property health
         </CardContent>
       </Card>
-      <Card size="sm" className={cn(dashCardClass, urgentAlerts > 0 ? entityBrandStyles.yellowStar.accentBar : undefined)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <AlertTriangle className="size-4" />
             Urgent Infrastructure Alerts
           </CardDescription>
-          <CardTitle className={cn(dashKpiValueClass, urgentAlerts > 0 && entityBrandStyles.yellowStar.text)}>
-            {urgentAlerts}
-          </CardTitle>
+          <CardTitle className={dashKpiValueClass}>{urgentAlerts}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           SSL renewals, DreamHost certificate issues, domain monitoring

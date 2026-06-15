@@ -8,6 +8,7 @@ import {
   dashPageClass,
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
+  dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockClass,
@@ -44,8 +45,8 @@ const monthCells = Array.from({ length: 35 }, (_, index) => {
   };
 });
 
-function eventAccentClass(brand: string) {
-  return entityBrandStylesFor(brand).accentBar;
+function eventAccentClass(_brand: string) {
+  return "";
 }
 
 function flattenEvents(calendarEvents: Record<number, CalendarEvent[]>) {
@@ -212,7 +213,7 @@ function TaskAndDocumentDeck() {
 
 function CalendarApiSyncCard() {
   return (
-    <Card className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
           <div>
@@ -263,7 +264,7 @@ function CalendarApiSyncCard() {
 
 function AgendaFeed({ events }: { events: Array<CalendarEvent & { day: number }> }) {
   return (
-    <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+    <Card size="sm" className={dashSurfaceCardClass}>
       <CardHeader className={cn("border-border border-b", dashSectionCardHeaderClass)}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">

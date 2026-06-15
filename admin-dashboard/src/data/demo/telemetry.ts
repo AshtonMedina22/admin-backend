@@ -108,13 +108,13 @@ export const activeTelemetryAssets: SolarEdgeDevice[] = [
     lastTelemetryPing: "2026-06-14T17:04:36.000Z",
   },
   {
-    siteId: "site-3sk-collin-150kw",
-    inverterId: "se-inv-150kw-collin-gateway",
+    siteId: "site-3sk-frisco-commercial-array",
+    inverterId: "se-inv-frisco-commercial-a",
     name: "Primary Commercial Gateway",
-    associatedAsset: "Collin County Utility Expansion",
+    associatedAsset: "Frisco Commercial Array (Inverter A)",
     entityCompany: "3SK",
     hardware: {
-      model: "SolarEdge SE100K-USR4",
+      model: "SolarEdge Synergy three-phase inverter (120 kW class)",
       serialNumber: "7F003821-99C",
       firmwareVersion: "v4.21.05",
     },

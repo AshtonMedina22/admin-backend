@@ -15,6 +15,7 @@ import {
   dashKpiGrid3Class,
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
+  dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockClass,
@@ -84,6 +85,10 @@ function shouldShowEscalation(project: PipelineProject) {
   return /McKinney Logistics Hub|Frisco Commercial Plaza|Wylie Industrial Microgrid/i.test(project.clientName);
 }
 
+function isUnderConstruction(project: PipelineProject) {
+  return /executed|interconnection/i.test(`${project.pipelineStage} ${project.pipelinePhase}`);
+}
+
 function escalationBrand(project: PipelineProject) {
   return project.entityBrand === "Yellow Star" ? "YSP" : "3SK";
 }
@@ -94,21 +99,14 @@ function PipelineKpiStrip({
   projects,
 }: Pick<CommercialPipelineTabProps, "activeProjects" | "openPipelineBalance" | "projects">) {
   const bidValue = projects
-    .filter((project) => project.pipelineStage === "Active Bid Out" || project.pipelineStage === "OpenSolar Design")
+    .filter((project) => !isUnderConstruction(project))
     .reduce((sum, project) => sum + project.projectValue, 0);
-  const underConstruction = projects
-    .filter(
-      (project) =>
-        project.pipelineStage === "DocuSign Executed" ||
-        project.pipelineStage === "Engineering Hold" ||
-        project.pipelineStage === "Interconnection Review",
-    )
-    .reduce((sum, project) => sum + project.projectValue, 0);
+  const underConstruction = projects.filter(isUnderConstruction).reduce((sum, project) => sum + project.projectValue, 0);
   const alerts = projects.filter((project, index) => staleDays(project, index) >= 31).length;
 
   return (
     <div className={cn(dashKpiGrid3Class, "grid-cols-1 gap-3 md:grid-cols-3")}>
-      <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <Sigma className={cn("size-4", entityBrandStyles.solar3k.icon)} />
@@ -127,7 +125,7 @@ function PipelineKpiStrip({
           </div>
         </CardContent>
       </Card>
-      <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <Gauge className={cn("size-4", entityBrandStyles.solar3k.icon)} />
@@ -139,7 +137,7 @@ function PipelineKpiStrip({
           {activeProjects} active 3SK commercial and utility engineering workstreams.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <FileWarning className={cn("size-4", entityBrandStyles.yellowStar.icon)} />
@@ -172,7 +170,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
     <div className="flex flex-col gap-3">
       <PipelineKpiStrip openPipelineBalance={openPipelineBalance} activeProjects={activeProjects} projects={projects} />
 
-      <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle className="flex items-center gap-2">
             <Briefcase className="size-5" />
@@ -260,7 +258,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
         </CardContent>
       </Card>
 
-      <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle>OpenSolar / Proposal Sync Automation</CardTitle>
           <CardDescription>
@@ -280,7 +278,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
           <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
             {syncSteps.map((step, index) => (
               <div key={step} className="rounded-lg border border-border bg-slate-50 p-3">
-                <p className={cn("mb-2 font-mono text-xs", entityBrandStyles.solar3k.text)}>0{index + 1}</p>
+                <p className="mb-2 font-mono text-muted-foreground text-xs">0{index + 1}</p>
                 <p className="text-muted-foreground text-xs leading-relaxed">{step}</p>
               </div>
             ))}

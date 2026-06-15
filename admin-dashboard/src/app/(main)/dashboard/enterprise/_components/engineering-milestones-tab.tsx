@@ -3,7 +3,7 @@
 import { ScrollText } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { dashCardClass, dashCardContentClass, dashCardHeaderClass } from "@/lib/dashboard-ui";
+import { dashCardContentClass, dashCardHeaderClass, dashSurfaceCardClass } from "@/lib/dashboard-ui";
 import { entityBrandStyles } from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
@@ -32,7 +32,7 @@ export function EngineeringMilestonesTab() {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {milestoneLanes.map((lane) => (
-          <Card key={lane.title} className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+          <Card key={lane.title} className={dashSurfaceCardClass}>
             <CardHeader className={dashCardHeaderClass}>
               <CardTitle className="flex items-center gap-2 text-base">
                 <ScrollText className={cn("size-4", entityBrandStyles.solar3k.icon)} />

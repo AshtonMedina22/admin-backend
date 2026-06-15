@@ -7,8 +7,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { inventoryData } from "@/data/demo/inventory";
-import { dashCardClass, dashCardContentClass, dashCardHeaderClass } from "@/lib/dashboard-ui";
+import { dashCardContentClass, dashCardHeaderClass, dashSurfaceCardClass } from "@/lib/dashboard-ui";
 import { dashCodeBlockSmClass, dashProseClass, entityBrandStyles, statusStyles } from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
@@ -18,8 +17,10 @@ type LogLine = {
   time: string;
 };
 
-const anenjiSku = inventoryData.find((item) => item.sku === "INV-3KW-ANENJI");
-const stockUnits = anenjiSku?.stockLevel ?? 42;
+const commercialInverterSku = "SE100K-USR4-COMM";
+const commercialInverterName = "SolarEdge SE100K-USR4 Three-Phase Inverters & Optimizers";
+const stockUnits = 3;
+const estimatedSavings = "$18,900";
 const projectName = "McKinney Logistics Hub";
 const BOM_PARSER_CONTRACT = `type OpenSolarBOMRow = {
   projectId: string;
@@ -29,6 +30,8 @@ const BOM_PARSER_CONTRACT = `type OpenSolarBOMRow = {
   quantityRequired: number;
 };
 
+// normalizeSku() strips vendor suffixes, whitespace, case drift, and punctuation
+// before matching against the normalized PostgreSQL inventory schema.
 OpenSolarBOMRow[]
   .map(normalizeSku)
   .map(compareAgainstInventoryTab)
@@ -72,7 +75,7 @@ export function EngineeringBomConsole() {
       setLogs((prev) => [
         ...prev,
         {
-          text: `MATCH DETECTED: ${stockUnits} unallocated Anenji 3KW inverters in Wylie Hub (Bin B-12).`,
+          text: `MATCH DETECTED: ${stockUnits} unallocated ${commercialInverterName} in Wylie Hub (SKU ${commercialInverterSku}).`,
           type: "warn",
           time: timestamp(),
         },
@@ -84,7 +87,7 @@ export function EngineeringBomConsole() {
       setLogs((prev) => [
         ...prev,
         {
-          text: `SUCCESS: ${stockUnits} physical units reserved. Internal supply lock complete. Double-purchasing mitigated (~$14,280 saved).`,
+          text: `SUCCESS: ${stockUnits} commercial inverter lots reserved. Internal supply lock complete. Double-purchasing mitigated (~${estimatedSavings} saved).`,
           type: "success",
           time: timestamp(),
         },
@@ -97,7 +100,7 @@ export function EngineeringBomConsole() {
   }
 
   return (
-    <Card className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
@@ -106,8 +109,8 @@ export function EngineeringBomConsole() {
               Cross-Company Material Allocator
             </CardTitle>
             <CardDescription>
-              Reconciles OpenSolar CAD blueprints from 3SK against 2SK retail warehouse stock (Anenji 3KW Hybrid
-              Inverter)
+              Reconciles OpenSolar CAD blueprints from 3SK against 2SK warehouse-held commercial inverter stock
+              (SolarEdge SE100K-USR4 three-phase inverters and optimizers)
             </CardDescription>
           </div>
           <Button
@@ -160,6 +163,11 @@ export function EngineeringBomConsole() {
             project/system component rows, normalize manufacturer/model/SKU strings, compare required quantities against
             the 2SK inventory workbook tab, reserve matching units, and append an audit row for every allocation
             decision.
+          </p>
+          <p className={cn("mt-2", dashProseClass)}>
+            <strong>Normalization note:</strong> <span className="font-mono">normalizeSku()</span> handles lowercase
+            strings, spacing differences, punctuation, and vendor suffix codes before validating against the normalized
+            PostgreSQL inventory schema.
           </p>
           <pre className={cn("mt-2", dashCodeBlockSmClass)}>
             <code>{BOM_PARSER_CONTRACT}</code>

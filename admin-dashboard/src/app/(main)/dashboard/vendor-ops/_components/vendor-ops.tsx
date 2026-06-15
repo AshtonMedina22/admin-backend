@@ -23,6 +23,7 @@ import {
   dashKpiGrid3Class,
   dashPageClass,
   dashPageHeaderClass,
+  dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockClass,
@@ -38,7 +39,7 @@ const vendorComplianceSteps = [
   "Scheduled Apps Script checks COI expiration dates against a 14-day renewal window.",
   "Gmail draft is generated for human review with the vendor record and renewal request.",
   "Drive folder URL from the row is included so COI / W-9 uploads land in the correct repository.",
-  "Compliance Status is updated to Needs Renewal and the outreach timestamp is written back to the ledger.",
+  "Compliance Status and Last Outreach are written back together to reduce Sheets API round trips.",
 ];
 
 const vendorComplianceScript = `function checkVendorComplianceRenewals() {
@@ -49,6 +50,8 @@ const vendorComplianceScript = `function checkVendorComplianceRenewals() {
   if (!sheet) throw new Error('Missing Contractors & Vendors sheet');
 
   const values = sheet.getDataRange().getValues();
+  if (values.length <= 1) return;
+
   const headers = values[0].map(String);
   const col = (name) => headers.indexOf(name);
   const required = [
@@ -63,12 +66,17 @@ const vendorComplianceScript = `function checkVendorComplianceRenewals() {
     throw new Error('Missing required vendor compliance headers');
   }
 
-  const today = new Date();
+  const now = new Date();
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const msPerDay = 24 * 60 * 60 * 1000;
 
   values.slice(1).forEach((row, index) => {
-    const expiresAt = new Date(row[col('COI Expiration')]);
-    const daysUntilExpiration = Math.ceil((expiresAt.getTime() - today.getTime()) / msPerDay);
+    const rawDate = row[col('COI Expiration')];
+    if (!rawDate) return;
+
+    const expiresAt = new Date(rawDate);
+    const expiryMidnight = new Date(expiresAt.getFullYear(), expiresAt.getMonth(), expiresAt.getDate());
+    const daysUntilExpiration = Math.round((expiryMidnight.getTime() - todayMidnight.getTime()) / msPerDay);
     const status = String(row[col('Compliance Status')]);
 
     if (Number.isNaN(daysUntilExpiration) || daysUntilExpiration < 0 || daysUntilExpiration > 14) return;
@@ -85,8 +93,8 @@ const vendorComplianceScript = `function checkVendorComplianceRenewals() {
     );
 
     const sheetRow = index + 2;
-    sheet.getRange(sheetRow, col('Compliance Status') + 1).setValue('Needs Renewal');
-    sheet.getRange(sheetRow, col('Last Outreach') + 1).setValue(new Date());
+    const statusColIndex = col('Compliance Status') + 1;
+    sheet.getRange(sheetRow, statusColIndex, 1, 2).setValues([['Needs Renewal', new Date()]]);
   });
 }`;
 
@@ -128,7 +136,7 @@ function VendorKpiStrip({
 }) {
   return (
     <div className={cn(dashKpiGrid3Class, "grid-cols-1 md:grid-cols-3")}>
-      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <Users className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -140,7 +148,7 @@ function VendorKpiStrip({
           Roof, electrical, and permit partner crews available for field execution.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <MapPinned className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -152,15 +160,13 @@ function VendorKpiStrip({
           Active sites, permit audits, and interconnection dispatch lanes.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn(entityBrandStyles.yellowStar.accentBar, "bg-muted/40", dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <ShieldAlert className={cn("size-4", entityBrandStyles.yellowStar.icon)} />
             Compliance Renewal Alerts
           </CardDescription>
-          <CardTitle className={cn(dashKpiValueClass, entityBrandStyles.yellowStar.text)}>
-            {Math.max(1, complianceRisks)}
-          </CardTitle>
+          <CardTitle className={dashKpiValueClass}>{Math.max(1, complianceRisks)}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           General Liability / COI renewal exposure requiring owner-visible follow-up.
@@ -172,7 +178,7 @@ function VendorKpiStrip({
 
 function VendorComplianceAutomationCard() {
   return (
-    <Card className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
           <div className="space-y-1">
@@ -256,7 +262,7 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
         complianceRisks={complianceRisks}
       />
 
-      <Card className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
+      <Card className={dashSurfaceCardClass}>
         <CardContent className={cn(dashAlertBannerClass, "flex items-start gap-3 border-0", dashCardContentClass)}>
           <AlertTriangle className="mt-0.5 size-4 shrink-0" />
           <p className="text-xs leading-relaxed md:text-sm">

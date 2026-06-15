@@ -17,6 +17,7 @@ import {
   dashPageHeaderClass,
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
+  dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockSmClass,
@@ -60,34 +61,72 @@ const fulfillmentZapSteps = [
   "Filter: continue only when line-item SKU contains inverter, battery, kit, or balance-of-system hardware.",
   "Formatter: normalize customer name, SKU, quantity, package weight, warehouse bin, and fulfillment status.",
   "Webhook POST: send cleaned JSON to an Apps Script web app doPost(e) endpoint.",
-  "Sheet Action: append one sanitized row to the 2SK Fulfillment tab and preserve source order ID for dedupe.",
+  "Sheet Action: reject duplicate source order IDs before appending one sanitized 2SK Fulfillment row.",
   "Optional Alert: send a Gmail/MailApp notification when package weight or battery freight rules exceed threshold.",
 ];
 
 const FULFILLMENT_APPS_SCRIPT = `function doPost(e) {
-  const payload = JSON.parse(e.postData.contents);
-  const sheet = SpreadsheetApp
-    .openById(PropertiesService.getScriptProperties().getProperty('OPS_WORKBOOK_ID'))
-    .getSheetByName('2SK Fulfillment');
+  try {
+    const payload = JSON.parse(e.postData.contents);
+    const workbookId = PropertiesService.getScriptProperties().getProperty('OPS_WORKBOOK_ID');
 
-  const row = [
-    payload.order_id,
-    payload.customer_name.trim(),
-    payload.sku,
-    Number(payload.quantity || 1),
-    Number(payload.package_weight_lbs || 0),
-    payload.warehouse_bin || 'UNASSIGNED',
-    payload.fulfillment_status || 'Warehouse Pull',
-    new Date(),
-  ];
+    if (!workbookId) {
+      throw new Error('Configuration Fault: OPS_WORKBOOK_ID script property is unconfigured.');
+    }
 
-  sheet.appendRow(row);
+    const sheet = SpreadsheetApp.openById(workbookId).getSheetByName('2SK Fulfillment');
+    if (!sheet) {
+      throw new Error("Data Integrity Fault: '2SK Fulfillment' tab not found.");
+    }
 
-  if (Number(payload.package_weight_lbs || 0) > 75) {
-    MailApp.sendEmail('ops-alerts@demo-ops.local', '2SK freight review required', JSON.stringify(payload, null, 2));
+    const orderId = String(payload.order_id || '').trim();
+    if (!orderId) {
+      throw new Error('Payload Fault: order_id is required for fulfillment dedupe.');
+    }
+
+    const lastRow = sheet.getLastRow();
+    if (lastRow > 1) {
+      const existingOrderIds = sheet
+        .getRange(2, 1, lastRow - 1, 1)
+        .getValues()
+        .map((row) => String(row[0]).trim());
+
+      if (existingOrderIds.includes(orderId)) {
+        return jsonResponse({ ok: true, status: 'SKIPPED_DUPLICATE', order_id: orderId });
+      }
+    }
+
+    const packageWeightLbs = Number(payload.package_weight_lbs || 0);
+    const row = [
+      orderId,
+      payload.customer_name ? String(payload.customer_name).trim() : 'UNKNOWN CUSTOMER',
+      payload.sku || 'UNKNOWN-SKU',
+      Number(payload.quantity || 1),
+      packageWeightLbs,
+      payload.warehouse_bin || 'UNASSIGNED',
+      payload.fulfillment_status || 'Pending Warehouse Pull',
+      new Date(),
+    ];
+
+    sheet.appendRow(row);
+
+    if (packageWeightLbs > 75) {
+      MailApp.sendEmail(
+        'ops-alerts@demo-ops.local',
+        '2SK LTL Freight Review Required',
+        JSON.stringify(payload, null, 2),
+      );
+    }
+
+    return jsonResponse({ ok: true, status: 'RECORDED', order_id: orderId });
+  } catch (error) {
+    console.error('Webhook Ingestion Failure: ' + error.toString());
+    return jsonResponse({ ok: false, error: error.message });
   }
+}
 
-  return ContentService.createTextOutput(JSON.stringify({ ok: true }))
+function jsonResponse(body) {
+  return ContentService.createTextOutput(JSON.stringify(body))
     .setMimeType(ContentService.MimeType.JSON);
 }`;
 
@@ -110,7 +149,7 @@ function KpiStrip({
   const stats = fulfillmentStats(orders);
   return (
     <div className={cn(dashKpiGridClass, "grid-cols-1 md:grid-cols-2 lg:grid-cols-4")}>
-      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <Package className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -122,7 +161,7 @@ function KpiStrip({
           Active WooCommerce orders across 2SK hardware fulfillment.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <PackageCheck className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -134,7 +173,7 @@ function KpiStrip({
           Wylie warehouse pull queue for inverter and kit SKUs.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <BatteryCharging className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -146,13 +185,13 @@ function KpiStrip({
           48V LiFePO4 battery blocks pending freight reconciliation.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn(entityBrandStyles.yellowStar.accentBar, "bg-muted/40", dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <ClockAlert className={cn("size-4", entityBrandStyles.yellowStar.icon)} />
             Transit Fulfillment Delays
           </CardDescription>
-          <CardTitle className={cn(dashKpiValueClass, entityBrandStyles.yellowStar.text)}>{stats.transitDelay}</CardTitle>
+          <CardTitle className={dashKpiValueClass}>{stats.transitDelay}</CardTitle>
         </CardHeader>
         <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
           Orders blocked by pallet weight, LTL timing, or inventory hold.
@@ -178,7 +217,7 @@ function FulfillmentBadge({ stage }: { stage: string }) {
 
 function ZapierFulfillmentZapCard() {
   return (
-    <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
+    <Card size="sm" className={dashSurfaceCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <CardTitle>Zapier → Apps Script Fulfillment Zap</CardTitle>
         <CardDescription>
@@ -195,7 +234,7 @@ function ZapierFulfillmentZapCard() {
           ))}
         </div>
         <div className={cn(dashCodeBlockSmClass, "text-xs leading-relaxed")}>
-          <strong className="text-slate-100">Accuracy note:</strong> WooCommerce can trigger Zapier on order-created
+          <strong className="text-foreground">Accuracy note:</strong> WooCommerce can trigger Zapier on order-created
           events, Zapier can filter/format fields, and Webhooks by Zapier can POST a JSON payload into an Apps Script
           web app endpoint. The Apps Script then owns Sheet writes, dedupe policy, and optional Gmail/MailApp alerts.
         </div>
@@ -210,7 +249,7 @@ function ZapierFulfillmentZapCard() {
 function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
-      <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, "xl:col-span-8", dashCardClass)}>
+      <Card size="sm" className={cn("xl:col-span-8", dashSurfaceCardClass)}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle>2SK Fulfillment Matrix</CardTitle>
           <CardDescription>
@@ -255,7 +294,7 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
       </Card>
 
       <div className="grid gap-4 xl:col-span-4">
-        <Card size="sm" className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
+        <Card size="sm" className={dashSurfaceCardClass}>
           <CardHeader className={dashSectionCardHeaderClass}>
             <CardTitle>Order Webhook Payload Monitor</CardTitle>
             <CardDescription>
@@ -268,8 +307,8 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
               <span className="block font-bold text-foreground">Webhook Ingestion Protocol</span>
               <p className={cn("font-mono leading-relaxed", dashProseClass)}>
                 Production wiring would receive WooCommerce order.created webhook payloads through middleware, validate
-                customer/SKU/shipping fields, strip duplicates and malformed rows, then append sanitized fulfillment
-                records to the Google Sheets operations workbook through an Apps Script execution endpoint.
+                customer/SKU/shipping fields, reject duplicate order IDs and malformed rows, then append sanitized
+                fulfillment records to the Google Sheets operations workbook through an Apps Script execution endpoint.
               </p>
             </div>
             <pre className={cn(dashCodeBlockSmClass, "max-h-64 md:text-xs")}>

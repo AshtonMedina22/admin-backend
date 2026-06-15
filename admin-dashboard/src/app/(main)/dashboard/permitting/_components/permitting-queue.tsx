@@ -13,8 +13,10 @@ import {
   dashKpiGrid3Class,
   dashPageClass,
   dashPageHeaderClass,
+  dashInfoBannerClass,
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
+  dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockClass,
@@ -108,7 +110,7 @@ const PERMIT_ALERT_SCRIPT = `function onPermitStatusEdit(e) {
 
 function PermitStatusFormulaCard() {
   return (
-    <Card size="sm" className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
+    <Card size="sm" className={dashSurfaceCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <CardTitle>Permit Status Formula / Conditional Formatting Rule</CardTitle>
         <CardDescription>
@@ -119,9 +121,9 @@ function PermitStatusFormulaCard() {
         <div className="space-y-3">
           <div className={cn(dashCodeBlockSmClass, "text-xs leading-relaxed")}>
             <p>
-              <strong className="text-slate-100">Workbook setup:</strong> calculate{" "}
-              <span className={entityBrandStyles.solar3k.text}>DaysStale</span> from
-              <span className={entityBrandStyles.solar3k.text}> TODAY() - SubmittedDate</span>, then use the status output as the source
+              <strong className="text-foreground">Workbook setup:</strong> calculate{" "}
+              <span className="font-mono text-foreground">DaysStale</span> from
+              <span className="font-mono text-foreground"> TODAY() - SubmittedDate</span>, then use the status output as the source
               column for conditional formatting, filters, and Apps Script escalation checks.
             </p>
           </div>
@@ -143,7 +145,7 @@ function PermitStatusFormulaCard() {
 
 function AppsScriptPermitAlertCard() {
   return (
-    <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+    <Card size="sm" className={dashSurfaceCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
           <FileCheck className={cn("size-5", entityBrandStyles.solar3k.icon)} />
@@ -158,15 +160,15 @@ function AppsScriptPermitAlertCard() {
       <CardContent className={cn("space-y-3", dashSectionCardContentClass)}>
         <div className={cn(dashCodeBlockSmClass, "grid gap-2 text-xs leading-relaxed")}>
           <p>
-            <strong className="text-slate-100">Configuration:</strong> Apps Script trigger → Event source:{" "}
-            <span className={entityBrandStyles.solar3k.text}>From spreadsheet</span> → Event type:{" "}
-            <span className={entityBrandStyles.solar3k.text}>On edit</span> → Handler:{" "}
-            <span className={entityBrandStyles.solar3k.text}>onPermitStatusEdit</span>.
+            <strong className="text-foreground">Configuration:</strong> Apps Script trigger → Event source:{" "}
+            <span className="font-mono text-foreground">From spreadsheet</span> → Event type:{" "}
+            <span className="font-mono text-foreground">On edit</span> → Handler:{" "}
+            <span className="font-mono text-foreground">onPermitStatusEdit</span>.
           </p>
           <p>
             The handler checks the edited column, detects blocked/stale/rejected permit states, pulls the
             asset/AHJ/permit fields from the same row, and sends a targeted operations alert via{" "}
-            <span className={entityBrandStyles.solar3k.text}>MailApp</span>.
+            <span className="font-mono text-foreground">MailApp</span>.
           </p>
         </div>
         <pre className={cn(dashCodeBlockClass, "max-h-80 text-[11px]")}>
@@ -188,7 +190,7 @@ export function PermittingQueue() {
       </div>
 
       <div className={cn(dashKpiGrid3Class, "grid-cols-1 md:grid-cols-3")}>
-        <Card size="sm" className={cn(entityBrandStyles.systems.accentBar, dashCardClass)}>
+        <Card size="sm" className={dashSurfaceCardClass}>
           <CardHeader className={dashCardHeaderClass}>
             <CardDescription className="text-xs">Stale Permit Applications</CardDescription>
             <CardTitle className={dashKpiValueClass}>3</CardTitle>
@@ -197,7 +199,7 @@ export function PermittingQueue() {
             Projects exceeding municipal or utility review thresholds.
           </CardContent>
         </Card>
-        <Card size="sm" className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
+        <Card size="sm" className={dashSurfaceCardClass}>
           <CardHeader className={dashCardHeaderClass}>
             <CardDescription className="text-xs">Average AHJ Cycle Time</CardDescription>
             <CardTitle className={dashKpiValueClass}>28.4 Days</CardTitle>
@@ -206,7 +208,7 @@ export function PermittingQueue() {
             Rolling permit, interconnection, and PTO review duration.
           </CardContent>
         </Card>
-        <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+        <Card size="sm" className={dashSurfaceCardClass}>
           <CardHeader className={dashCardHeaderClass}>
             <CardDescription className="text-xs">Escalation Drafts Dispatched</CardDescription>
             <CardTitle className={dashKpiValueClass}>14</CardTitle>
@@ -217,7 +219,7 @@ export function PermittingQueue() {
         </Card>
       </div>
 
-      <Card size="sm" className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle className="flex items-center gap-2">
             <FileCheck className="size-5" />
@@ -229,8 +231,8 @@ export function PermittingQueue() {
           </CardDescription>
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
-          <div className={cn(dashCodeBlockSmClass, "mb-3 text-xs leading-relaxed")}>
-            <strong className="text-slate-100">AI Automation Layer:</strong> Production wiring would pass AHJ name,
+          <div className={cn(dashInfoBannerClass, "mb-3 text-xs leading-relaxed")}>
+            <strong className="text-foreground">AI Automation Layer:</strong> Production wiring would pass AHJ name,
             permit number, days delayed, missing requirements, and brand context into a controlled prompt/template
             service, generate a professional escalation draft, and keep a human approval step before sending through
             email or CRM automation.

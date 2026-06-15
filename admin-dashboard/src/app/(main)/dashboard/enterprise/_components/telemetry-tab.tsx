@@ -6,7 +6,7 @@ import { EntityBrandBadge } from "@/components/dashboard/entity-brand-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { activeTelemetryAssets, aggregateEnvironmentalImpact } from "@/data/demo/telemetry";
-import { dashCardClass, dashCardContentClass, dashCardHeaderClass } from "@/lib/dashboard-ui";
+import { dashCardContentClass, dashCardHeaderClass, dashSurfaceCardClass } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockClass,
   dashKpiValueClass,
@@ -88,11 +88,11 @@ export async function fetchSolarEdgeTelemetry(siteId: string) {
   });
 }`;
 
-function MetricRow({ label, value, valueClassName }: { label: string; value: string; valueClassName?: string }) {
+function MetricRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4 rounded-md border border-border bg-slate-50 px-3 py-2">
       <span className="text-muted-foreground text-sm">{label}</span>
-      <span className={cn(dashKpiValueClass, "text-sm", valueClassName)}>{value}</span>
+      <span className={cn(dashKpiValueClass, "text-sm")}>{value}</span>
     </div>
   );
 }
@@ -114,7 +114,7 @@ export function TelemetryTab() {
       />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <Card className={cn(entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
+        <Card className={dashSurfaceCardClass}>
           <CardHeader className={dashCardHeaderClass}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="grid gap-2">
@@ -134,13 +134,11 @@ export function TelemetryTab() {
             <MetricRow
               label="Current Array Generation"
               value={`${liveYield.toFixed(1)} kW`}
-              valueClassName={entityBrandStyles.yellowStar.text}
             />
             <MetricRow label="Local Consumption Load" value={`${consumptionKw.toFixed(1)} kW`} />
             <MetricRow
               label="Isolated Microgrid Output"
               value={`${netExport.toFixed(1)} kW (local load and battery bank during commissioning)`}
-              valueClassName={entityBrandStyles.solar2sk.text}
             />
             <MetricRow label="Inverter Efficiency" value={`${efficiency}%`} />
             <MetricRow label="Battery Storage Capacity" value="92.5% (LiFePO4 Core Bank)" />
@@ -155,7 +153,7 @@ export function TelemetryTab() {
           </CardContent>
         </Card>
 
-        <Card className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+        <Card className={dashSurfaceCardClass}>
           <CardHeader className={dashCardHeaderClass}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="grid gap-2">
@@ -185,7 +183,8 @@ export function TelemetryTab() {
                 Hardware Data & Telemetry Error Output
               </div>
               <p className="text-muted-foreground">
-                SolarEdge SE100K-USR4 | SN: 7F003821-99C | Core Temp: 22.8°C | Last Ping: 18 minutes ago (Stale).
+                SolarEdge Synergy three-phase inverter, 120 kW class | SN: 7F003821-99C | Core Temp: 22.8°C | Last
+                Ping: 18 minutes ago (Stale).
               </p>
             </div>
 
@@ -196,7 +195,7 @@ export function TelemetryTab() {
         </Card>
       </div>
 
-      <Card className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+      <Card className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardTitle>SolarEdge Telemetry API Wiring Spec</CardTitle>
           <CardDescription>
@@ -213,10 +212,10 @@ export function TelemetryTab() {
             </p>
             <p>
               <strong className="text-foreground">Production path:</strong> poll{" "}
-              <span className={entityBrandStyles.solar3k.text}>/site/&lt;siteId&gt;/currentPowerFlow</span>,{" "}
-              <span className={entityBrandStyles.solar3k.text}>/overview</span>,{" "}
-              <span className={entityBrandStyles.solar3k.text}>/inventory</span>, inverter technical-data endpoints, and{" "}
-              <span className={entityBrandStyles.solar3k.text}>/envBenefits</span>; normalize units into one typed
+              <span className="font-mono text-foreground">/site/&lt;siteId&gt;/currentPowerFlow</span>,{" "}
+              <span className="font-mono text-foreground">/overview</span>,{" "}
+              <span className="font-mono text-foreground">/inventory</span>, inverter technical-data endpoints, and{" "}
+              <span className="font-mono text-foreground">/envBenefits</span>; normalize units into one typed
               dashboard payload; cache/revalidate server-side; then render only sanitized telemetry records in this tab.
             </p>
           </div>
@@ -236,7 +235,7 @@ export function TelemetryTab() {
         </CardContent>
       </Card>
 
-      <Card className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
+      <Card className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardTitle>Normalized Live Data Mock Payload</CardTitle>
           <CardDescription>

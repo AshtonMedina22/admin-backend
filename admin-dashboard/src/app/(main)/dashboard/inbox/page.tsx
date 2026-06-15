@@ -8,6 +8,7 @@ import {
   dashCardHeaderClass,
   dashPageClass,
   dashPageHeaderClass,
+  dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockClass,
@@ -79,7 +80,7 @@ HUMAN STEP: Builder Ops reviews the draft before Gmail API send.`;
 
 function DraftQueueCard() {
   return (
-    <Card className={cn(entityBrandStyles.solar3k.accentBar, dashCardClass)}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
           <MailCheck className={cn("size-5", entityBrandStyles.solar3k.icon)} />
@@ -116,7 +117,7 @@ function DraftQueueCard() {
 
 function GmailApiProofCard() {
   return (
-    <Card className={cn(entityBrandStyles.solar2sk.accentBar, dashCardClass)}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
           <ShieldCheck className={cn("size-5", entityBrandStyles.solar2sk.icon)} />
@@ -129,12 +130,12 @@ function GmailApiProofCard() {
       <CardContent className={cn("grid gap-4 lg:grid-cols-[0.9fr_1.3fr]", dashCardContentClass)}>
         <div className={cn(dashCodeBlockSmClass, "space-y-3 text-xs leading-relaxed")}>
           <p>
-            <strong className="text-slate-100">Flow:</strong> Sheet row / app event → server route validates row metadata
+            <strong className="text-foreground">Flow:</strong> Sheet row / app event → server route validates row metadata
             → OAuth-authenticated Gmail client creates a draft → draft ID is written back to the workbook for audit and
             approval tracking.
           </p>
           <p>
-            <strong className="text-slate-100">Accuracy guardrail:</strong> Gmail drafts require user OAuth consent or
+            <strong className="text-foreground">Accuracy guardrail:</strong> Gmail drafts require user OAuth consent or
             Google Workspace domain-wide delegation. A plain service account by itself cannot create drafts inside a
             user mailbox.
           </p>
@@ -149,7 +150,7 @@ function GmailApiProofCard() {
 
 function AiDraftingCard() {
   return (
-    <Card className={cn(entityBrandStyles.systems.accentBar, dashCardClass)}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
           <Bot className={cn("size-5", entityBrandStyles.systems.icon)} />

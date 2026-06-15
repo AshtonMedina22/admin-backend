@@ -46,7 +46,7 @@ const NavSkillChips = ({ skills }: { skills?: string[] }) => {
       {skills.map((skill) => (
         <span
           key={skill}
-          className="rounded-full border border-sidebar-border bg-background px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground leading-none group-data-[active=true]/menu-button:border-[color-mix(in_oklab,var(--brand-3sk)_40%,transparent)] group-data-[active=true]/menu-button:text-[var(--brand-3sk-text)]"
+          className="rounded-full border border-sidebar-border bg-sidebar-accent/70 px-1.5 py-0.5 font-mono text-[9px] text-sidebar-foreground/70 leading-none group-data-[active=true]/menu-button:border-[color-mix(in_oklab,var(--brand-3sk)_45%,transparent)] group-data-[active=true]/menu-button:bg-sidebar/80 group-data-[active=true]/menu-button:text-[var(--brand-3sk-text)]"
         >
           {skill}
         </span>

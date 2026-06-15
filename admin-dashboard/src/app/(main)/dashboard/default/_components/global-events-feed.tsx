@@ -9,16 +9,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { GlobalEvent, GlobalEventStatus } from "@/data/demo/global-events";
 import { globalEventsData } from "@/data/demo/global-events";
-import { dashCardClass, dashInfoBannerClass, dashSectionCardContentClass, dashSectionCardHeaderClass } from "@/lib/dashboard-ui";
-import { entityBrandStyles, statusStyles } from "@/lib/entity-brand";
+import {
+  dashInfoBannerClass,
+  dashSectionCardContentClass,
+  dashSectionCardHeaderClass,
+  dashSurfaceCardClass,
+} from "@/lib/dashboard-ui";
+import { statusStyles } from "@/lib/entity-brand";
 import { formatSyncRelativeTime } from "@/lib/sync-time";
 import { cn } from "@/lib/utils";
 
 const eventRowStyles: Record<GlobalEventStatus, string> = {
-  critical: "border-l-[var(--status-critical)] bg-[var(--status-critical-bg)]/30",
-  warning: "border-l-[var(--brand-ysp)] bg-[var(--status-warning-bg)]/40",
-  success: "border-l-[var(--status-live)] bg-[var(--status-live-bg)]/40",
-  info: "border-l-[var(--brand-3sk)] bg-muted/30",
+  critical: "border-l-[var(--status-critical)] bg-[var(--status-critical-bg)]/25",
+  warning: "border-l-[var(--status-warning-text)] bg-[var(--status-warning-bg)]/30",
+  success: "border-l-[var(--status-live)] bg-[var(--status-live-bg)]/25",
+  info: "border-l-border bg-muted/20",
 };
 
 const statusIcons: Record<GlobalEventStatus, typeof AlertCircle> = {
@@ -53,7 +58,7 @@ export function GlobalEventsFeed({
   const openIssues = events.filter((e) => e.status === "critical" || e.status === "warning").length;
 
   return (
-    <Card size="sm" className={cn("flex h-full flex-col", entityBrandStyles.yellowStar.accentBar, dashCardClass)}>
+    <Card size="sm" className={cn("flex h-full flex-col", dashSurfaceCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <CardTitle className="flex items-center gap-2 leading-none">
@@ -136,7 +141,7 @@ export function GlobalEventsFeed({
                       </span>
                     )}
                   </div>
-                  <p className="line-clamp-2 text-sm leading-relaxed text-foreground">{event.message}</p>
+                  <p className="line-clamp-2 text-foreground text-sm leading-relaxed">{event.message}</p>
                 </div>
               );
             })}
