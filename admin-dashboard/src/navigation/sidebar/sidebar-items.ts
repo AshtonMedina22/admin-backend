@@ -76,16 +76,16 @@ export const sidebarItems: NavGroup[] = [
         skills: ["Installable Triggers", "Next.js Edge Routes", "AI Context Mapping"],
       },
       {
-        title: "Tasks & Schedule",
-        url: "/dashboard/calendar",
-        icon: CalendarCheck,
-        skills: ["Calendar API", "DocuSign Connect", "Idempotent Syncer"],
-      },
-      {
         title: "Inbox & Drafting",
         url: "/dashboard/inbox",
         icon: MailCheck,
         skills: ["Gmail REST API", "OAuth Client Auth", "Deterministic Prompting"],
+      },
+      {
+        title: "Tasks & Schedule",
+        url: "/dashboard/calendar",
+        icon: CalendarCheck,
+        skills: ["Calendar API", "DocuSign Connect", "Idempotent Syncer"],
       },
       {
         title: "Systems",
