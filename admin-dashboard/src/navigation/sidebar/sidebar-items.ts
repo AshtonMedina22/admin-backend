@@ -45,7 +45,7 @@ export const sidebarItems: NavGroup[] = [
     label: "Operations",
     items: [
       {
-        title: "Ops Command Center",
+        title: "Command Center",
         url: "/dashboard",
         icon: LayoutDashboard,
         skills: ["Sheets API", "Apps Script", "Server Cache"],
@@ -58,7 +58,7 @@ export const sidebarItems: NavGroup[] = [
         skills: ["SolarEdge API", "SCADA Telemetry", "BOM Automation"],
       },
       {
-        title: "Consumer Retail Hub",
+        title: "Retail Hub",
         url: "/dashboard/retail",
         icon: ShoppingBag,
         skills: ["Webhook Ingestion", "Zapier Middleware", "Deduplication Engine"],
@@ -70,7 +70,7 @@ export const sidebarItems: NavGroup[] = [
         skills: ["Compliance Cron", "Gmail Draft API", "Batch Write Guard"],
       },
       {
-        title: "Permitting & AHJ Queue",
+        title: "Permitting Queue",
         url: "/dashboard/permitting",
         icon: FileCheck,
         skills: ["Installable Triggers", "Next.js Edge Routes", "AI Context Mapping"],
@@ -88,7 +88,7 @@ export const sidebarItems: NavGroup[] = [
         skills: ["Gmail REST API", "OAuth Client Auth", "Deterministic Prompting"],
       },
       {
-        title: "Systems & Settings",
+        title: "Systems",
         url: "/dashboard/systems",
         icon: Settings,
         accessRequired: "admin",

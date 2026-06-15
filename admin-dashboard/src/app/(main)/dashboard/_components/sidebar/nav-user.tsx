@@ -27,15 +27,15 @@ export function NavUser() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
-              size="lg"
-              className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-[var(--brand-3sk-text)] data-[state=open]:bg-sidebar-accent data-[state=open]:text-[var(--brand-3sk-text)]"
+              size="default"
+              className="h-9 text-sidebar-foreground hover:bg-sidebar-accent hover:text-[var(--brand-3sk-text)] data-[state=open]:bg-sidebar-accent data-[state=open]:text-[var(--brand-3sk-text)]"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarFallback className="rounded-lg">{getInitials(profile.name)}</AvatarFallback>
+              <Avatar className="size-7 rounded-md">
+                <AvatarFallback className="rounded-md text-[10px]">{getInitials(profile.name)}</AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{profile.name}</span>
-                <span className="truncate text-sidebar-foreground/70 text-xs">{profile.roleLabel}</span>
+              <div className="grid min-w-0 flex-1 text-left leading-none">
+                <span className="truncate font-medium text-[13px]">{profile.name}</span>
+                <span className="truncate text-[10px] text-sidebar-foreground/70">{profile.roleLabel}</span>
               </div>
             </SidebarMenuButton>
           </DropdownMenuTrigger>

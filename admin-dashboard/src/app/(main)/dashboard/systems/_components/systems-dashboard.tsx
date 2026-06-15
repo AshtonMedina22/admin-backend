@@ -204,16 +204,16 @@ export const defaultAccessRows: AccessRow[] = [
 
 function GoogleCloudServiceAccountScopeMap() {
   return (
-    <Card className={dashSurfaceCardClass}>
-      <CardHeader className={dashCardHeaderClass}>
+    <Card className={cn("h-full", dashSurfaceCardClass)}>
+      <CardHeader className={cn("border-border border-b", dashCardHeaderClass)}>
         <CardTitle>Google Cloud Service Account / OAuth Scope Map</CardTitle>
         <CardDescription>
           Production permission model for connecting the dashboard, Apps Script, and Google Workspace APIs without
           hard-coding secrets in the client bundle.
         </CardDescription>
       </CardHeader>
-      <CardContent className={cn("space-y-4", dashCardContentClass)}>
-        <div className={cn(dashCodeBlockSmClass, "grid gap-2 text-xs leading-relaxed md:grid-cols-[10rem_1fr]")}>
+      <CardContent className={cn("space-y-3", dashCardContentClass)}>
+        <div className={cn(dashCodeBlockSmClass, "grid gap-2 text-[11px] leading-snug md:grid-cols-[8rem_1fr]")}>
           <span className="text-foreground">Auth path</span>
           <span>
             Service account for shared Sheets/Drive assets, delegated OAuth for user mailbox/calendar actions →
@@ -221,18 +221,18 @@ function GoogleCloudServiceAccountScopeMap() {
             and scheduled workers.
           </span>
           <span className="text-foreground">Env keys</span>
-          <span className="font-mono text-foreground">
+          <span className="truncate font-mono text-foreground">
             GOOGLE_CLIENT_EMAIL | GOOGLE_PRIVATE_KEY | GOOGLE_WORKSPACE_ACT_AS_USER | GOOGLE_SHEET_ID | OPS_CALENDAR_ID
           </span>
         </div>
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid max-h-[280px] gap-2 overflow-y-auto pr-1 md:grid-cols-2">
           {oauthScopeMap.map((item) => (
-            <div key={item.scope} className="rounded-lg border border-border bg-muted/40 p-3">
-              <p className="font-semibold text-foreground text-sm">{item.label}</p>
-              <code className="mt-1 block break-all font-mono text-[11px] text-muted-foreground">
+            <div key={item.scope} className="rounded-lg border border-border bg-muted/40 p-2.5">
+              <p className="font-semibold text-foreground text-xs">{item.label}</p>
+              <code className="mt-1 block truncate font-mono text-[10px] text-muted-foreground">
                 {item.scope}
               </code>
-              <p className="mt-2 text-muted-foreground text-xs leading-relaxed">{item.use}</p>
+              <p className="mt-1.5 line-clamp-3 text-muted-foreground text-[11px] leading-snug">{item.use}</p>
             </div>
           ))}
         </div>
@@ -243,18 +243,18 @@ function GoogleCloudServiceAccountScopeMap() {
 
 function WebsiteMaintenanceRunbook() {
   return (
-    <Card className={dashSurfaceCardClass}>
-      <CardHeader className={dashCardHeaderClass}>
+    <Card className={cn("h-full", dashSurfaceCardClass)}>
+      <CardHeader className={cn("border-border border-b", dashCardHeaderClass)}>
         <CardTitle>Website Maintenance Runbook</CardTitle>
         <CardDescription>
           Operational checklist for WordPress, DNS, SSL, cPanel/DreamHost, backups, redirects, and issue logging.
         </CardDescription>
       </CardHeader>
       <CardContent className={dashCardContentClass}>
-        <ol className="grid gap-2 text-muted-foreground text-xs leading-relaxed md:grid-cols-5">
+        <ol className="grid gap-2 text-muted-foreground text-[11px] leading-snug md:grid-cols-5">
           {websiteMaintenanceSteps.map((step, index) => (
-            <li key={step} className="rounded-lg border border-border bg-muted/40 p-3">
-              <span className="mb-2 block font-mono text-muted-foreground text-xs tabular-nums">
+            <li key={step} className="rounded-lg border border-border bg-muted/40 p-2.5">
+              <span className="mb-1.5 block font-mono text-muted-foreground text-[10px] tabular-nums">
                 0{index + 1}
               </span>
               {step}
@@ -291,47 +291,37 @@ function AutomationPlatformRegistry() {
 
 function DomainMonitors({ domainMonitors }: { domainMonitors: DomainMonitorRow[] }) {
   return (
-    <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-      {domainMonitors.map((domain) => (
-        <Card
-          key={domain.domain}
-          className={cn(
-            dashSurfaceCardClass,
-            domain.critical && "border-l-4 border-l-[var(--status-critical)]",
-          )}
-        >
-          <CardHeader className={dashCardHeaderClass}>
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="grid gap-1">
-                <CardTitle className="font-mono text-base">{domain.domain}</CardTitle>
-                <CardDescription>{domain.detail}</CardDescription>
+    <Card className={cn("h-full", dashSurfaceCardClass)}>
+      <CardHeader className={cn("border-border border-b", dashCardHeaderClass)}>
+        <CardTitle>Domain Monitors</CardTitle>
+        <CardDescription>Certificate, hosting, and storefront status checks across managed domains.</CardDescription>
+      </CardHeader>
+      <CardContent className={cn("grid max-h-[430px] gap-2 overflow-y-auto pr-1", dashCardContentClass)}>
+        {domainMonitors.map((domain) => (
+          <div
+            key={domain.domain}
+            className={cn(
+              "rounded-lg border border-border bg-muted/40 p-3",
+              domain.critical && "border-l-4 border-l-[var(--status-critical)]",
+            )}
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div className="min-w-0">
+                <h3 className="font-mono font-semibold text-sm">{domain.domain}</h3>
+                <p className="mt-1 line-clamp-2 text-muted-foreground text-xs leading-snug">{domain.detail}</p>
               </div>
-              {domain.critical ? (
-                <span className="size-3 animate-pulse rounded-full bg-amber-500" />
-              ) : (
-                <span className="size-3 rounded-full bg-emerald-500" />
-              )}
-            </div>
-          </CardHeader>
-          <CardContent className={cn("grid gap-2 text-sm", dashCardContentClass)}>
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-slate-50 px-3 py-2">
-              <span className="text-muted-foreground">SSL Handshake Status</span>
-              <Badge variant={domain.critical ? "destructive" : "outline"} className="font-mono">
+              <Badge variant={domain.critical ? "destructive" : "outline"} className="h-5 font-mono text-[10px]">
                 {domain.ssl}
               </Badge>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-slate-50 px-3 py-2">
-              <span className="text-muted-foreground">Expiration / Renewal</span>
-              <span className="font-medium font-mono">{domain.renewal}</span>
+            <div className="mt-2 grid gap-2 border-border border-t pt-2 text-[11px] text-muted-foreground sm:grid-cols-2">
+              <span className="truncate font-mono">Renewal: {domain.renewal}</span>
+              <span className="truncate font-mono">Admin: {domain.admin}</span>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-slate-50 px-3 py-2">
-              <span className="text-muted-foreground">Assigned Administrator Handle</span>
-              <span className="font-medium font-mono">{domain.admin}</span>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -340,37 +330,37 @@ function SubscriptionLedger({ subscriptions }: { subscriptions: SubscriptionRow[
   const annualTotal = monthlyTotal * 12;
 
   return (
-    <Card className={dashSurfaceCardClass}>
-      <CardHeader className={dashCardHeaderClass}>
+    <Card className={cn("h-full", dashSurfaceCardClass)}>
+      <CardHeader className={cn("border-border border-b", dashCardHeaderClass)}>
         <CardTitle>SaaS Subscription Ledger</CardTitle>
         <CardDescription>Dense monthly software spend ledger across corporate operating systems.</CardDescription>
       </CardHeader>
-      <CardContent className={cn("grid gap-4", dashCardContentClass)}>
+      <CardContent className={cn("grid gap-3", dashCardContentClass)}>
         <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-border">
-          <Table className="min-w-[860px]">
+          <Table className="min-w-[620px] table-fixed text-[11px]">
             <TableHeader>
               <TableRow>
-                <TableHead>Tool</TableHead>
-                <TableHead>Cadence</TableHead>
-                <TableHead className="text-right">Cost</TableHead>
-                <TableHead>Purpose</TableHead>
-                <TableHead>Admin</TableHead>
+                <TableHead className="w-[28%]">Tool</TableHead>
+                <TableHead className="w-[14%]">Cadence</TableHead>
+                <TableHead className="w-[14%] text-right">Cost</TableHead>
+                <TableHead className="w-[44%]">Purpose</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {subscriptions.map((subscription) => (
-                <TableRow key={subscription.tool}>
-                  <TableCell className="font-medium">{subscription.tool}</TableCell>
-                  <TableCell className="font-mono">{subscription.cadence}</TableCell>
-                  <TableCell className="text-right font-medium font-mono tabular-nums">${subscription.cost}</TableCell>
-                  <TableCell>{subscription.purpose}</TableCell>
-                  <TableCell className="font-mono">Admin: {subscription.admin}</TableCell>
+                <TableRow key={subscription.tool} className="h-9">
+                  <TableCell className="truncate py-2 font-medium">{subscription.tool}</TableCell>
+                  <TableCell className="py-2 font-mono">{subscription.cadence}</TableCell>
+                  <TableCell className="py-2 text-right font-medium font-mono tabular-nums">
+                    ${subscription.cost}
+                  </TableCell>
+                  <TableCell className="truncate py-2">{subscription.purpose}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
-        <div className="rounded-md border border-border bg-slate-50 p-4 font-medium font-mono text-muted-foreground">
+        <div className="rounded-md border border-border bg-slate-50 px-3 py-2 font-medium font-mono text-muted-foreground text-xs">
           Aggregated Global Tool Burn Rate: ${monthlyTotal.toFixed(2)} / month (${annualTotal.toLocaleString()}.00 /
           year).
         </div>
@@ -382,7 +372,7 @@ function SubscriptionLedger({ subscriptions }: { subscriptions: SubscriptionRow[
 function AccessControls({ accessRows }: { accessRows: AccessRow[] }) {
   return (
     <Card className={dashSurfaceCardClass}>
-      <CardHeader className={dashCardHeaderClass}>
+      <CardHeader className={cn("border-border border-b", dashCardHeaderClass)}>
         <CardTitle>User Access / RBAC Controls</CardTitle>
         <CardDescription>
           Role-based safety parameters across corporate units and external field access.
@@ -390,24 +380,28 @@ function AccessControls({ accessRows }: { accessRows: AccessRow[] }) {
       </CardHeader>
       <CardContent className={dashCardContentClass}>
         <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-border">
-          <Table className="min-w-[860px]">
+          <Table className="min-w-[920px] table-fixed text-[11px]">
             <TableHeader>
               <TableRow>
-                <TableHead>Profile</TableHead>
-                <TableHead>Corporate Role Assigned</TableHead>
-                <TableHead>Scope</TableHead>
-                <TableHead>Module Permissions Profile</TableHead>
+                <TableHead className="w-[30%]">Profile</TableHead>
+                <TableHead className="w-[18%]">Corporate Role Assigned</TableHead>
+                <TableHead className="w-[17%]">Scope</TableHead>
+                <TableHead className="w-[35%]">Module Permissions Profile</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {accessRows.map((row) => (
-                <TableRow key={row.profile}>
-                  <TableCell className="font-medium">{row.profile}</TableCell>
+                <TableRow key={row.profile} className="h-10">
+                  <TableCell className="truncate py-2 font-medium">{row.profile}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{row.role}</Badge>
+                    <Badge variant="outline" className="h-5 font-mono text-[10px]">
+                      {row.role}
+                    </Badge>
                   </TableCell>
-                  <TableCell>{row.scope}</TableCell>
-                  <TableCell className="max-w-2xl whitespace-normal leading-relaxed">{row.permissions}</TableCell>
+                  <TableCell className="truncate py-2">{row.scope}</TableCell>
+                  <TableCell className="truncate py-2 font-mono text-[10px] text-muted-foreground">
+                    {row.permissions}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -486,12 +480,12 @@ function GoogleWorkspaceArchitectureSpec() {
 
 function InfrastructureStatusLog() {
   return (
-    <Card className={cn(dashSurfaceCardClass, entityBrandStyles.systems.accentBar)}>
-      <CardHeader className={dashCardHeaderClass}>
+    <Card className={cn("h-full", dashSurfaceCardClass, entityBrandStyles.systems.accentBar)}>
+      <CardHeader className={cn("border-border border-b", dashCardHeaderClass)}>
         <CardTitle className="text-base">Infrastructure Status Log</CardTitle>
       </CardHeader>
       <CardContent className={dashCardContentClass}>
-        <p className={cn(dashAlertBannerClass, "font-mono text-sm leading-relaxed")}>
+        <p className={cn(dashAlertBannerClass, "font-mono text-sm leading-snug")}>
           DreamHost Server Status: 1 Domain Flagged URGENT (solar2sk.com SSL handshake exception)
         </p>
       </CardContent>
@@ -501,7 +495,7 @@ function InfrastructureStatusLog() {
 
 function SystemsKpiStrip({ monthlySpend, urgentAlerts }: { monthlySpend: number; urgentAlerts: number }) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
       <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
@@ -542,6 +536,99 @@ function SystemsKpiStrip({ monthlySpend, urgentAlerts }: { monthlySpend: number;
   );
 }
 
+function PlatformEnvironmentSyncProfiles() {
+  const profiles = [
+    {
+      label: "Published Workbook",
+      code: "YSP_Operations HTML export -> server parser",
+      description:
+        "Public workbook tables are parsed server-side for read-only dashboard snapshots when private API credentials are unavailable.",
+    },
+    {
+      label: "Apps Script Webhook",
+      code: "doPost(JSON) -> normalize event -> append row",
+      description:
+        "Zapier, DocuSign, WooCommerce, and OpenSolar-style events normalize into workbook rows for audit-safe operational history.",
+    },
+    {
+      label: "Sheets API Fallback",
+      code: "service account -> slug map -> sheet tab range",
+      description:
+        "Private reads use route slugs mapped to exact tab names when the published workbook endpoint changes.",
+    },
+  ];
+
+  return (
+    <Card className={cn("h-full", dashPlatformCardClass)}>
+      <CardHeader className={cn("border-border border-b", dashCardHeaderClass)}>
+        <CardTitle className="text-base">Platform Environment Sync Profiles</CardTitle>
+        <CardDescription>
+          Non-interactive ingestion path mapping for published workbook, Apps Script webhook, and Sheets API fallbacks.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className={cn("grid gap-2.5", dashCardContentClass)}>
+        {profiles.map((profile, index) => (
+          <div key={profile.label} className="rounded-lg border border-border bg-muted/40 p-3">
+            <span className="font-mono font-semibold text-[10px] text-muted-foreground uppercase">
+              0{index + 1}. {profile.label}
+            </span>
+            <code className={cn("mt-1 block truncate rounded border px-2 py-1 font-mono text-[10px]", dashCodeBlockSmClass)}>
+              {profile.code}
+            </code>
+            <p className="mt-1.5 line-clamp-2 text-muted-foreground text-[11px] leading-snug">
+              {profile.description}
+            </p>
+          </div>
+        ))}
+        <pre className={cn(dashCodeBlockSmClass, "text-[10px]")}>
+          {`Data path: route -> published tables -> Apps Script payload -> fetchSheet(slug) -> typed UI rows`}
+        </pre>
+      </CardContent>
+    </Card>
+  );
+}
+
+function StatusAndRunbookRow() {
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <div className="lg:col-span-4">
+        <InfrastructureStatusLog />
+      </div>
+      <div className="lg:col-span-8">
+        <WebsiteMaintenanceRunbook />
+      </div>
+    </div>
+  );
+}
+
+function ConfigSyncRow() {
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <div className="lg:col-span-7">
+        <GoogleCloudServiceAccountScopeMap />
+      </div>
+      <div className="lg:col-span-5">
+        <PlatformEnvironmentSyncProfiles />
+      </div>
+    </div>
+  );
+}
+
+function SystemsDataRow({
+  domainMonitors,
+  subscriptions,
+}: {
+  domainMonitors: DomainMonitorRow[];
+  subscriptions: SubscriptionRow[];
+}) {
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <DomainMonitors domainMonitors={domainMonitors} />
+      <SubscriptionLedger subscriptions={subscriptions} />
+    </div>
+  );
+}
+
 export function SystemsDashboard({
   accessRows = defaultAccessRows,
   domainMonitors = defaultDomainMonitors,
@@ -565,80 +652,15 @@ export function SystemsDashboard({
         </p>
       </div>
 
-      <InfrastructureStatusLog />
-
-      <WebsiteMaintenanceRunbook />
-
       <SystemsKpiStrip monthlySpend={monthlySpend} urgentAlerts={urgentAlerts} />
 
-      {showPlatformConfig ? (
-        <Card className={dashPlatformCardClass}>
-          <CardHeader className={dashCardHeaderClass}>
-            <CardTitle className="text-base">Platform Environment Sync Profiles</CardTitle>
-            <CardDescription>
-              Non-interactive ingestion path mapping for published workbook, Apps Script webhook, and Sheets API
-              fallbacks.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className={cn("space-y-3", dashCardContentClass)}>
-            <div className="grid gap-2 text-sm">
-              <div className="grid gap-1 rounded-md border border-border px-3 py-2 md:grid-cols-[11rem_1fr] md:items-center">
-                <span className="font-medium">Published Workbook</span>
-                <div className="grid gap-1">
-                  <code className={cn("w-fit select-all rounded border px-2 py-1 font-mono text-[11px]", dashCodeBlockSmClass, "inline-block")}>
-                    YSP_Operations HTML export → server parser
-                  </code>
-                  <p className="text-muted-foreground text-xs">
-                    Public workbook tables are parsed server-side for read-only dashboard snapshots when private API
-                    credentials are unavailable.
-                  </p>
-                </div>
-              </div>
-              <div className="grid gap-1 rounded-md border border-border px-3 py-2 md:grid-cols-[11rem_1fr] md:items-center">
-                <span className="font-medium">Apps Script Webhook</span>
-                <div className="grid gap-1">
-                  <code className={cn("w-fit select-all rounded border px-2 py-1 font-mono text-[11px]", dashCodeBlockSmClass, "inline-block")}>
-                    doPost(JSON) → normalize event → append row
-                  </code>
-                  <p className="text-muted-foreground text-xs">
-                    Zapier, DocuSign, WooCommerce, and OpenSolar-style events can be normalized into workbook rows for
-                    audit-safe operational history.
-                  </p>
-                </div>
-              </div>
-              <div className="grid gap-1 rounded-md border border-border px-3 py-2 md:grid-cols-[11rem_1fr] md:items-center">
-                <span className="font-medium">Sheets API Fallback</span>
-                <div className="grid gap-1">
-                  <code className={cn("w-fit select-all rounded border px-2 py-1 font-mono text-[11px]", dashCodeBlockSmClass, "inline-block")}>
-                    service account → slug map → sheet tab range
-                  </code>
-                  <p className="text-muted-foreground text-xs">
-                    Private reads use route slugs mapped to exact tab names, giving the app a stable fallback when the
-                    published workbook endpoint changes.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <pre className={cn(dashCodeBlockSmClass, "text-[11px]")}>
-              {`Data path: dashboard route → fetchPublishedSectionTable() → Apps Script payload fallback → fetchSheet(slug) → typed UI rows`}
-            </pre>
-          </CardContent>
-        </Card>
-      ) : null}
+      <StatusAndRunbookRow />
 
-      {showPlatformConfig ? <GoogleCloudServiceAccountScopeMap /> : null}
+      {showPlatformConfig ? <ConfigSyncRow /> : null}
 
       <GoogleWorkspaceArchitectureSpec />
 
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center gap-2">
-          <Globe2 className="size-4 text-muted-foreground" />
-          <h2 className="font-semibold text-base">Domain Monitors</h2>
-        </div>
-        <DomainMonitors domainMonitors={domainMonitors} />
-      </section>
-
-      <SubscriptionLedger subscriptions={subscriptions} />
+      <SystemsDataRow domainMonitors={domainMonitors} subscriptions={subscriptions} />
 
       <AutomationPlatformRegistry />
 

@@ -76,26 +76,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {...props}
       variant={variant}
       collapsible={collapsible}
-      className="[&_[data-slot=sidebar-footer]]:gap-1 [&_[data-slot=sidebar-footer]]:px-2 [&_[data-slot=sidebar-group]]:px-2 [&_[data-slot=sidebar-header]]:px-2"
+      className="[&_[data-slot=sidebar-footer]]:gap-1 [&_[data-slot=sidebar-footer]]:px-2 [&_[data-slot=sidebar-group]]:px-2 [&_[data-slot=sidebar-header]]:px-2 [&_[data-slot=sidebar-content]]:overflow-hidden"
     >
-      <SidebarHeader>
+      <SidebarHeader className="h-12 shrink-0 border-sidebar-border border-b py-0">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild className="h-9">
               <Link prefetch={false} href="/dashboard">
-                <Command />
-                <span className="font-semibold text-base">{APP_CONFIG.name}</span>
+                <Command className="size-4" />
+                <span className="truncate font-semibold text-sm">{APP_CONFIG.name}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="gap-0 overflow-hidden py-1">
         <NavMain items={sidebarItems} />
         {/* <NavDocuments items={data.documents} /> */}
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="shrink-0 border-sidebar-border border-t py-1.5">
         <SidebarSupportCard />
         <NavUser />
       </SidebarFooter>

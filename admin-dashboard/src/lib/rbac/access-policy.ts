@@ -22,7 +22,7 @@ export function isNavItemRestrictedForRole(item: NavMainItem, accessLevel: Dashb
 
 export function moduleLabelForRestrictedPath(pathname: string): string {
   if (pathname.startsWith("/dashboard/enterprise")) return "Enterprise Hub";
-  if (pathname.startsWith("/dashboard/systems")) return "Systems & Settings";
+  if (pathname.startsWith("/dashboard/systems")) return "Systems";
   if (pathname.startsWith("/dashboard/settings")) return "Settings";
   return "Restricted module";
 }

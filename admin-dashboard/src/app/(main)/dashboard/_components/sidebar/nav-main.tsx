@@ -36,27 +36,14 @@ interface NavMainProps {
 }
 
 const navItemClass =
-  "h-auto min-h-11 items-start rounded-xl py-2 text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground data-[active=true]:border-l-2 data-[active=true]:border-[var(--brand-3sk)] data-[active=true]:bg-sidebar-accent data-[active=true]:text-[var(--brand-3sk-text)]";
+  "h-9 min-h-0 items-center gap-2 rounded-lg px-2 py-0 text-[13px] text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground data-[active=true]:border-l-2 data-[active=true]:border-[var(--brand-3sk)] data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-[var(--brand-3sk-text)]";
 const navSubItemClass =
   "text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-[var(--brand-3sk-text)]";
 
-const NavSkillChips = ({ skills }: { skills?: string[] }) => {
-  if (!skills?.length) return null;
-
-  return (
-    <span className="mt-1 flex max-w-full flex-wrap gap-1.5">
-      {skills.map((skill) => (
-        <span
-          key={skill}
-          title={skill}
-          className="max-w-[8.25rem] truncate rounded-md border border-sidebar-border bg-sidebar-accent/70 px-1.5 py-0.5 font-mono text-[9px] text-sidebar-foreground/75 leading-none tracking-tight group-data-[active=true]/menu-button:border-[color-mix(in_oklab,var(--brand-3sk)_45%,transparent)] group-data-[active=true]/menu-button:bg-sidebar/80 group-data-[active=true]/menu-button:text-[var(--brand-3sk-text)]"
-        >
-          {skill}
-        </span>
-      ))}
-    </span>
-  );
-};
+function navItemTooltip(item: NavMainItem, suffix?: string) {
+  const skills = item.skills?.join(" · ");
+  return [item.title, skills, suffix].filter(Boolean).join(" — ");
+}
 
 const IsComingSoon = () => (
   <span className="ml-auto rounded-md bg-gray-200 px-2 py-1 text-xs dark:text-gray-800">Soon</span>
@@ -64,10 +51,9 @@ const IsComingSoon = () => (
 
 const NavRestrictedBadge = () => (
   <span
-    className="ml-auto shrink-0 rounded border border-[color-mix(in_oklab,var(--status-critical)_35%,transparent)] bg-[var(--status-critical-bg)] px-1.5 py-0.5 font-mono text-[9px] text-[var(--status-critical-text)] uppercase tracking-wide"
-    title="Global Super Admin required — route shows Access Denied for your current profile"
+    className="shrink-0 rounded border border-[color-mix(in_oklab,var(--status-critical)_35%,transparent)] bg-[var(--status-critical-bg)] px-1 py-px font-mono text-[8px] text-[var(--status-critical-text)] uppercase leading-none tracking-wide"
+    title="Global Super Admin required"
   >
-    <Lock className="mr-0.5 inline size-2.5" />
     Admin
   </span>
 );
@@ -93,34 +79,28 @@ const NavItemExpanded = ({
             <SidebarMenuButton
               disabled={item.comingSoon}
               isActive={isActive(item.url, item.subItems)}
-              tooltip={item.title}
+              tooltip={navItemTooltip(item)}
               className={cn(navItemClass, isRestricted && "opacity-90")}
             >
-              {item.icon && <item.icon className="mt-0.5" />}
-              <span className="min-w-0 flex-1">
-                <span className="block truncate">{item.title}</span>
-                <NavSkillChips skills={item.skills} />
-              </span>
+              {item.icon && <item.icon className="size-4 shrink-0" />}
+              <span className="min-w-0 flex-1 truncate">{item.title}</span>
               {isRestricted ? <NavRestrictedBadge /> : null}
               {item.comingSoon && <IsComingSoon />}
-              <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+              <ChevronRight className="ml-auto size-3.5 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
           ) : (
             <SidebarMenuButton
               asChild
               aria-disabled={item.comingSoon}
               isActive={isActive(item.url)}
-              tooltip={isRestricted ? `${item.title} — Access Denied for current profile` : item.title}
+              tooltip={navItemTooltip(item, isRestricted ? "Access Denied for current profile" : undefined)}
               className={cn(navItemClass, isRestricted && "opacity-90")}
             >
               <Link prefetch={false} href={item.url} target={item.newTab ? "_blank" : undefined}>
-                {item.icon && <item.icon className="mt-0.5" />}
-                <span className="min-w-0 flex-1">
-                  <span className="flex items-center gap-1.5 truncate">
-                    {isRestricted ? <Lock className="size-3 shrink-0 text-[var(--status-critical)]" /> : null}
-                    <span className="truncate">{item.title}</span>
-                  </span>
-                  <NavSkillChips skills={item.skills} />
+                {item.icon && <item.icon className="size-4 shrink-0" />}
+                <span className="flex min-w-0 flex-1 items-center gap-1.5 truncate">
+                  {isRestricted ? <Lock className="size-3 shrink-0 text-[var(--status-critical)]" /> : null}
+                  <span className="truncate">{item.title}</span>
                 </span>
                 {isRestricted ? <NavRestrictedBadge /> : null}
                 {item.comingSoon && <IsComingSoon />}
@@ -224,10 +204,12 @@ export function NavMain({ items }: NavMainProps) {
   return (
     <>
       {visibleItems.map((group) => (
-        <SidebarGroup key={group.id}>
-          {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
-          <SidebarGroupContent className="flex flex-col gap-2">
-            <SidebarMenu className="gap-1.5">
+        <SidebarGroup key={group.id} className="py-0">
+          {group.label && (
+            <SidebarGroupLabel className="h-7 px-2 py-0 text-[10px] uppercase tracking-widest">{group.label}</SidebarGroupLabel>
+          )}
+          <SidebarGroupContent className="flex flex-col gap-0 px-0">
+            <SidebarMenu className="gap-0.5">
               {group.items.map((item) => {
                 if (state === "collapsed" && !isMobile) {
                   // If no subItems, just render the button as a link
@@ -238,7 +220,7 @@ export function NavMain({ items }: NavMainProps) {
                         <SidebarMenuButton
                           asChild
                           aria-disabled={item.comingSoon}
-                          tooltip={isRestricted ? `${item.title} — Access Denied for current profile` : item.title}
+                          tooltip={navItemTooltip(item, isRestricted ? "Access Denied for current profile" : undefined)}
                           isActive={isItemActive(item.url)}
                           className={cn(navItemClass, isRestricted && "opacity-90")}
                         >
