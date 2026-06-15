@@ -18,6 +18,19 @@ type LogLine = {
 const anenjiSku = inventoryData.find((item) => item.sku === "INV-3KW-ANENJI");
 const stockUnits = anenjiSku?.stockLevel ?? 42;
 const projectName = "McKinney Logistics Hub";
+const BOM_PARSER_CONTRACT = `type OpenSolarBOMRow = {
+  projectId: string;
+  componentName: string;
+  manufacturer: string;
+  model: string;
+  quantityRequired: number;
+};
+
+OpenSolarBOMRow[]
+  .map(normalizeSku)
+  .map(compareAgainstInventoryTab)
+  .map(reserveAvailableUnits)
+  .forEach(appendProcurementAuditRow);`;
 
 export function EngineeringBomConsole() {
   const [status, setStatus] = useState<"idle" | "running" | "complete">("idle");
@@ -45,7 +58,7 @@ export function EngineeringBomConsole() {
       setLogs((prev) => [
         ...prev,
         {
-          text: "Cross-checking electrical BOM arrays with Solar 2SK Wylie warehouse inventory…",
+          text: "Cross-checking electrical BOM arrays with 2SK Wylie warehouse inventory…",
           type: "info",
           time: timestamp(),
         },
@@ -82,7 +95,7 @@ export function EngineeringBomConsole() {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="p-4 pb-3">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <CardTitle className="flex items-center gap-2 text-base">
@@ -90,7 +103,8 @@ export function EngineeringBomConsole() {
               Cross-Company Material Allocator
             </CardTitle>
             <CardDescription>
-              Reconciles OpenSolar CAD blueprints against Solar 2SK retail warehouse stock ({anenjiSku?.componentName})
+              Reconciles OpenSolar CAD blueprints from 3SK against 2SK retail warehouse stock (Anenji 3KW Hybrid
+              Inverter)
             </CardDescription>
           </div>
           <Button disabled={status === "running"} onClick={runDiagnostics}>
@@ -108,7 +122,7 @@ export function EngineeringBomConsole() {
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 pt-0 pb-4">
         <div className="flex h-48 flex-col justify-end overflow-y-auto rounded-lg bg-zinc-950 p-4 font-mono text-xs shadow-inner">
           {logs.length === 0 ? (
             <div className="py-10 text-center text-zinc-600">
@@ -116,9 +130,9 @@ export function EngineeringBomConsole() {
             </div>
           ) : (
             <div className="space-y-2">
-              {logs.map((log, index) => (
-                <div key={`${log.time}-${index}`} className="flex items-start gap-2">
-                  <span className="text-zinc-500 select-none">[{log.time}]</span>
+              {logs.map((log) => (
+                <div key={`${log.time}-${log.text}`} className="flex items-start gap-2">
+                  <span className="select-none text-zinc-500">[{log.time}]</span>
                   <span
                     className={
                       log.type === "success"
@@ -134,6 +148,17 @@ export function EngineeringBomConsole() {
               ))}
             </div>
           )}
+        </div>
+        <div className="mt-3 rounded-lg border border-zinc-900 bg-zinc-950 p-3 font-mono text-xs text-zinc-400 leading-relaxed">
+          <div className="mb-2">
+            <strong className="text-zinc-200">BOM Parser Script Contract:</strong> Production wiring would export or
+            retrieve OpenSolar project/system component rows, normalize manufacturer/model/SKU strings, compare required
+            quantities against the 2SK inventory workbook tab, reserve matching units, and append an audit row for every
+            allocation decision.
+          </div>
+          <pre className="overflow-x-auto rounded-md border border-zinc-900 bg-black/70 p-3 text-[11px] text-emerald-300 leading-relaxed">
+            <code>{BOM_PARSER_CONTRACT}</code>
+          </pre>
         </div>
         {status === "complete" ? (
           <div className="mt-3 flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2.5 text-emerald-700 text-xs dark:text-emerald-300">

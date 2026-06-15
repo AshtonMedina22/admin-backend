@@ -42,7 +42,7 @@ I am writing on behalf of ${brandEntity} regarding the active engineering review
 As this commercial facility is currently holding installation schedules, we request an expedited update on any pending engineering variances or outstanding documentation holds.
 
 Best Regards,
-Thureen Operations Portal Automated Dispatch`;
+YS Ops Demo Automated Dispatch`;
 }
 
 export function AIEscalationButton({
@@ -87,7 +87,10 @@ export function AIEscalationButton({
         type="button"
         variant="outline"
         size="sm"
-        className={cn("h-8 gap-1.5 px-2.5 text-xs", className)}
+        className={cn(
+          "h-8 gap-1.5 rounded-md border border-slate-700/70 bg-[#0f1b2d] px-3 py-1.5 font-mono text-slate-200 text-xs shadow-sm transition-all hover:border-cyan-300/50 hover:bg-[#13233a] hover:text-cyan-200",
+          className,
+        )}
         onClick={() => handleOpenChange(true)}
       >
         <Sparkles className="size-3.5 text-amber-500" />
@@ -95,13 +98,16 @@ export function AIEscalationButton({
       </Button>
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="gap-0 overflow-hidden border-emerald-500/20 bg-zinc-950 p-0 sm:max-w-2xl" showCloseButton>
-          <DialogHeader className="border-emerald-500/20 border-b bg-zinc-900/80 px-5 py-4">
-            <DialogTitle className="flex items-center gap-2 font-mono text-emerald-400 text-sm uppercase tracking-wider">
+        <DialogContent
+          className="gap-0 overflow-hidden border-cyan-300/20 bg-[#07111f] p-0 text-slate-100 sm:max-w-2xl"
+          showCloseButton
+        >
+          <DialogHeader className="border-cyan-300/20 border-b bg-[#0f1b2d]/95 px-5 py-4">
+            <DialogTitle className="flex items-center gap-2 font-mono text-cyan-200 text-sm uppercase tracking-wider">
               <Terminal className="size-4" />
               AI Escalation Console
             </DialogTitle>
-            <DialogDescription className="font-mono text-[11px] text-zinc-400">
+            <DialogDescription className="font-mono text-[11px] text-slate-400">
               Automated dispatch template · {projectName} · {permitNumber} · {daysStale}d stale
             </DialogDescription>
           </DialogHeader>
@@ -116,13 +122,18 @@ export function AIEscalationButton({
             <Textarea
               value={emailText}
               onChange={(event) => setEmailText(event.target.value)}
-              className="min-h-72 resize-y border-zinc-800 bg-zinc-900/90 font-mono text-xs leading-relaxed text-zinc-100"
+              className="min-h-72 resize-y border-slate-700/70 bg-[#0f1b2d]/95 font-mono text-slate-100 text-xs leading-relaxed"
               spellCheck={false}
             />
           </div>
 
-          <DialogFooter className="border-emerald-500/20 border-t bg-zinc-900/80 px-5 py-4 sm:justify-between">
-            <Button type="button" variant="ghost" className="text-zinc-300" onClick={() => setOpen(false)}>
+          <DialogFooter className="border-cyan-300/20 border-t bg-[#0f1b2d]/95 px-5 py-4 sm:justify-between">
+            <Button
+              type="button"
+              variant="ghost"
+              className="text-slate-300 hover:text-cyan-200"
+              onClick={() => setOpen(false)}
+            >
               Dismiss
             </Button>
             <Button type="button" className="gap-2 bg-emerald-600 hover:bg-emerald-500" onClick={handleCopy}>
