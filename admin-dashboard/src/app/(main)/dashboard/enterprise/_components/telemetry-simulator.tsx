@@ -5,16 +5,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { dashInfoBannerClass } from "@/lib/dashboard-ui";
-import { dashKpiValueClass, statusStyles } from "@/lib/entity-brand";
+import { dashKpiValueClass, entityBrandStyles, statusStyles } from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
-const BASELINE_GENERATION_KW = 2482.0;
-const BASELINE_CONSUMPTION_KW = 412.0;
+const BASELINE_GENERATION_KW = 48.2;
+const BASELINE_CONSUMPTION_KW = 12.4;
 const TICK_MS = 2000;
-const GENERATION_MIN_KW = 2450.0;
-const GENERATION_MAX_KW = 2525.0;
-const GENERATION_VARIANCE_KW = 7.5;
-const CONSUMPTION_VARIANCE_KW = 3.2;
+const GENERATION_MIN_KW = 45.0;
+const GENERATION_MAX_KW = 55.8;
+const GENERATION_VARIANCE_KW = 0.9;
+const CONSUMPTION_VARIANCE_KW = 0.3;
 
 function clamp(value: number, min: number, max: number) {
   return parseFloat(Math.min(max, Math.max(min, value)).toFixed(1));
@@ -33,17 +33,17 @@ type TelemetrySimulatorProps = {
 
 export function TelemetrySimulatorControl({ isSimulating, onSimulatingChange, liveYield }: TelemetrySimulatorProps) {
   return (
-    <div className="grid gap-3 rounded-xl border border-border bg-card p-4 shadow-sm backdrop-blur-md">
+    <div className="grid gap-3 rounded-xl border border-border bg-slate-50 p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Switch
             id="solaredge-sim"
             checked={isSimulating}
             onCheckedChange={onSimulatingChange}
-            className="data-[state=checked]:bg-emerald-500 data-[state=checked]:shadow-[0_0_18px_rgba(16,185,129,0.35)]"
+            className="data-[state=checked]:bg-[var(--status-live)]"
           />
           <div>
-            <Label htmlFor="solaredge-sim" className="font-medium text-sm">
+            <Label htmlFor="solaredge-sim" className="font-medium text-foreground text-sm">
               Simulate SolarEdge / SCADA Polling Loop
             </Label>
             <p className="text-muted-foreground text-xs">
@@ -52,7 +52,7 @@ export function TelemetrySimulatorControl({ isSimulating, onSimulatingChange, li
                 className={cn(
                   dashKpiValueClass,
                   "text-base",
-                  isSimulating ? "text-emerald-600" : "text-foreground",
+                  isSimulating ? entityBrandStyles.solar2sk.text : "text-foreground",
                 )}
               >
                 {liveYield.toFixed(1)} kW
@@ -96,7 +96,7 @@ export function useTelemetrySimulation() {
 
   const runTelemetryTick = useCallback(() => {
     setGenerationKw((prev) => drift(prev, GENERATION_VARIANCE_KW, GENERATION_MIN_KW, GENERATION_MAX_KW));
-    setConsumptionKw((prev) => drift(prev, CONSUMPTION_VARIANCE_KW, 395.0, 430.0));
+    setConsumptionKw((prev) => drift(prev, CONSUMPTION_VARIANCE_KW, 11.8, 13.1));
     setEfficiency((prev) => {
       const next = prev + (Math.random() * 2 - 1) * 0.15;
       return parseFloat(Math.min(99.1, Math.max(92, next)).toFixed(2));

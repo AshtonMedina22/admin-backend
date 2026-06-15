@@ -16,13 +16,13 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import type { RevenueSplitMonth } from "@/data/demo/revenue-split";
 import { revenueSplitData } from "@/data/demo/revenue-split";
 import { dashCardClass, dashSectionCardContentClass, dashSectionCardHeaderClass } from "@/lib/dashboard-ui";
-import { dashCodeBlockClass, entityBrandStyles, statusStyles } from "@/lib/entity-brand";
+import { entityBrandStyles, statusStyles } from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
 const chartConfig = {
-  solar2sk: { label: "2SK Hardware", color: "#a3e635" },
-  solar3k: { label: "3SK Services", color: "#22d3ee" },
-  yellowStar: { label: "YSP Yield", color: "#fbbf24" },
+  solar2sk: { label: "2SK Hardware", color: "var(--brand-2sk)" },
+  solar3k: { label: "3SK Services", color: "var(--brand-3sk)" },
+  yellowStar: { label: "YSP Yield", color: "var(--brand-ysp)" },
 } satisfies ChartConfig;
 
 function statusLabel(status: RevenueSplitMonth["status"]) {
@@ -110,7 +110,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
               cursor={{ fill: "var(--border)", opacity: 0.45 }}
               content={
                 <ChartTooltipContent
-                  className={cn(dashCodeBlockClass, "min-w-48 border border-border shadow-lg")}
+                  className="min-w-48 border border-border bg-card text-card-foreground shadow-lg"
                   indicator="dot"
                   labelFormatter={(_, payload) => {
                     const row = payload?.[0]?.payload as RevenueSplitMonth | undefined;

@@ -172,7 +172,9 @@ function TelemetryMatrixCard() {
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-md border border-border bg-slate-50 p-3">
             <p className="text-[11px] text-muted-foreground uppercase">Generation</p>
-            <p className={cn(dashKpiValueClass, "text-amber-600 text-lg")}>{telemetry.liveYield.toFixed(1)} kW</p>
+            <p className={cn(dashKpiValueClass, "text-lg", entityBrandStyles.yellowStar.text)}>
+              {telemetry.liveYield.toFixed(1)} kW
+            </p>
           </div>
           <div className="rounded-md border border-border bg-slate-50 p-3">
             <p className="text-[11px] text-muted-foreground uppercase">Consumption</p>
@@ -180,7 +182,9 @@ function TelemetryMatrixCard() {
           </div>
           <div className="rounded-md border border-border bg-slate-50 p-3">
             <p className="text-[11px] text-muted-foreground uppercase">Microgrid Output</p>
-            <p className={cn(dashKpiValueClass, "text-emerald-600 text-lg")}>{telemetry.netExport.toFixed(1)} kW</p>
+            <p className={cn(dashKpiValueClass, "text-lg", entityBrandStyles.solar2sk.text)}>
+              {telemetry.netExport.toFixed(1)} kW
+            </p>
           </div>
         </div>
       </CardContent>
@@ -235,19 +239,19 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
       <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
         <div className={cn("grid gap-2", dashCodeBlockClass)}>
           <p>
-            <strong className="text-slate-100">Production flow:</strong>{" "}
-            <span className="text-[var(--brand-3sk)]">server cache</span> -&gt;{" "}
-            <span className="text-[var(--brand-3sk)]">Google Sheets API</span> -&gt;{" "}
-            <span className="text-[var(--brand-3sk)]">Apps Script JSON fallback</span> -&gt;{" "}
-            <span className="text-[var(--brand-3sk)]">published workbook snapshot</span> -&gt; typed KPI cards + event
-            stream.
+            <strong className="text-foreground">Production flow:</strong>{" "}
+            <span className={entityBrandStyles.solar3k.text}>server cache</span> -&gt;{" "}
+            <span className={entityBrandStyles.solar3k.text}>Google Sheets API</span> -&gt;{" "}
+            <span className={entityBrandStyles.solar3k.text}>Apps Script JSON fallback</span> -&gt;{" "}
+            <span className={entityBrandStyles.solar3k.text}>published workbook snapshot</span> -&gt; typed KPI cards +
+            event stream.
           </p>
           <p>
-            <strong className="text-slate-100">Current repository path:</strong>{" "}
-            <span className="text-[var(--brand-3sk)]">fetchWorkbookCommandCenter()</span> checks a short in-memory
-            cache, calls <span className="text-[var(--brand-3sk)]">fetchDashboardSummary()</span> via the Sheets API,
-            falls through to Apps Script / published workbook providers when needed, and preserves the dashboard with
-            local demo data if every live provider fails.
+            <strong className="text-foreground">Current repository path:</strong>{" "}
+            <span className={entityBrandStyles.solar3k.text}>fetchWorkbookCommandCenter()</span> checks a short
+            in-memory cache, calls <span className={entityBrandStyles.solar3k.text}>fetchDashboardSummary()</span> via
+            the Sheets API, falls through to Apps Script / published workbook providers when needed, and preserves the
+            dashboard with local demo data if every live provider fails.
           </p>
         </div>
         <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
@@ -294,13 +298,13 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
           <Table className="min-w-[760px]">
             <TableHeader>
               <TableRow className="h-9 border-border/60 hover:bg-transparent">
-                <TableHead>Project</TableHead>
-                <TableHead>Entity</TableHead>
-                <TableHead>Stage</TableHead>
-                <TableHead className="text-right">Value</TableHead>
-                <TableHead className="text-right">Stale</TableHead>
-                <TableHead>Authority</TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="font-semibold text-foreground">Project</TableHead>
+                <TableHead className="font-semibold text-foreground">Entity</TableHead>
+                <TableHead className="font-semibold text-foreground">Stage</TableHead>
+                <TableHead className="text-right font-semibold text-foreground">Value</TableHead>
+                <TableHead className="text-right font-semibold text-foreground">Stale</TableHead>
+                <TableHead className="font-semibold text-foreground">Authority</TableHead>
+                <TableHead className="text-right font-semibold text-foreground">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -399,7 +403,13 @@ export function CommandCenter({ data }: CommandCenterProps) {
             >
               Proof-of-capability demo
             </Badge>
-            <Badge variant={data.source === "workbook" ? "default" : "outline"} className="h-6 px-2 text-[10px]">
+            <Badge
+              variant="outline"
+              className={cn(
+                "h-6 px-2 text-[10px]",
+                data.source === "workbook" ? statusStyles.live : "text-muted-foreground",
+              )}
+            >
               {data.source === "workbook" ? "Workbook connected" : "Preview mode"}
             </Badge>
           </div>

@@ -84,9 +84,14 @@ export const statusStyles = {
 export const dashKpiValueClass = "font-mono text-2xl font-semibold tabular-nums tracking-tight text-foreground";
 export const dashKpiValueLgClass = "font-mono text-3xl font-semibold tabular-nums tracking-tight text-foreground";
 export const dashCodeBlockClass =
-  "overflow-x-auto rounded-md bg-slate-950 p-4 font-mono text-xs leading-relaxed text-slate-100";
+  "overflow-x-auto rounded-md border border-border bg-slate-50 p-4 font-mono text-xs leading-relaxed text-slate-700";
 export const dashCodeBlockSmClass =
-  "overflow-x-auto rounded-md bg-slate-950 p-3 font-mono text-[11px] leading-relaxed text-slate-100";
+  "overflow-x-auto rounded-md border border-border bg-slate-50 p-3 font-mono text-[11px] leading-relaxed text-slate-700";
+/** Dark terminal blocks for multi-line Apps Script / API samples */
+export const dashTerminalBlockClass =
+  "overflow-x-auto rounded-md bg-slate-900 p-4 font-mono text-xs leading-relaxed text-slate-100";
+export const dashTerminalBlockSmClass =
+  "overflow-x-auto rounded-md bg-slate-900 p-3 font-mono text-[11px] leading-relaxed text-slate-100";
 export const dashProseClass = "text-sm leading-relaxed text-slate-700";
 export const dashSectionTitleClass = "font-semibold text-foreground";
 

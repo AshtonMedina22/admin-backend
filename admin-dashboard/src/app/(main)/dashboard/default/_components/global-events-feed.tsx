@@ -14,11 +14,11 @@ import { entityBrandStyles, statusStyles } from "@/lib/entity-brand";
 import { formatSyncRelativeTime } from "@/lib/sync-time";
 import { cn } from "@/lib/utils";
 
-const eventStatusStyles: Record<GlobalEventStatus, string> = {
-  critical: cn(statusStyles.critical, "border-l-2 shadow-none"),
-  warning: cn(statusStyles.warning, "border-l-2 shadow-none"),
-  success: cn(statusStyles.live, "border-l-2 shadow-none"),
-  info: cn(statusStyles.info, "border-l-2 shadow-none"),
+const eventRowStyles: Record<GlobalEventStatus, string> = {
+  critical: "border-l-[var(--status-critical)] bg-[var(--status-critical-bg)]/30",
+  warning: "border-l-[var(--brand-ysp)] bg-[var(--status-warning-bg)]/40",
+  success: "border-l-[var(--status-live)] bg-[var(--status-live-bg)]/40",
+  info: "border-l-[var(--brand-3sk)] bg-muted/30",
 };
 
 const statusIcons: Record<GlobalEventStatus, typeof AlertCircle> = {
@@ -61,7 +61,7 @@ export function GlobalEventsFeed({
             Global Operations Stream
           </CardTitle>
           {openIssues > 0 ? (
-            <Badge variant="destructive" className="shrink-0 whitespace-nowrap">
+            <Badge variant="outline" className={cn("shrink-0 whitespace-nowrap", statusStyles.critical)}>
               {openIssues} open {openIssues === 1 ? "issue" : "issues"}
             </Badge>
           ) : null}
@@ -84,7 +84,7 @@ export function GlobalEventsFeed({
       </CardHeader>
       <CardContent className={cn("min-h-0 flex-1", dashSectionCardContentClass)}>
         <ScrollArea className="h-72 pr-3">
-          <div className="divide-y divide-border/60">
+          <div className="grid gap-2">
             {events.map((event) => {
               const StatusIcon = statusIcons[event.status];
               const isIsoTimestamp = !/ago|just now/i.test(event.timestamp);
@@ -92,7 +92,10 @@ export function GlobalEventsFeed({
               return (
                 <div
                   key={event.id}
-                  className={cn("border-l-2 px-0 py-3 first:pt-0 last:pb-0", eventStatusStyles[event.status])}
+                  className={cn(
+                    "rounded-md border border-border border-l-4 px-3 py-2.5",
+                    eventRowStyles[event.status],
+                  )}
                 >
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <div className="flex min-w-0 items-center gap-2">
@@ -133,7 +136,7 @@ export function GlobalEventsFeed({
                       </span>
                     )}
                   </div>
-                  <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{event.message}</p>
+                  <p className="line-clamp-2 text-sm leading-relaxed text-foreground">{event.message}</p>
                 </div>
               );
             })}
