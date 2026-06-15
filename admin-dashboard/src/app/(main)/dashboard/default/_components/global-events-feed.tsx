@@ -9,15 +9,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { GlobalEvent, GlobalEventStatus } from "@/data/demo/global-events";
 import { globalEventsData } from "@/data/demo/global-events";
-import { formatSyncRelativeTime } from "@/lib/sync-time";
 import { dashCardClass, dashSectionCardContentClass, dashSectionCardHeaderClass } from "@/lib/dashboard-ui";
+import { formatSyncRelativeTime } from "@/lib/sync-time";
 import { cn } from "@/lib/utils";
 
 const statusStyles: Record<GlobalEventStatus, string> = {
-  critical: "border-destructive/40 bg-destructive/5 dark:bg-destructive/10",
-  warning: "border-amber-500/40 bg-amber-500/5 dark:bg-amber-500/10",
-  success: "border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/10",
-  info: "border-border bg-muted/20",
+  critical:
+    "border-destructive/30 border-l-destructive bg-destructive/5 shadow-[0_0_0_1px_color-mix(in_oklab,var(--destructive)_10%,transparent)] dark:bg-destructive/10",
+  warning:
+    "border-amber-500/25 border-l-amber-500 bg-amber-500/5 shadow-[0_0_0_1px_rgba(245,158,11,0.08)] dark:bg-amber-500/10",
+  success:
+    "border-emerald-500/25 border-l-emerald-500 bg-emerald-500/5 shadow-[0_0_0_1px_rgba(16,185,129,0.08)] dark:bg-emerald-500/10",
+  info: "border-border/60 border-l-muted-foreground/40 bg-muted/10",
 };
 
 const statusIcons: Record<GlobalEventStatus, typeof AlertCircle> = {
@@ -52,7 +55,7 @@ export function GlobalEventsFeed({
   const openIssues = events.filter((e) => e.status === "critical" || e.status === "warning").length;
 
   return (
-    <Card size="sm" className={cn("flex h-full flex-col border-amber-500 border-l-4", dashCardClass)}>
+    <Card size="sm" className={cn("flex h-full flex-col border-amber-500/70 border-l-4", dashCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <CardTitle className="flex items-center gap-2 leading-none">
@@ -60,7 +63,7 @@ export function GlobalEventsFeed({
             Global Operations Stream
           </CardTitle>
           {openIssues > 0 ? (
-            <Badge variant="destructive" className="shrink-0">
+            <Badge variant="destructive" className="shrink-0 whitespace-nowrap">
               {openIssues} open {openIssues === 1 ? "issue" : "issues"}
             </Badge>
           ) : null}
@@ -76,19 +79,23 @@ export function GlobalEventsFeed({
         </CardDescription>
         {workbookConnected ? (
           <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-emerald-950 text-sm dark:text-emerald-100">
-            Live workbook pull - event timestamps use each row&apos;s Logged At column when present, otherwise the sync pull time.
+            Live workbook pull - event timestamps use each row&apos;s Logged At column when present, otherwise the sync
+            pull time.
           </div>
         ) : null}
       </CardHeader>
       <CardContent className={cn("min-h-0 flex-1", dashSectionCardContentClass)}>
         <ScrollArea className="h-72 pr-3">
-          <div className="grid gap-3">
+          <div className="divide-y divide-neutral-800/60">
             {events.map((event) => {
               const StatusIcon = statusIcons[event.status];
               const isIsoTimestamp = !/ago|just now/i.test(event.timestamp);
 
               return (
-                <div key={event.id} className={cn("rounded-md border p-3", statusStyles[event.status])}>
+                <div
+                  key={event.id}
+                  className={cn("border-l-2 px-0 py-3 first:pt-0 last:pb-0", statusStyles[event.status])}
+                >
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <div className="flex min-w-0 items-center gap-2">
                       <StatusIcon
@@ -100,8 +107,14 @@ export function GlobalEventsFeed({
                           event.status === "info" && "text-muted-foreground",
                         )}
                       />
-                      <EntityBrandBadge brand={event.entityBrand} className="h-5 px-1.5 text-[10px]" />
-                      <Badge variant={statusBadgeVariant[event.status]} className="h-5 px-1.5 text-[10px]">
+                      <EntityBrandBadge
+                        brand={event.entityBrand}
+                        className="h-5 whitespace-nowrap px-1.5 text-[10px]"
+                      />
+                      <Badge
+                        variant={statusBadgeVariant[event.status]}
+                        className="h-5 whitespace-nowrap px-1.5 text-[10px]"
+                      >
                         {event.status}
                       </Badge>
                     </div>
@@ -116,7 +129,7 @@ export function GlobalEventsFeed({
                       </span>
                     )}
                   </div>
-                  <p className="text-sm leading-relaxed">{event.message}</p>
+                  <p className="line-clamp-2 text-sm leading-relaxed">{event.message}</p>
                 </div>
               );
             })}
