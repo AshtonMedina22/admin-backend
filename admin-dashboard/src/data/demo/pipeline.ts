@@ -32,8 +32,7 @@ export const crmPipelineData: PipelineProject[] = [
     pipelineStage: "DocuSign Executed",
     pipelinePhase: "Engineering Design Check",
     projectValue: 185000,
-    nextCriticalPath:
-      "File Oncor interconnection application; hand OpenSolar layout to structural engineers",
+    nextCriticalPath: "File Oncor interconnection application; hand OpenSolar layout to structural engineers",
   },
   {
     id: "pipe-102",
@@ -55,8 +54,7 @@ export const crmPipelineData: PipelineProject[] = [
     pipelineStage: "Engineering Hold",
     pipelinePhase: "Engineering Hold",
     projectValue: 145000,
-    nextCriticalPath:
-      "Awaiting structural PE weight-load blueprint assessment from North Texas Structural PE Group",
+    nextCriticalPath: "Awaiting structural PE weight-load blueprint assessment from North Texas Structural PE Group",
   },
   {
     id: "pipe-104",
@@ -99,7 +97,10 @@ export function isCommercialPipeline(project: PipelineProject) {
 
 export const commercialPipelineData = crmPipelineData.filter(isCommercialPipeline);
 
-export const openCommercialPipelineBalance = commercialPipelineData.reduce((sum, project) => sum + project.projectValue, 0);
+export const openCommercialPipelineBalance = commercialPipelineData.reduce(
+  (sum, project) => sum + project.projectValue,
+  0,
+);
 
 export const activeCommercialProjects = commercialPipelineData.filter(
   (project) => project.pipelineStage !== "DocuSign Executed" || project.pipelinePhase !== "Commissioning",

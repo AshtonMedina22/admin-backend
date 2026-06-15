@@ -1,4 +1,14 @@
-import { Building2, Calendar, FileCheck, Forklift, LayoutDashboard, type LucideIcon, Settings, ShoppingBag } from "lucide-react";
+import {
+  Building2,
+  CalendarCheck,
+  FileCheck,
+  Forklift,
+  LayoutDashboard,
+  type LucideIcon,
+  MailCheck,
+  Settings,
+  ShoppingBag,
+} from "lucide-react";
 
 export interface NavSubItem {
   title: string;
@@ -60,9 +70,14 @@ export const sidebarItems: NavGroup[] = [
         icon: FileCheck,
       },
       {
-        title: "Calendar",
+        title: "Tasks & Schedule",
         url: "/dashboard/calendar",
-        icon: Calendar,
+        icon: CalendarCheck,
+      },
+      {
+        title: "Inbox & Drafting",
+        url: "/dashboard/inbox",
+        icon: MailCheck,
       },
       {
         title: "Systems",
