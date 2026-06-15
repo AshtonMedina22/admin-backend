@@ -32,6 +32,7 @@ import {
   entityBrandStyles,
   statusStyles,
 } from "@/lib/entity-brand";
+import { implementationLabels } from "@/lib/implementation-labels";
 import { cn } from "@/lib/utils";
 
 const vendorComplianceSteps = [
@@ -105,9 +106,9 @@ function complianceVariant(status: ComplianceStatus): "default" | "secondary" | 
 }
 
 function compliancePrefix(status: ComplianceStatus): string {
-  if (status === "Verified Active") return "✅";
-  if (status === "General Liability Expiring") return "⚠️";
-  return "⛔";
+  if (status === "Verified Active") return "OK";
+  if (status === "General Liability Expiring") return "WARN";
+  return "BLOCK";
 }
 
 function tradeTagClass(specialty: string) {
@@ -134,9 +135,12 @@ function VendorKpiStrip({
   activeAssignments: number;
   complianceRisks: number;
 }) {
+  const cardClass = cn(dashSurfaceCardClass, entityBrandStyles.solar2sk.accentBar, "min-h-[7.25rem]");
+  const contentClass = cn("line-clamp-2 text-muted-foreground text-[11px] leading-snug", dashCardContentClass);
+
   return (
-    <div className={cn(dashKpiGrid3Class, "grid-cols-1 md:grid-cols-3")}>
-      <Card size="sm" className={cn(dashSurfaceCardClass, entityBrandStyles.solar2sk.accentBar)}>
+    <div className={cn(dashKpiGrid3Class, "grid-cols-1 gap-3 md:grid-cols-3")}>
+      <Card size="sm" className={cardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <Users className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -144,11 +148,11 @@ function VendorKpiStrip({
           </CardDescription>
           <CardTitle className={dashKpiValueClass}>12</CardTitle>
         </CardHeader>
-        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+        <CardContent className={contentClass}>
           Roof, electrical, and permit partner crews available for field execution.
         </CardContent>
       </Card>
-      <Card size="sm" className={cn(dashSurfaceCardClass, entityBrandStyles.solar2sk.accentBar)}>
+      <Card size="sm" className={cardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <MapPinned className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -156,11 +160,11 @@ function VendorKpiStrip({
           </CardDescription>
           <CardTitle className={dashKpiValueClass}>{Math.max(6, activeAssignments)}</CardTitle>
         </CardHeader>
-        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+        <CardContent className={contentClass}>
           Active sites, permit audits, and interconnection dispatch lanes.
         </CardContent>
       </Card>
-      <Card size="sm" className={dashSurfaceCardClass}>
+      <Card size="sm" className={cn(dashSurfaceCardClass, "min-h-[7.25rem]")}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <ShieldAlert className={cn("size-4", entityBrandStyles.yellowStar.icon)} />
@@ -168,7 +172,7 @@ function VendorKpiStrip({
           </CardDescription>
           <CardTitle className={dashKpiValueClass}>{Math.max(1, complianceRisks)}</CardTitle>
         </CardHeader>
-        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+        <CardContent className={contentClass}>
           General Liability / COI renewal exposure requiring owner-visible follow-up.
         </CardContent>
       </Card>
@@ -182,28 +186,32 @@ function VendorComplianceAutomationCard() {
       <CardHeader className={dashCardHeaderClass}>
         <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
           <div className="space-y-1">
-            <CardTitle>Vendor Compliance Automation</CardTitle>
+            <DashImplementationLabel variant={implementationLabels.vendorCompliance.variant}>
+              {implementationLabels.vendorCompliance.title}
+            </DashImplementationLabel>
             <CardDescription>
               Production wiring for turning vendor records into renewal drafts, Drive document routing, and compliance
               status updates.
             </CardDescription>
           </div>
           <Badge variant="outline" className={cn("w-fit font-mono", statusStyles.live)}>
-            Sheets → Apps Script → Gmail → Drive
+            Sheets -&gt; Apps Script -&gt; Gmail -&gt; Drive
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className={cn("grid gap-4 md:grid-cols-[0.95fr_1.35fr]", dashCardContentClass)}>
-        <div className="space-y-3">
+      <CardContent className={cn("grid gap-4 lg:grid-cols-12", dashCardContentClass)}>
+        <div className="space-y-3 lg:col-span-5">
           <div className="rounded-xl border border-border bg-muted/40 p-3">
             <p className={cn("font-mono text-[11px] uppercase tracking-[0.2em]", entityBrandStyles.solar2sk.text)}>
               Workflow contract
             </p>
-            <ol className="mt-3 space-y-2 text-muted-foreground text-xs leading-relaxed">
+            <ol className="mt-3 max-h-[380px] space-y-2 overflow-y-auto pr-1 text-muted-foreground text-xs leading-relaxed">
               {vendorComplianceSteps.map((step, index) => (
-                <li key={step} className="flex gap-2">
-                  <span className={cn("font-mono tabular-nums", entityBrandStyles.solar2sk.text)}>{index + 1}.</span>
-                  <span>{step}</span>
+                <li key={step} className="rounded-lg border border-border bg-card/60 p-2.5">
+                  <span className={cn("block font-mono text-[10px] uppercase tabular-nums", entityBrandStyles.solar2sk.text)}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="mt-1 block leading-snug">{step}</span>
                 </li>
               ))}
             </ol>
@@ -214,9 +222,15 @@ function VendorComplianceAutomationCard() {
             resulting renewal status back to the compliance ledger for auditability.
           </p>
         </div>
-        <pre className={cn(dashCodeBlockClass, "max-h-[23rem] text-[10px]")}>
-          <code>{vendorComplianceScript}</code>
-        </pre>
+        <div className="lg:col-span-7">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2 border-border border-b pb-2">
+            <p className="font-semibold text-[11px] text-foreground uppercase tracking-wide">Registry Automation Script</p>
+            <span className="font-mono text-[10px] text-muted-foreground">checkVendorComplianceRenewals()</span>
+          </div>
+          <pre className={cn(dashCodeBlockClass, "max-h-[390px] overflow-y-auto text-[10px]")}>
+            <code>{vendorComplianceScript}</code>
+          </pre>
+        </div>
       </CardContent>
     </Card>
   );
@@ -263,20 +277,17 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
       />
 
       <Card className={dashSurfaceCardClass}>
-        <CardContent className={cn(dashAlertBannerClass, "flex items-start gap-3 border-0", dashCardContentClass)}>
+        <CardContent className={cn(dashAlertBannerClass, "flex items-start gap-2 border-0 px-3 py-2", dashCardContentClass)}>
           <AlertTriangle className="mt-0.5 size-4 shrink-0" />
-          <p className="text-xs leading-relaxed md:text-sm">
-            Critical Path Blockage: 3SK Frisco Commercial Plaza cannot transition to structural assembly until North
-            Texas Structural PE Group uploads verified load assessment blueprints. North TX Racking Crews general
-            liability certificate expires in 14 days.
+          <p className="text-xs leading-snug">
+            <strong>Critical Path Blockage:</strong> 3SK Frisco Commercial Plaza is held for structural PE load
+            assessment blueprints. North TX Racking Crews general liability certificate expires in 14 days.
           </p>
         </CardContent>
       </Card>
 
-      <VendorComplianceAutomationCard />
-
-      <Card className={cn("min-h-[calc(100vh-22rem)]", dashCardClass)}>
-        <CardHeader className={cn("gap-4", dashCardHeaderClass)}>
+      <Card className={dashCardClass}>
+        <CardHeader className={cn("gap-3 border-border border-b bg-muted/20", dashCardHeaderClass)}>
           <div className="flex flex-col gap-1">
             <CardTitle>Solar Field Partner Matrix</CardTitle>
             <CardDescription>
@@ -286,7 +297,7 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
           <div className="relative max-w-sm">
             <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              className="border-border bg-slate-50 pl-8 text-foreground placeholder:text-muted-foreground"
+              className="h-8 border-border bg-card pl-8 text-foreground text-xs placeholder:text-muted-foreground"
               placeholder="Filter vendors, regions, or compliance..."
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -295,34 +306,36 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
         </CardHeader>
         <CardContent className={dashCardContentClass}>
           <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-border">
-            <Table className="min-w-[720px]">
+            <Table className="min-w-[940px] table-fixed text-[11px]">
               <TableHeader>
-                <TableRow>
-                  <TableHead>Vendor Partner</TableHead>
-                  <TableHead>Specialty Type</TableHead>
-                  <TableHead>Regional Coverage</TableHead>
-                  <TableHead>Active Assignments</TableHead>
-                  <TableHead>Compliance Status</TableHead>
+                <TableRow className="h-9 bg-muted/30 hover:bg-muted/30">
+                  <TableHead className="w-[25%] font-semibold text-foreground">Vendor Partner</TableHead>
+                  <TableHead className="w-[25%] font-semibold text-foreground">Specialty Type</TableHead>
+                  <TableHead className="w-[20%] font-semibold text-foreground">Regional Coverage</TableHead>
+                  <TableHead className="w-[15%] font-semibold text-foreground">Active Assignments</TableHead>
+                  <TableHead className="w-[15%] font-semibold text-foreground">Compliance Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredVendors.map((vendor) => (
-                  <TableRow key={vendor.id} className="border-border/60">
-                    <TableCell className="max-w-[12rem] whitespace-normal py-2 font-medium">{vendor.name}</TableCell>
+                  <TableRow key={vendor.id} className="h-10 border-border/60 hover:bg-muted/30">
+                    <TableCell className="truncate py-2 font-medium">{vendor.name}</TableCell>
                     <TableCell className="py-2">
                       <span
                         className={cn(
-                          "rounded-md border px-2 py-0.5 font-bold font-mono text-[10px] uppercase tracking-wider",
+                          "inline-flex max-w-full truncate rounded-md border px-2 py-0.5 font-bold font-mono text-[10px] uppercase tracking-tight",
                           tradeTagClass(vendor.specialtyType),
                         )}
                       >
                         {vendor.specialtyType}
                       </span>
                     </TableCell>
-                    <TableCell className="py-2 font-mono text-xs">{vendor.region}</TableCell>
-                    <TableCell className="py-2 font-mono tabular-nums">{assignmentLabel(vendor)}</TableCell>
+                    <TableCell className="truncate py-2 font-mono text-xs">{vendor.region}</TableCell>
+                    <TableCell className="whitespace-nowrap py-2 font-mono tabular-nums">
+                      {assignmentLabel(vendor)}
+                    </TableCell>
                     <TableCell className="py-2">
-                      <Badge variant={complianceVariant(vendor.complianceStatus)} className="gap-1 font-normal">
+                      <Badge variant={complianceVariant(vendor.complianceStatus)} className="max-w-full gap-1 truncate font-normal text-[10px]">
                         <span aria-hidden>{compliancePrefix(vendor.complianceStatus)}</span>
                         {vendor.complianceStatus}
                       </Badge>
@@ -341,6 +354,8 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
           </div>
         </CardContent>
       </Card>
+
+      <VendorComplianceAutomationCard />
     </div>
   );
 }
