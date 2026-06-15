@@ -1,3 +1,5 @@
+import type { EnvironmentalImpact, SolarEdgeDevice } from "@/types/telemetry";
+
 import type { EntityBrand } from "./types";
 
 export interface TelemetrySite {
@@ -77,3 +79,64 @@ export const gridEfficiencyIndex = Math.round(
 );
 
 export const liveSitesCount = telemetrySitesData.filter((s) => s.inverterStatus === "Online").length;
+
+export const activeTelemetryAssets: SolarEdgeDevice[] = [
+  {
+    siteId: "site-ysp-hunt-60kw",
+    inverterId: "se-inv-60kw-hunt-core-01",
+    name: "Inverter Array Core 01",
+    associatedAsset: "Hunt County 60kW Microgrid",
+    entityCompany: "YSP",
+    hardware: {
+      model: "SolarEdge SE66.6K-USRW",
+      serialNumber: "7E120934-21B",
+      firmwareVersion: "v4.19.42",
+    },
+    currentPowerFlowKw: {
+      pvGeneration: 48.2,
+      storageChargeLevelPercentage: 92.5,
+      consumptionLoad: 12.4,
+      gridFeedIn: 35.8,
+    },
+    telemetryLogs: {
+      lifetimeEnergyWh: 184_592_000,
+      todayEnergyWh: 242_100,
+      efficiencyRatingPercentage: 98.1,
+      inverterTemperatureCelsius: 41.2,
+    },
+    systemStatus: "ACTIVE_GENERATING",
+    lastTelemetryPing: "2026-06-14T17:04:36.000Z",
+  },
+  {
+    siteId: "site-3sk-collin-150kw",
+    inverterId: "se-inv-150kw-collin-gateway",
+    name: "Primary Commercial Gateway",
+    associatedAsset: "Collin County Utility Expansion",
+    entityCompany: "3SK",
+    hardware: {
+      model: "SolarEdge SE100K-USR4",
+      serialNumber: "7F003821-99C",
+      firmwareVersion: "v4.21.05",
+    },
+    currentPowerFlowKw: {
+      pvGeneration: 0,
+      storageChargeLevelPercentage: 0,
+      consumptionLoad: 45.1,
+      gridFeedIn: -45.1,
+    },
+    telemetryLogs: {
+      lifetimeEnergyWh: 12_409_000,
+      todayEnergyWh: 0,
+      efficiencyRatingPercentage: 0,
+      inverterTemperatureCelsius: 22.8,
+    },
+    systemStatus: "SYSTEM_FAULT",
+    lastTelemetryPing: "2026-06-14T16:46:36.000Z",
+  },
+];
+
+export const aggregateEnvironmentalImpact: EnvironmentalImpact = {
+  co2SavedLbs: 142_095.4,
+  equivalentTreesPlanted: 1_842,
+  lightBulbDaysPowered: 549_200,
+};
