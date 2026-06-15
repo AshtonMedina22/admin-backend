@@ -156,7 +156,7 @@ function TelemetryMatrixCard() {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
             <CardTitle>Live Interconnection Telemetry</CardTitle>
-            <CardDescription>SolarEdge polling loop for YSP grid export status.</CardDescription>
+            <CardDescription>SolarEdge polling loop for YSP isolated microgrid commissioning status.</CardDescription>
           </div>
           <Badge variant="outline" className={entityBadgeClassForLabel("YSP")}>
             YSP
@@ -172,15 +172,15 @@ function TelemetryMatrixCard() {
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-md border border-border bg-slate-50 p-3">
             <p className="text-[11px] text-muted-foreground uppercase">Generation</p>
-            <p className={cn(dashKpiValueClass, "text-lg text-amber-600")}>{telemetry.liveYield.toFixed(1)} kW</p>
+            <p className={cn(dashKpiValueClass, "text-amber-600 text-lg")}>{telemetry.liveYield.toFixed(1)} kW</p>
           </div>
           <div className="rounded-md border border-border bg-slate-50 p-3">
             <p className="text-[11px] text-muted-foreground uppercase">Consumption</p>
             <p className={cn(dashKpiValueClass, "text-lg")}>{telemetry.consumptionKw.toFixed(1)} kW</p>
           </div>
           <div className="rounded-md border border-border bg-slate-50 p-3">
-            <p className="text-[11px] text-muted-foreground uppercase">Grid Export</p>
-            <p className={cn(dashKpiValueClass, "text-lg text-emerald-600")}>{telemetry.netExport.toFixed(1)} kW</p>
+            <p className="text-[11px] text-muted-foreground uppercase">Microgrid Output</p>
+            <p className={cn(dashKpiValueClass, "text-emerald-600 text-lg")}>{telemetry.netExport.toFixed(1)} kW</p>
           </div>
         </div>
       </CardContent>
@@ -191,22 +191,20 @@ function TelemetryMatrixCard() {
 function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: boolean }) {
   const syncSteps = [
     {
-      label: "Sheet event source",
-      detail:
-        "Workbook tab changes, Apps Script doPost JSON payloads, or a time-based Apps Script pull consolidate rows.",
+      label: "60s server cache",
+      detail: "fetchWorkbookCommandCenter() returns the cached workbook payload when the TTL is still fresh.",
     },
     {
-      label: "Next.js server fetch",
-      detail:
-        "fetchWorkbookCommandCenter() tries Apps Script JSON first, then Sheets API, then published workbook fallback.",
+      label: "Sheets API primary",
+      detail: "Authenticated Google Sheets API reads dashboard, project, and financial tabs when the cache is stale.",
     },
     {
-      label: "Mapping layer",
-      detail: "mapScriptPayloadToCommandCenter() type-casts metrics, revenue rows, and operation-stream events.",
+      label: "Webhook fallback",
+      detail: "Apps Script JSON is a secondary provider for webhook-shaped payloads or scheduled workbook exports.",
     },
     {
-      label: "Executive render",
-      detail: "Sanitized rows feed the KPI cards, revenue split matrix, and Global Operations Stream.",
+      label: "Published snapshot",
+      detail: "Published workbook tables remain the read-only fallback before local preview data is used.",
     },
   ];
 
@@ -238,18 +236,18 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
         <div className={cn("grid gap-2", dashCodeBlockClass)}>
           <p>
             <strong className="text-slate-100">Production flow:</strong>{" "}
-            <span className="text-[var(--brand-3sk)]">Google Sheet tab update</span> →{" "}
-            <span className="text-[var(--brand-3sk)]">Apps Script endpoint / scheduled pull</span> →{" "}
-            <span className="text-[var(--brand-3sk)]">Next.js server fetch</span> →{" "}
-            <span className="text-[var(--brand-3sk)]">mapScriptPayloadToCommandCenter()</span> → KPI cards + event
+            <span className="text-[var(--brand-3sk)]">server cache</span> -&gt;{" "}
+            <span className="text-[var(--brand-3sk)]">Google Sheets API</span> -&gt;{" "}
+            <span className="text-[var(--brand-3sk)]">Apps Script JSON fallback</span> -&gt;{" "}
+            <span className="text-[var(--brand-3sk)]">published workbook snapshot</span> -&gt; typed KPI cards + event
             stream.
           </p>
           <p>
             <strong className="text-slate-100">Current repository path:</strong>{" "}
-            <span className="text-[var(--brand-3sk)]">fetchWorkbookCommandCenter()</span> calls{" "}
-            <span className="text-[var(--brand-3sk)]">fetchWorkbookScriptPayloadOrNull()</span>, falls through to Sheets API /
-            published workbook providers when needed, and preserves the dashboard with local demo data if every live
-            provider fails.
+            <span className="text-[var(--brand-3sk)]">fetchWorkbookCommandCenter()</span> checks a short in-memory
+            cache, calls <span className="text-[var(--brand-3sk)]">fetchDashboardSummary()</span> via the Sheets API,
+            falls through to Apps Script / published workbook providers when needed, and preserves the dashboard with
+            local demo data if every live provider fails.
           </p>
         </div>
         <div className="grid grid-cols-1 gap-2 md:grid-cols-4">

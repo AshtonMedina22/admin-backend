@@ -1,0 +1,12 @@
+{
+  "name": "admin-backend",
+  "private": true,
+  "description": "Monorepo root — Next.js app lives in admin-dashboard/",
+  "scripts": {
+    "build": "npm run build --prefix admin-dashboard",
+    "vercel-build": "npm run build --prefix admin-dashboard"
+  },
+  "dependencies": {
+    "next": "^16.2.9"
+  }
+}

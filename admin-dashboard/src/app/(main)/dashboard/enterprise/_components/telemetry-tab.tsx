@@ -131,7 +131,10 @@ export function TelemetryTab() {
           <CardContent className={cn("grid gap-3", dashCardContentClass)}>
             <MetricRow label="Current Array Generation" value={`${liveYield.toFixed(1)} kW`} />
             <MetricRow label="Local Consumption Load" value={`${consumptionKw.toFixed(1)} kW`} />
-            <MetricRow label="Net Grid Export Feed-In" value={`${netExport.toFixed(1)} kW (Surplus to Oncor Grid)`} />
+            <MetricRow
+              label="Isolated Microgrid Output"
+              value={`${netExport.toFixed(1)} kW (local load and battery bank during commissioning)`}
+            />
             <MetricRow label="Inverter Efficiency" value={`${efficiency}%`} />
             <MetricRow label="Battery Storage Capacity" value="92.5% (LiFePO4 Core Bank)" />
 
@@ -180,7 +183,7 @@ export function TelemetryTab() {
             </div>
 
             <pre className={cn(dashAlertBannerClass, "font-mono text-xs")}>
-              {`[ERR-CODE: 18x2] - Utility Isolation Timeout Fault. Check Oncor Interconnection Circuit Line Balance Status.`}
+              {`[ERR-CODE: 18x86] - PV isolation fault. Dispatch certified PV installer; verify isolation before reconnecting affected string.`}
             </pre>
           </CardContent>
         </Card>
@@ -250,7 +253,7 @@ export function TelemetryTab() {
                     {asset.entityCompany}
                   </Badge>
                 </div>
-                <div className="grid gap-2 font-mono text-xs text-slate-100">
+                <div className="grid gap-2 font-mono text-slate-100 text-xs">
                   {[
                     ["PV generation", `${asset.currentPowerFlowKw.pvGeneration.toFixed(1)} kW`],
                     ["Facility load", `${asset.currentPowerFlowKw.consumptionLoad.toFixed(1)} kW`],

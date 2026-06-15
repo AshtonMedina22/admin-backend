@@ -40,7 +40,8 @@ export const globalEventsData: GlobalEvent[] = [
     entityBrand: "Yellow Star",
     status: "success",
     timestamp: "22 min ago",
-    message: "Hunt County 60 kW microgrid export stabilized at 35.8 kW surplus to Oncor grid.",
+    message:
+      "Hunt County 60 kW microgrid isolated load test held 35.8 kW output to the local battery bank; awaiting final Oncor PTO before grid export.",
   },
   {
     id: "evt-005",

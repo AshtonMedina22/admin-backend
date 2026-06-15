@@ -79,8 +79,9 @@ export function TelemetrySimulatorControl({ isSimulating, onSimulatingChange, li
       <div className={cn(dashInfoBannerClass, "font-mono text-xs leading-relaxed")}>
         <strong>Engineering Implementation Notes:</strong> Production wiring would run this as a scheduled server worker
         or API route that polls SolarEdge / SCADA endpoints on a controlled interval, queues requests to respect vendor
-        rate limits, validates inverter register payloads, catches offline-device states (e.g., [ERR-CODE: 18x2]), and
-        routes normalized alerts into the systems log instead of letting hardware exceptions break the dashboard.
+        rate limits, validates inverter register payloads, catches offline-device states (e.g., SolarEdge 18x86 PV
+        isolation fault or 18x37/18x38 AC line voltage bounds), and routes normalized alerts into the systems log
+        instead of letting hardware exceptions break the dashboard.
       </div>
     </div>
   );

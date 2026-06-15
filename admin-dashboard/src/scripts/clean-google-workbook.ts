@@ -69,7 +69,12 @@ const workbook: Record<string, SheetSpec> = {
         "Critical",
         "2026-06-13 12:48",
       ],
-      ["YSP", "Hunt County 60kW microgrid injection balance stabilized at 35.8 kW export.", "Info", "2026-06-13 11:30"],
+      [
+        "YSP",
+        "Hunt County 60kW isolated load test held 35.8 kW output to the local battery bank; awaiting final Oncor PTO.",
+        "Info",
+        "2026-06-13 11:30",
+      ],
     ],
   },
   "Lead Tracker": {

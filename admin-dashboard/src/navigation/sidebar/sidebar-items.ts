@@ -48,7 +48,7 @@ export const sidebarItems: NavGroup[] = [
         title: "Ops Command Center",
         url: "/dashboard",
         icon: LayoutDashboard,
-        skills: ["Sheets", "Apps Script", "KPIs"],
+        skills: ["Sheets API", "Apps Script", "Telemetry", "APIs"],
       },
       {
         title: "Pipeline & Telemetry",
