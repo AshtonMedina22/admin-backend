@@ -237,3 +237,60 @@ html {
 .disable-transitions * {
   transition: none !important;
 }
+
+@layer components {
+  .dashboard-shell {
+    background:
+      radial-gradient(circle at top right, rgba(68, 178, 242, 0.16), transparent 30rem),
+      radial-gradient(circle at bottom left, rgba(124, 92, 255, 0.1), transparent 28rem),
+      linear-gradient(180deg, #ffffff 0%, #f6fbff 45%, #eef7fb 100%);
+    color: #0f172a;
+  }
+
+  .dashboard-shell [class*="bg-zinc-950"],
+  .dashboard-shell [class*="bg-neutral-950"] {
+    background-color: #f6fbff !important;
+  }
+
+  .dashboard-shell [class*="bg-zinc-900"],
+  .dashboard-shell [class*="bg-neutral-900"] {
+    background-color: #ffffff !important;
+  }
+
+  .dashboard-shell [class*="bg-zinc-800"] {
+    background-color: #f8fbff !important;
+  }
+
+  .dashboard-shell [class*="border-zinc-900"],
+  .dashboard-shell [class*="border-zinc-800"],
+  .dashboard-shell [class*="border-zinc-700"],
+  .dashboard-shell [class*="border-neutral-800"] {
+    border-color: #dbe5ee !important;
+  }
+
+  .dashboard-shell .text-muted-foreground,
+  .dashboard-shell [class*="text-zinc-400"],
+  .dashboard-shell [class*="text-zinc-500"],
+  .dashboard-shell [class*="text-slate-400"],
+  .dashboard-shell [class*="text-slate-500"] {
+    color: #4b5b73 !important;
+  }
+
+  .dashboard-shell [class*="text-zinc-100"],
+  .dashboard-shell [class*="text-zinc-200"],
+  .dashboard-shell [class*="text-zinc-300"],
+  .dashboard-shell [class*="text-slate-100"],
+  .dashboard-shell [class*="text-slate-200"],
+  .dashboard-shell [class*="text-slate-300"] {
+    color: #101828 !important;
+  }
+
+  .dashboard-shell table th {
+    color: #101828;
+    font-weight: 800;
+  }
+
+  .dashboard-shell table td {
+    color: #344054;
+  }
+}
