@@ -9,7 +9,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { SupportTicket } from "@/data/demo/support-tickets";
 import { supportTicketsData } from "@/data/demo/support-tickets";
 import {
-  dashCardClass,
   dashCardContentClass,
   dashCardHeaderClass,
   dashKpiGridClass,
