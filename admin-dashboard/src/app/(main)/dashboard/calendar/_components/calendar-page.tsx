@@ -4,21 +4,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { calendarEventsByDay } from "@/data/demo/calendar-events";
 import {
   dashAlertBannerClass,
-  dashCardClass,
   dashPageClass,
+  dashPlatformCardClass,
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
   dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockClass,
-  dashCodeBlockSmClass,
   dashKpiValueClass,
   dashProseClass,
   entityAccentBarForLabel,
   entityBadgeClassForLabel,
   entityBrandStyles,
-  entityBrandStylesFor,
   statusStyles,
 } from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
@@ -45,8 +43,8 @@ const monthCells = Array.from({ length: 35 }, (_, index) => {
   };
 });
 
-function eventAccentClass(_brand: string) {
-  return "";
+function eventAccentClass(brand: string) {
+  return entityAccentBarForLabel(brand);
 }
 
 function flattenEvents(calendarEvents: Record<number, CalendarEvent[]>) {
@@ -57,52 +55,75 @@ function flattenEvents(calendarEvents: Record<number, CalendarEvent[]>) {
 
 const calendarSyncSteps = [
   "Calendar tab row is marked Ready to Schedule in the workbook.",
-  "Apps Script time trigger reads unsynced rows from the Calendar tab.",
-  "Calendar.Events.insert() creates the meeting with attendees and reminders.",
-  "The returned calendarEventId is written back to the same row for idempotent updates.",
+  "Apps Script sync reads unsynced rows and skips rows that already have a Calendar Event ID.",
+  "Calendar.Events.insert() creates the meeting through the Advanced Calendar service.",
+  "Calendar Event ID and status are written back to the same row for idempotent reruns.",
+  "Needs Reminder rows create Gmail drafts with the same header-index mapping.",
 ];
 
-const GOOGLE_CALENDAR_SYNC_SCRIPT = `function syncCalendarRows() {
+const GOOGLE_CALENDAR_SYNC_SCRIPT = `/**
+ * Synchronizes workbook rows with the enterprise Google Calendar.
+ * Requires the "Google Calendar API" Advanced Service to be enabled.
+ */
+function syncCalendarRows() {
   const sheet = SpreadsheetApp.getActive().getSheetByName('Calendar');
+  if (!sheet) throw new Error('Data Integrity Fault: Calendar sheet tab not found.');
+
   const rows = sheet.getDataRange().getValues();
+  if (rows.length <= 1) return;
+
   const headers = rows[0].map(String);
   const col = (name) => headers.indexOf(name);
   const calendarId = PropertiesService.getScriptProperties().getProperty('OPS_CALENDAR_ID');
-  if (!calendarId) throw new Error('Missing OPS_CALENDAR_ID script property');
+  if (!calendarId) throw new Error('Configuration Fault: Missing OPS_CALENDAR_ID script property.');
 
   rows.slice(1).forEach((row, index) => {
-    if (row[col('Status')] !== 'Ready to Schedule') return;
-    if (row[col('Calendar Event ID')]) return;
+    const statusIndex = col('Status');
+    const eventIdIndex = col('Calendar Event ID');
 
-    const event = Calendar.Events.insert({
-      summary: row[col('Meeting Title')],
-      description: row[col('Next Action')],
-      start: { dateTime: new Date(row[col('Start Time')]).toISOString() },
-      end: { dateTime: new Date(row[col('End Time')]).toISOString() },
-      attendees: String(row[col('Attendees')])
-        .split(',')
-        .map((email) => ({ email: email.trim() }))
-        .filter((attendee) => attendee.email),
-      reminders: { useDefault: false, overrides: [{ method: 'email', minutes: 1440 }] },
-    }, calendarId, { sendUpdates: 'all' });
+    if (row[statusIndex] === 'Ready to Schedule' && !row[eventIdIndex]) {
+      try {
+        const eventResource = {
+          summary: row[col('Meeting Title')],
+          description: row[col('Next Action')],
+          start: { dateTime: new Date(row[col('Start Time')]).toISOString() },
+          end: { dateTime: new Date(row[col('End Time')]).toISOString() },
+          attendees: String(row[col('Attendees')] || '')
+            .split(',')
+            .map((email) => ({ email: email.trim() }))
+            .filter((attendee) => attendee.email),
+          reminders: { useDefault: false, overrides: [{ method: 'email', minutes: 1440 }] },
+        };
 
-    sheet.getRange(index + 2, col('Calendar Event ID') + 1).setValue(event.id);
-    sheet.getRange(index + 2, col('Status') + 1).setValue('Scheduled');
+        const event = Calendar.Events.insert(eventResource, calendarId, { sendUpdates: 'all' });
+        const sheetRow = index + 2;
+        sheet.getRange(sheetRow, eventIdIndex + 1).setValue(event.id);
+        sheet.getRange(sheetRow, statusIndex + 1).setValue('Scheduled');
+      } catch (error) {
+        console.error('Calendar insertion rejected on row ' + (index + 2) + ': ' + error.toString());
+      }
+    }
+
+    if (row[statusIndex] === 'Needs Reminder') {
+      buildMeetingReminderDraft(row, col);
+      sheet.getRange(index + 2, statusIndex + 1).setValue('Reminder Drafted');
+    }
   });
 }`;
 
-const GMAIL_REMINDER_DRAFT_SCRIPT = `function buildMeetingReminderDraft(row) {
-  if (row['Meeting Status'] !== 'Needs Reminder') return;
-
-  GmailApp.createDraft(
-    row['Vendor Email'],
-    'Reminder: ' + row['Project'] + ' / ' + row['Meeting Date'],
-    'Meeting: ' + row['Meeting Date'] +
-      '\nVendor/AHJ: ' + row['Vendor or AHJ'] +
-      '\nProject: ' + row['Project'] +
-      '\nNext action: ' + row['Next Action'],
-    { name: 'Demo Ops Scheduling Desk' }
-  );
+const GMAIL_REMINDER_DRAFT_SCRIPT = `function buildMeetingReminderDraft(rowArray, col) {
+  try {
+    GmailApp.createDraft(
+      rowArray[col('Vendor Email')],
+      'Ops Follow-Up: ' + rowArray[col('Project')] + ' / Schedule Target Confirmation',
+      'Meeting Target Date: ' + rowArray[col('Meeting Date')] +
+        '\nEntity/AHJ Endpoint: ' + rowArray[col('Vendor or AHJ')] +
+        '\n\nNext Critical Path Action:\n' + rowArray[col('Next Action')],
+      { name: 'Operations Scheduling Desk' }
+    );
+  } catch (error) {
+    console.error('Gmail reminder draft generation failed: ' + error.toString());
+  }
 }`;
 
 const actionItems = [
@@ -122,7 +143,7 @@ const actionItems = [
 
 function TasksHeader() {
   return (
-    <Card className={dashCardClass}>
+    <Card className={dashSurfaceCardClass}>
       <CardContent className="grid gap-2 p-5 md:p-6">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full border border-border bg-slate-50 px-2.5 py-1 font-mono text-[11px] text-muted-foreground uppercase tracking-[0.18em]">
@@ -144,7 +165,7 @@ function TasksHeader() {
 function TaskAndDocumentDeck() {
   return (
     <div className="mb-2 grid grid-cols-1 gap-5 lg:grid-cols-2">
-      <Card className={dashCardClass}>
+      <Card className={dashSurfaceCardClass}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle>Operational Action Items</CardTitle>
           <CardDescription>
@@ -176,7 +197,7 @@ function TaskAndDocumentDeck() {
         </CardContent>
       </Card>
 
-      <Card className={dashCardClass}>
+      <Card className={dashSurfaceCardClass}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle>Automated Document Tracking</CardTitle>
           <CardDescription>
@@ -213,14 +234,14 @@ function TaskAndDocumentDeck() {
 
 function CalendarApiSyncCard() {
   return (
-    <Card className={dashSurfaceCardClass}>
+    <Card className={dashPlatformCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
-        <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-          <div>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="grid gap-1">
             <CardTitle>Google Calendar API Sync</CardTitle>
             <CardDescription>
-              Scripted scheduling workflow that turns workbook rows into calendar events, reminders, and auditable row
-              IDs.
+              Scripted scheduling workflow that turns workbook rows into idempotent calendar events, reminder drafts,
+              and auditable row IDs.
             </CardDescription>
           </div>
           <span className={cn("w-fit rounded-full px-2.5 py-1 font-mono text-[10px]", entityBrandStyles.solar3k.badge)}>
@@ -242,6 +263,13 @@ function CalendarApiSyncCard() {
                 </li>
               ))}
             </ol>
+          </div>
+          <div className={cn(dashAlertBannerClass, "font-mono text-xs leading-relaxed")}>
+            <p>
+              <strong>Advanced service dependency:</strong>{" "}
+              <span className="font-mono">Calendar.Events.insert()</span> uses the Google Calendar API Advanced Service,
+              which must be enabled in the Apps Script project before this syncer runs.
+            </p>
           </div>
           <div className={cn(dashAlertBannerClass, "font-mono text-xs leading-relaxed")}>
             <strong>Gmail reminder draft companion:</strong> when a row's meeting status is
@@ -338,7 +366,7 @@ export function CalendarPage({
       <AgendaFeed events={agendaEvents} />
 
       <div className="hidden md:block">
-        <Card size="sm" className={dashCardClass}>
+        <Card size="sm" className={dashSurfaceCardClass}>
           <CardHeader className={cn("border-border border-b", dashSectionCardHeaderClass)}>
             <CardTitle>Month View Reference</CardTitle>
             <CardDescription>Compact 7-column planning reference for desktop review.</CardDescription>

@@ -136,7 +136,7 @@ function VendorKpiStrip({
 }) {
   return (
     <div className={cn(dashKpiGrid3Class, "grid-cols-1 md:grid-cols-3")}>
-      <Card size="sm" className={dashSurfaceCardClass}>
+      <Card size="sm" className={cn(dashSurfaceCardClass, entityBrandStyles.solar2sk.accentBar)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <Users className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -148,7 +148,7 @@ function VendorKpiStrip({
           Roof, electrical, and permit partner crews available for field execution.
         </CardContent>
       </Card>
-      <Card size="sm" className={dashSurfaceCardClass}>
+      <Card size="sm" className={cn(dashSurfaceCardClass, entityBrandStyles.solar2sk.accentBar)}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <MapPinned className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -251,7 +251,7 @@ export function VendorOps({ vendors = vendorsData }: { vendors?: VendorRecord[] 
   return (
     <div className={dashPageClass}>
       <div className={dashPageHeaderClass}>
-        <h1 className="font-semibold text-2xl tracking-tight">Vendor Ops</h1>
+        <h1 className="font-semibold text-2xl tracking-tight">Vendor Operations</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
           Field labor pools, subcontractor assignments, and insurance compliance for multi-tenant solar operations.
         </p>

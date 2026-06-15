@@ -33,7 +33,7 @@ type TelemetrySimulatorProps = {
 
 export function TelemetrySimulatorControl({ isSimulating, onSimulatingChange, liveYield }: TelemetrySimulatorProps) {
   return (
-    <div className="grid gap-3 rounded-xl border border-border bg-slate-50 p-4">
+    <div className="grid gap-3 rounded-lg border border-border bg-muted/40 p-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Switch
@@ -76,7 +76,7 @@ export function TelemetrySimulatorControl({ isSimulating, onSimulatingChange, li
           {isSimulating ? "Streaming loop active" : "Stream paused"}
         </span>
       </div>
-      <div className={cn(dashInfoBannerClass, "font-mono text-xs leading-relaxed")}>
+      <div className={cn(dashInfoBannerClass, "font-mono text-[11px] leading-relaxed")}>
         <strong>Engineering Implementation Notes:</strong> Production wiring would run this as a scheduled server worker
         or API route that polls SolarEdge / SCADA endpoints on a controlled interval, queues requests to respect vendor
         rate limits, validates inverter register payloads, catches offline-device states (e.g., SolarEdge 18x86 PV

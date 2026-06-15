@@ -3,11 +3,11 @@ import { Bot, MailCheck, Send, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  dashCardClass,
   dashCardContentClass,
   dashCardHeaderClass,
   dashPageClass,
   dashPageHeaderClass,
+  dashPlatformCardClass,
   dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
@@ -23,21 +23,21 @@ import { cn } from "@/lib/utils";
 const draftQueue = [
   {
     title: "Vendor COI Renewal Follow-up",
-    source: "Vendor Ops → North TX Racking Crews",
+    source: "Vendor Ops -> North TX Racking Crews",
     trigger: "COI expiration inside 14-day window",
     fields: "vendorName, vendorEmail, driveFolderUrl, complianceStatus",
     status: "Needs Review",
   },
   {
     title: "AHJ Escalation Draft",
-    source: "Permitting Queue → City of McKinney / Oncor",
+    source: "Permitting Queue -> City of McKinney / Oncor",
     trigger: "DaysStale > 30 or Permit Status = STALE_AHJ_REVIEW",
     fields: "projectName, authority, permitNumber, daysStale, missingRequirement",
     status: "Escalation Ready",
   },
   {
     title: "Calendar Reminder Email",
-    source: "Calendar tab → Vendor / AHJ meeting",
+    source: "Calendar tab -> Vendor / AHJ meeting",
     trigger: "Meeting Status = Needs Reminder",
     fields: "meetingDate, attendeeEmail, vendorOrAhj, project, nextAction",
     status: "Draft Queued",
@@ -45,18 +45,31 @@ const draftQueue = [
 ];
 
 const gmailDraftWorker = `import { google } from 'googleapis';
+import type { OAuth2Client } from 'google-auth-library';
 
-export async function createGmailDraft(auth, draft) {
-  // Requires user OAuth consent or Workspace domain-wide delegation.
+export interface EmailDraftPayload {
+  to: string;
+  subject: string;
+  body: string;
+}
+
+/**
+ * Creates a pending draft inside the user's authenticated mailbox.
+ * Requires user OAuth consent or Workspace domain-wide delegation.
+ */
+export async function createGmailDraft(auth: OAuth2Client, draft: EmailDraftPayload) {
   const gmail = google.gmail({ version: 'v1', auth });
+
   const mime = [
-    'To: ' + draft.to,
-    'Subject: ' + draft.subject,
+    \`To: \${draft.to}\`,
+    \`Subject: \${draft.subject}\`,
     'Content-Type: text/plain; charset=utf-8',
+    'MIME-Version: 1.0',
     '',
     draft.body,
   ].join('\\r\\n');
 
+  // Gmail REST API requires strict base64URL for message.raw.
   const raw = Buffer.from(mime)
     .toString('base64')
     .replace(/\\+/g, '-')
@@ -65,7 +78,9 @@ export async function createGmailDraft(auth, draft) {
 
   return gmail.users.drafts.create({
     userId: 'me',
-    requestBody: { message: { raw } },
+    requestBody: {
+      message: { raw },
+    },
   });
 }`;
 
@@ -80,7 +95,7 @@ HUMAN STEP: Builder Ops reviews the draft before Gmail API send.`;
 
 function DraftQueueCard() {
   return (
-    <Card className={dashSurfaceCardClass}>
+    <Card className={dashPlatformCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
           <MailCheck className={cn("size-5", entityBrandStyles.solar3k.icon)} />
@@ -117,7 +132,7 @@ function DraftQueueCard() {
 
 function GmailApiProofCard() {
   return (
-    <Card className={dashSurfaceCardClass}>
+    <Card className={dashPlatformCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
           <ShieldCheck className={cn("size-5", entityBrandStyles.solar2sk.icon)} />
@@ -130,14 +145,19 @@ function GmailApiProofCard() {
       <CardContent className={cn("grid gap-4 lg:grid-cols-[0.9fr_1.3fr]", dashCardContentClass)}>
         <div className={cn(dashCodeBlockSmClass, "space-y-3 text-xs leading-relaxed")}>
           <p>
-            <strong className="text-foreground">Flow:</strong> Sheet row / app event → server route validates row metadata
-            → OAuth-authenticated Gmail client creates a draft → draft ID is written back to the workbook for audit and
-            approval tracking.
+            <strong className="text-foreground">Flow:</strong> Sheet row / app event -&gt; server route validates row
+            metadata -&gt; OAuth-authenticated Gmail client creates a draft -&gt; draft ID is written back to the workbook
+            for audit and approval tracking.
           </p>
           <p>
             <strong className="text-foreground">Accuracy guardrail:</strong> Gmail drafts require user OAuth consent or
             Google Workspace domain-wide delegation. A plain service account by itself cannot create drafts inside a
             user mailbox.
+          </p>
+          <p>
+            <strong className="text-foreground">Architecture note:</strong> Spreadsheet triggers can webhook row metadata
+            into the Next.js backend. The server centralizes OAuth tokens, compiles AI context, and calls the Gmail REST
+            API instead of exposing credentials to Apps Script snippets or the browser.
           </p>
         </div>
         <pre className={cn(dashCodeBlockClass, "max-h-[26rem] text-[10px]")}>
@@ -188,10 +208,10 @@ export default function InboxPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card size="sm" className={dashCardClass}>
+        <Card size="sm" className={cn(dashSurfaceCardClass, entityBrandStyles.solar3k.accentBar)}>
           <CardHeader className={dashCardHeaderClass}>
             <CardDescription className="flex items-center gap-2 text-xs">
-              <MailCheck className="size-4" /> Drafts Waiting Review
+              <MailCheck className={cn("size-4", entityBrandStyles.solar3k.icon)} /> Drafts Waiting Review
             </CardDescription>
             <CardTitle className={dashKpiValueClass}>3</CardTitle>
           </CardHeader>
@@ -199,7 +219,7 @@ export default function InboxPage() {
             Vendor, AHJ, and calendar reminder drafts generated from workbook metadata.
           </CardContent>
         </Card>
-        <Card size="sm" className={dashCardClass}>
+        <Card size="sm" className={dashSurfaceCardClass}>
           <CardHeader className={dashCardHeaderClass}>
             <CardDescription className="flex items-center gap-2 text-xs">
               <Bot className="size-4" /> AI-Assisted Drafts
@@ -210,10 +230,10 @@ export default function InboxPage() {
             Controlled prompt output awaiting human approval before any Gmail action.
           </CardContent>
         </Card>
-        <Card size="sm" className={dashCardClass}>
+        <Card size="sm" className={cn(dashSurfaceCardClass, entityBrandStyles.solar2sk.accentBar)}>
           <CardHeader className={dashCardHeaderClass}>
             <CardDescription className="flex items-center gap-2 text-xs">
-              <Send className="size-4" /> Gmail API Path
+              <Send className={cn("size-4", entityBrandStyles.solar2sk.icon)} /> Gmail API Path
             </CardDescription>
             <CardTitle className={dashKpiValueClass}>OAuth</CardTitle>
           </CardHeader>

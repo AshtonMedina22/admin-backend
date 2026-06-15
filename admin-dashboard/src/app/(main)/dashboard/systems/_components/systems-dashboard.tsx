@@ -8,21 +8,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { totalMonthlySpend, urgentAlertsCount } from "@/data/demo/systems";
 import {
   dashAlertBannerClass,
-  dashCardClass,
   dashCardContentClass,
   dashCardHeaderClass,
   dashPageClass,
   dashPageHeaderClass,
+  dashPlatformCardClass,
   dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
-  dashCodeBlockClass,
   dashCodeBlockSmClass,
   dashKpiValueClass,
   dashProseClass,
   dashSectionTitleClass,
   entityBrandStyles,
-  statusStyles,
 } from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
 
@@ -86,8 +84,8 @@ const oauthScopeMap = [
 
 const websiteMaintenanceSteps = [
   "SSL check: verify certificate validity and renewal date for apex and subdomains.",
-  "DNS / cPanel / DreamHost check: confirm A, CNAME, and hosting panel routing records.",
-  "Redirect validation: test HTTP→HTTPS and legacy URL forwarding paths.",
+  "DNS / cPanel / DreamHost check: audit authoritative DNS zones (apex A records, CNAME subdomains, and TXT/SPF authentication vectors).",
+  "Redirect validation: validate TLS enforcement layers, HSTS headers, and 301 canonical redirect paths.",
   "Backup verification: confirm recent WordPress/database snapshot or host backup exists.",
   "Issue log append: write failed checks to the Systems ledger with owner and next action.",
 ];
@@ -128,7 +126,7 @@ export const defaultDomainMonitors: DomainMonitorRow[] = [
     domain: "solar3k.com",
     detail: "Vercel | Next.js commercial consultation platform",
     ssl: "OPERATIONAL",
-    renewal: "Nov 22, 2026",
+    renewal: "Sep 13, 2026",
     admin: "Builder Ops",
     critical: false,
   },
@@ -136,7 +134,7 @@ export const defaultDomainMonitors: DomainMonitorRow[] = [
     domain: "yellowstarpower.com",
     detail: "Vercel | Next.js utility asset and grid operations platform",
     ssl: "OPERATIONAL",
-    renewal: "Dec 05, 2026",
+    renewal: "Sep 11, 2026",
     admin: "Builder Ops",
     critical: false,
   },
@@ -224,7 +222,7 @@ function GoogleCloudServiceAccountScopeMap() {
           </span>
           <span className="text-foreground">Env keys</span>
           <span className="font-mono text-foreground">
-            GOOGLE_CLIENT_EMAIL · GOOGLE_PRIVATE_KEY · GOOGLE_SHEET_ID · OPS_CALENDAR_ID
+            GOOGLE_CLIENT_EMAIL | GOOGLE_PRIVATE_KEY | GOOGLE_WORKSPACE_ACT_AS_USER | GOOGLE_SHEET_ID | OPS_CALENDAR_ID
           </span>
         </div>
         <div className="grid gap-3 md:grid-cols-2">
@@ -298,8 +296,8 @@ function DomainMonitors({ domainMonitors }: { domainMonitors: DomainMonitorRow[]
         <Card
           key={domain.domain}
           className={cn(
-            dashCardClass,
-            domain.critical ? "border-amber-500/70 shadow-[0_0_0_1px_rgba(245,158,11,0.25)]" : undefined,
+            dashSurfaceCardClass,
+            domain.critical && "border-l-4 border-l-[var(--status-critical)]",
           )}
         >
           <CardHeader className={dashCardHeaderClass}>
@@ -342,7 +340,7 @@ function SubscriptionLedger({ subscriptions }: { subscriptions: SubscriptionRow[
   const annualTotal = monthlyTotal * 12;
 
   return (
-    <Card className={dashCardClass}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle>SaaS Subscription Ledger</CardTitle>
         <CardDescription>Dense monthly software spend ledger across corporate operating systems.</CardDescription>
@@ -383,7 +381,7 @@ function SubscriptionLedger({ subscriptions }: { subscriptions: SubscriptionRow[
 
 function AccessControls({ accessRows }: { accessRows: AccessRow[] }) {
   return (
-    <Card className={dashCardClass}>
+    <Card className={dashSurfaceCardClass}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle>User Access / RBAC Controls</CardTitle>
         <CardDescription>
@@ -488,7 +486,7 @@ function GoogleWorkspaceArchitectureSpec() {
 
 function InfrastructureStatusLog() {
   return (
-    <Card className={dashSurfaceCardClass}>
+    <Card className={cn(dashSurfaceCardClass, entityBrandStyles.systems.accentBar)}>
       <CardHeader className={dashCardHeaderClass}>
         <CardTitle className="text-base">Infrastructure Status Log</CardTitle>
       </CardHeader>
@@ -574,7 +572,7 @@ export function SystemsDashboard({
       <SystemsKpiStrip monthlySpend={monthlySpend} urgentAlerts={urgentAlerts} />
 
       {showPlatformConfig ? (
-        <Card className={dashCardClass}>
+        <Card className={dashPlatformCardClass}>
           <CardHeader className={dashCardHeaderClass}>
             <CardTitle className="text-base">Platform Environment Sync Profiles</CardTitle>
             <CardDescription>

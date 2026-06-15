@@ -24,7 +24,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { CommandCenterData } from "@/data/demo/command-center";
 import {
-  dashCardClass,
   dashCardContentClass,
   dashCardHeaderClass,
   dashKpiGridClass,
@@ -32,6 +31,7 @@ import {
   dashPageHeaderClass,
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
+  dashPlatformCardClass,
   dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
@@ -101,7 +101,7 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
       value: `$${metrics.b2bPipeline.toLocaleString()}`,
       caption: "Contract and proposal pipeline.",
       technicalNote:
-        "Production wiring: Google Sheets API and Apps Script webhooks ingest workbook rows, normalize company fields, and reconcile multi-company balances before the KPI render pass.",
+        "Sheets API + Apps Script normalize workbook rows before KPI render.",
       trend: trends.b2bPipeline,
       icon: TrendingUp,
       iconClassName: entityBrandStyles.solar3k.icon,
@@ -112,7 +112,7 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
       value: `${metrics.fleetYield.toFixed(1)} MW`,
       caption: "Active macro fleet generation.",
       technicalNote:
-        "Production wiring: a scheduled SolarEdge / SCADA polling worker batches inverter register reads, rate-limits API calls, and maps generation samples into YSP fleet-yield metrics.",
+        "SolarEdge / SCADA polling maps inverter samples into YSP fleet metrics.",
       trend: trends.fleetYield,
       icon: Activity,
       iconClassName: entityBrandStyles.yellowStar.icon,
@@ -123,7 +123,7 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
       value: `${metrics.portfolioCapacity.toFixed(1)} MW`,
       caption: "Aggregated North Texas asset footprint.",
       technicalNote:
-        "Production wiring: workbook and telemetry rows are cleaned, type-cast, entity-mapped, and rolled into MW-scale executive capacity metrics for portfolio review.",
+        "Workbook + telemetry rows type-cast into MW-scale portfolio metrics.",
       trend: trends.portfolioCapacity,
       icon: Zap,
       iconClassName: entityBrandStyles.yellowStar.icon,
@@ -134,7 +134,7 @@ function buildMetricCards(data: CommandCenterData): MetricCardConfig[] {
       value: `${metrics.retailVolume} Units`,
       caption: "Monthly warehouse fulfillment flow.",
       technicalNote:
-        "Production wiring: WooCommerce order webhooks post JSON payloads into middleware, which validates SKUs, deduplicates orders, and writes sanitized fulfillment rows to the operations workbook.",
+        "WooCommerce JSON validates SKUs, dedupes orders, and writes fulfillment rows.",
       trend: trends.retailVolume,
       icon: ShoppingCart,
       iconClassName: entityBrandStyles.solar2sk.icon,
@@ -147,7 +147,7 @@ function TelemetryMatrixCard() {
   const telemetry = useTelemetrySimulation();
 
   return (
-    <Card size="sm" className={cn("h-full", dashSurfaceCardClass)}>
+    <Card size="sm" className={cn("h-full", dashSurfaceCardClass, entityBrandStyles.yellowStar.accentBar)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -165,16 +165,16 @@ function TelemetryMatrixCard() {
           onSimulatingChange={telemetry.setIsSimulating}
           liveYield={telemetry.liveYield}
         />
-        <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-md border border-border bg-slate-50 p-3">
+        <div className="grid grid-cols-3 gap-2">
+          <div className="rounded-md border border-border bg-muted/40 p-2.5">
             <p className="text-[11px] text-muted-foreground uppercase">Generation</p>
             <p className={cn(dashKpiValueClass, "text-lg")}>{telemetry.liveYield.toFixed(1)} kW</p>
           </div>
-          <div className="rounded-md border border-border bg-slate-50 p-3">
+          <div className="rounded-md border border-border bg-muted/40 p-2.5">
             <p className="text-[11px] text-muted-foreground uppercase">Consumption</p>
             <p className={cn(dashKpiValueClass, "text-lg")}>{telemetry.consumptionKw.toFixed(1)} kW</p>
           </div>
-          <div className="rounded-md border border-border bg-slate-50 p-3">
+          <div className="rounded-md border border-border bg-muted/40 p-2.5">
             <p className="text-[11px] text-muted-foreground uppercase">Microgrid Output</p>
             <p className={cn(dashKpiValueClass, "text-lg")}>{telemetry.netExport.toFixed(1)} kW</p>
           </div>
@@ -187,25 +187,25 @@ function TelemetryMatrixCard() {
 function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: boolean }) {
   const syncSteps = [
     {
-      label: "60s server cache",
-      detail: "fetchWorkbookCommandCenter() returns the cached workbook payload when the TTL is still fresh.",
+      label: "Cache",
+      detail: "60s in-memory TTL keeps repeat route reads fast.",
     },
     {
-      label: "Sheets API primary",
-      detail: "Authenticated Google Sheets API reads dashboard, project, and financial tabs when the cache is stale.",
+      label: "Sheets API",
+      detail: "Authenticated tab reads hydrate dashboard rows.",
     },
     {
-      label: "Webhook fallback",
-      detail: "Apps Script JSON is a secondary provider for webhook-shaped payloads or scheduled workbook exports.",
+      label: "Webhook",
+      detail: "Apps Script JSON covers event-shaped payloads.",
     },
     {
-      label: "Published snapshot",
-      detail: "Published workbook tables remain the read-only fallback before local preview data is used.",
+      label: "Snapshot",
+      detail: "Published workbook tables protect preview availability.",
     },
   ];
 
   return (
-    <Card size="sm" className={dashSurfaceCardClass}>
+    <Card size="sm" className={dashPlatformCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -229,7 +229,7 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
         </div>
       </CardHeader>
       <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
-        <div className={cn("grid gap-2", dashCodeBlockClass)}>
+        <div className={cn("grid gap-2 text-[11px] leading-relaxed", dashCodeBlockClass)}>
           <p>
             <strong className="text-foreground">Production flow:</strong>{" "}
             <span className="font-mono text-foreground">server cache</span> -&gt;{" "}
@@ -246,9 +246,9 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
             dashboard with local demo data if every live provider fails.
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1">
           {syncSteps.map((step, index) => (
-            <div key={step.label} className="rounded-lg border border-border bg-muted/40 p-3">
+            <div key={step.label} className="rounded-lg border border-border bg-muted/40 p-2.5">
               <div className="mb-2 flex items-center gap-2">
                 <span
                   className={cn(
@@ -258,7 +258,7 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
                 >
                   {index + 1}
                 </span>
-                <p className="font-semibold text-xs">{step.label}</p>
+                <p className="font-semibold text-[11px] uppercase tracking-wide">{step.label}</p>
               </div>
               <p className={cn(dashProseClass, "font-mono text-[11px] text-muted-foreground")}>{step.detail}</p>
             </div>
@@ -271,7 +271,7 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
 
 function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["projects"] }) {
   return (
-    <Card size="sm" className={dashSurfaceCardClass}>
+    <Card size="sm" className={dashPlatformCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -286,17 +286,17 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
         </div>
       </CardHeader>
       <CardContent className={dashSectionCardContentClass}>
-        <div className="overflow-hidden rounded-md border border-border/60">
-          <Table className="min-w-[760px]">
+        <div className="overflow-x-auto rounded-md border border-border/60">
+          <Table className="min-w-[980px] text-xs">
             <TableHeader>
               <TableRow className="h-9 border-border/60 hover:bg-transparent">
-                <TableHead className="font-semibold text-foreground">Project</TableHead>
-                <TableHead className="font-semibold text-foreground">Entity</TableHead>
-                <TableHead className="font-semibold text-foreground">Stage</TableHead>
-                <TableHead className="text-right font-semibold text-foreground">Value</TableHead>
-                <TableHead className="text-right font-semibold text-foreground">Stale</TableHead>
-                <TableHead className="font-semibold text-foreground">Authority</TableHead>
-                <TableHead className="text-right font-semibold text-foreground">Action</TableHead>
+                <TableHead className="w-[240px] font-semibold text-foreground">Project Asset</TableHead>
+                <TableHead className="w-[80px] font-semibold text-foreground">Entity</TableHead>
+                <TableHead className="w-[190px] whitespace-nowrap font-semibold text-foreground">Stage</TableHead>
+                <TableHead className="w-[120px] text-right font-semibold text-foreground">Value</TableHead>
+                <TableHead className="w-[80px] text-right font-semibold text-foreground">Stale</TableHead>
+                <TableHead className="w-[230px] whitespace-nowrap font-semibold text-foreground">Authority</TableHead>
+                <TableHead className="w-[190px] text-right font-semibold text-foreground">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -312,19 +312,23 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
                     key={project.id}
                     className={cn("h-11 border-border/60 hover:bg-muted/30", entityAccentBarForLabel(entity))}
                   >
-                    <TableCell className="max-w-[220px] truncate py-2 font-medium">{project.customer}</TableCell>
+                    <TableCell className="max-w-[240px] truncate py-2 font-medium">{project.customer}</TableCell>
                     <TableCell className="py-2">
                       <Badge variant="outline" className={cn("h-6", entityBadgeClassForLabel(entity))}>
                         {entity}
                       </Badge>
                     </TableCell>
-                    <TableCell className="py-2 text-muted-foreground text-xs">{project.stage}</TableCell>
+                    <TableCell className="whitespace-nowrap py-2 text-muted-foreground text-xs">
+                      {project.stage}
+                    </TableCell>
                     <TableCell className="py-2 text-right font-medium font-mono tabular-nums">
                       {project.value}
                     </TableCell>
-                    <TableCell className="py-2 text-right font-mono tabular-nums">{daysStale}d</TableCell>
-                    <TableCell className="max-w-[220px] truncate py-2 text-xs">{authority}</TableCell>
-                    <TableCell className="py-2 text-right">
+                    <TableCell className="whitespace-nowrap py-2 text-right font-mono tabular-nums">
+                      {daysStale}d
+                    </TableCell>
+                    <TableCell className="max-w-[230px] truncate py-2 text-xs">{authority}</TableCell>
+                    <TableCell className="whitespace-nowrap py-2 text-right">
                       {showEscalation ? (
                         <AIEscalationButton
                           projectName={project.customer}
@@ -332,6 +336,7 @@ function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["proje
                           daysStale={daysStale}
                           utilityAuthority={authority}
                           permitNumber={permitNumber}
+                          className="h-7 px-2 text-[11px]"
                         />
                       ) : null}
                     </TableCell>
@@ -388,7 +393,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
       <div className={cn(dashPageHeaderClass, "gap-3 pb-4 lg:flex-row lg:items-end lg:justify-between")}>
         <div className="grid gap-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="font-semibold text-xl tracking-tight md:text-3xl">Executive Control Tower</h1>
+            <h1 className="font-semibold text-xl tracking-tight md:text-3xl">Ops Command Center</h1>
             <Badge
               variant="outline"
               className={cn("h-6 px-2 font-mono text-[10px]", entityBrandStyles.yellowStar.badge)}
@@ -411,7 +416,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 text-xs">
-          <div className="flex items-center gap-2 rounded-md border border-border bg-slate-50 px-2.5 py-1.5">
+          <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 px-2.5 py-1.5">
             <DatabaseZap className={cn("size-4", entityBrandStyles.solar3k.icon)} />
             <span className="font-medium">
               {data.source === "workbook" ? "Google Sheets live sync" : "Preview fallback"}
@@ -425,7 +430,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
           </div>
           <Button variant="outline" size="sm" disabled={isSyncing} onClick={handleSyncNow}>
             <RefreshCw className={cn("size-4", isSyncing && "animate-spin")} data-icon="inline-start" />
-            {isSyncing ? "Syncing…" : "Sync Now"}
+            {isSyncing ? "Syncing..." : "Sync Now"}
           </Button>
         </div>
       </div>
@@ -437,7 +442,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
             <Card
               key={metric.title}
               size="sm"
-              className={cn(dashSurfaceCardClass, "overflow-hidden shadow-sm")}
+              className={cn(dashSurfaceCardClass, entityAccentBarForLabel(metric.entity), "overflow-hidden shadow-sm")}
             >
               <CardHeader
                 className={cn(
@@ -461,7 +466,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
                     {metric.value}
                   </CardTitle>
                 </div>
-                <span className="rounded-full border border-border bg-slate-50 p-2 shadow-sm">
+                <span className="rounded-full border border-border bg-muted/40 p-2 shadow-sm">
                   <Icon className={`size-4 ${metric.iconClassName}`} />
                 </span>
               </CardHeader>
@@ -475,7 +480,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
                     {metric.trend}
                   </Badge>
                 </div>
-                <p className="mt-2 border-border border-t pt-2 font-mono text-[10px] text-muted-foreground leading-relaxed">
+                <p className="mt-2 line-clamp-2 border-border border-t pt-2 font-mono text-[10px] text-muted-foreground leading-relaxed">
                   {metric.technicalNote}
                 </p>
               </CardContent>
@@ -484,12 +489,16 @@ export function CommandCenter({ data }: CommandCenterProps) {
         })}
       </div>
 
-      <WorkbookSyncContractCard workbookConnected={data.source === "workbook"} />
-
-      <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-12">
+      <div className="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-12">
+        <div className="xl:col-span-4">
+          <WorkbookSyncContractCard workbookConnected={data.source === "workbook"} />
+        </div>
         <div className="xl:col-span-8">
           <RevenueSplitChart data={data.revenueSplit} />
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-12">
         <div className="xl:col-span-4">
           <GlobalEventsFeed
             events={data.events}
@@ -497,16 +506,12 @@ export function CommandCenter({ data }: CommandCenterProps) {
             workbookConnected={data.source === "workbook"}
           />
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-12">
-        <div className="xl:col-span-5">
+        <div className="xl:col-span-8">
           <TelemetryMatrixCard />
         </div>
-        <div className="xl:col-span-7">
-          <ActiveProjectsMatrix projects={data.projects} />
-        </div>
       </div>
+
+      <ActiveProjectsMatrix projects={data.projects} />
     </div>
   );
 }

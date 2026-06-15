@@ -14,6 +14,11 @@ export const dashSectionCardHeaderClass = "px-3 pt-3 pb-2";
 export const dashSectionCardContentClass = "px-3 pb-3 pt-0";
 export const dashAlertBannerClass =
   "rounded-lg border border-[color-mix(in_oklab,var(--brand-ysp)_30%,transparent)] bg-[var(--status-warning-bg)] px-4 py-3 text-[var(--status-warning-text)]";
-/** Technical / implementation callouts — neutral, readable on light canvas */
+/** Technical / implementation callouts — summer 3SK tint */
 export const dashInfoBannerClass =
-  "rounded-lg border border-border bg-slate-50 px-4 py-3 text-sm leading-relaxed text-slate-700";
+  "rounded-lg border border-[color-mix(in_oklab,var(--brand-3sk)_30%,transparent)] border-l-4 border-l-[var(--brand-3sk)] bg-[var(--brand-3sk-bg)] px-4 py-3 text-sm leading-relaxed text-[var(--brand-3sk-text)]";
+/** Platform / workbook sections — 3SK left accent on white card */
+export const dashPlatformCardClass = cn(
+  dashCardClass,
+  "border border-border bg-card shadow-sm border-l-4 border-l-[var(--brand-3sk)]",
+);

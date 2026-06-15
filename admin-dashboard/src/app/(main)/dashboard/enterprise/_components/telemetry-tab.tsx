@@ -6,7 +6,7 @@ import { EntityBrandBadge } from "@/components/dashboard/entity-brand-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { activeTelemetryAssets, aggregateEnvironmentalImpact } from "@/data/demo/telemetry";
-import { dashCardContentClass, dashCardHeaderClass, dashSurfaceCardClass } from "@/lib/dashboard-ui";
+import { dashCardContentClass, dashCardHeaderClass, dashPlatformCardClass, dashSurfaceCardClass } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockClass,
   dashKpiValueClass,
@@ -90,8 +90,8 @@ export async function fetchSolarEdgeTelemetry(siteId: string) {
 
 function MetricRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-md border border-border bg-slate-50 px-3 py-2">
-      <span className="text-muted-foreground text-sm">{label}</span>
+    <div className="flex items-center justify-between gap-3 rounded-md border border-border bg-muted/40 px-3 py-2">
+      <span className="text-muted-foreground text-xs">{label}</span>
       <span className={cn(dashKpiValueClass, "text-sm")}>{value}</span>
     </div>
   );
@@ -114,7 +114,7 @@ export function TelemetryTab() {
       />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <Card className={dashSurfaceCardClass}>
+        <Card className={cn(dashSurfaceCardClass, entityBrandStyles.yellowStar.accentBar)}>
           <CardHeader className={dashCardHeaderClass}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="grid gap-2">
@@ -143,7 +143,7 @@ export function TelemetryTab() {
             <MetricRow label="Inverter Efficiency" value={`${efficiency}%`} />
             <MetricRow label="Battery Storage Capacity" value="92.5% (LiFePO4 Core Bank)" />
 
-            <div className="mt-2 rounded-md border border-border bg-slate-50 p-3 text-sm">
+            <div className="mt-1 rounded-md border border-border bg-muted/40 p-3 text-xs">
               <div className="mb-2 flex items-center gap-2 font-medium text-foreground">
                 <Cpu className={cn("size-4", entityBrandStyles.yellowStar.icon)} />
                 Hardware Data
@@ -153,7 +153,7 @@ export function TelemetryTab() {
           </CardContent>
         </Card>
 
-        <Card className={dashSurfaceCardClass}>
+        <Card className={cn(dashSurfaceCardClass, entityBrandStyles.solar3k.accentBar)}>
           <CardHeader className={dashCardHeaderClass}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="grid gap-2">
@@ -177,7 +177,7 @@ export function TelemetryTab() {
               value="-45.1 kW (System drawing from grid to cover business facility load)"
             />
 
-            <div className="mt-2 rounded-md border border-border bg-slate-50 p-3 text-sm">
+            <div className="mt-1 rounded-md border border-border bg-muted/40 p-3 text-xs">
               <div className="mb-2 flex items-center gap-2 font-medium text-foreground">
                 <Cpu className={cn("size-4", entityBrandStyles.solar3k.icon)} />
                 Hardware Data & Telemetry Error Output
@@ -195,7 +195,7 @@ export function TelemetryTab() {
         </Card>
       </div>
 
-      <Card className={dashSurfaceCardClass}>
+      <Card className={dashPlatformCardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardTitle>SolarEdge Telemetry API Wiring Spec</CardTitle>
           <CardDescription>
@@ -204,7 +204,7 @@ export function TelemetryTab() {
           </CardDescription>
         </CardHeader>
         <CardContent className={cn("grid gap-3", dashCardContentClass)}>
-          <div className={cn("grid gap-2", dashCodeBlockClass)}>
+          <div className={cn("grid gap-2 text-[11px] leading-relaxed", dashCodeBlockClass)}>
             <p>
               <strong className="text-foreground">Accuracy check:</strong> SolarEdge exposes site overview/current
               power, power-flow, inventory, inverter technical data, meter/sensor data, and environmental-benefits
@@ -219,19 +219,28 @@ export function TelemetryTab() {
               dashboard payload; cache/revalidate server-side; then render only sanitized telemetry records in this tab.
             </p>
           </div>
-          <pre className={cn("max-h-96", dashCodeBlockClass)}>
-            <code>{SOLAREDGE_TELEMETRY_CODE}</code>
-          </pre>
-          <div className="rounded-md border border-border bg-slate-50 p-3">
-            <p className={dashProseClass}>
-              <strong>Server fetch contract:</strong> SolarEdge Monitoring API examples use an API key in the query
-              string, so the key must live in a backend route, server action, or scheduled worker. The dashboard should
-              only receive the normalized payload after endpoint responses are validated and cached.
-            </p>
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+            <div className={cn("max-h-[360px] overflow-y-auto rounded-lg border border-border bg-muted/40 p-3", dashCodeBlockClass)}>
+              <div className="mb-2 font-semibold text-[10px] text-muted-foreground uppercase tracking-wide">
+                src/types/telemetry.ts
+              </div>
+              <pre className="whitespace-pre-wrap text-[11px]">
+                <code>{SOLAREDGE_TELEMETRY_CODE}</code>
+              </pre>
+            </div>
+            <div className={cn("max-h-[360px] overflow-y-auto rounded-lg border border-border bg-muted/40 p-3", dashCodeBlockClass)}>
+              <div className="mb-2 font-semibold text-[10px] text-muted-foreground uppercase tracking-wide">
+                Server API Route Fetch Handler
+              </div>
+              <p className={cn("mb-3", dashProseClass)}>
+                <strong>Server fetch contract:</strong> SolarEdge API keys stay in a backend route, server action, or
+                scheduled worker. The dashboard only receives normalized telemetry after validation and caching.
+              </p>
+              <pre className="whitespace-pre-wrap text-[11px]">
+                <code>{SOLAREDGE_FETCH_CODE}</code>
+              </pre>
+            </div>
           </div>
-          <pre className={cn("max-h-80", dashCodeBlockClass)}>
-            <code>{SOLAREDGE_FETCH_CODE}</code>
-          </pre>
         </CardContent>
       </Card>
 
@@ -246,7 +255,7 @@ export function TelemetryTab() {
         <CardContent className={cn("grid gap-3", dashCardContentClass)}>
           <div className="grid gap-3 lg:grid-cols-2">
             {activeTelemetryAssets.map((asset) => (
-              <div key={asset.inverterId} className="rounded-lg border border-border bg-slate-50 p-4">
+              <div key={asset.inverterId} className="rounded-lg border border-border bg-muted/40 p-3">
                 <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="font-semibold text-foreground text-sm">{asset.associatedAsset}</p>
@@ -281,7 +290,7 @@ export function TelemetryTab() {
               </div>
             ))}
           </div>
-          <div className="rounded-md border border-border bg-slate-50 p-3">
+          <div className="rounded-md border border-border bg-muted/40 p-3">
             <p className={dashProseClass}>
               <strong>Environmental rollup:</strong> {aggregateEnvironmentalImpact.co2SavedLbs.toLocaleString()} lbs CO₂
               avoided · {aggregateEnvironmentalImpact.equivalentTreesPlanted.toLocaleString()} tree-equivalent offset ·{" "}

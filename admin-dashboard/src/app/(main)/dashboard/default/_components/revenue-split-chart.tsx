@@ -18,7 +18,7 @@ import { revenueSplitData } from "@/data/demo/revenue-split";
 import {
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
-  dashSurfaceCardClass,
+  dashPlatformCardClass,
 } from "@/lib/dashboard-ui";
 import { entityBrandStyles, statusStyles } from "@/lib/entity-brand";
 import { cn } from "@/lib/utils";
@@ -37,11 +37,11 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
   const pendingCount = data.filter((row) => row.status === "pending_reconciliation").length;
 
   return (
-    <Card size="sm" className={cn("@container/card", dashSurfaceCardClass)}>
+    <Card size="sm" className={cn("@container/card", dashPlatformCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
-            <CardTitle className="text-lg leading-tight md:text-xl">Combined Revenue Split Matrix</CardTitle>
+            <CardTitle className="text-base leading-tight md:text-lg">Combined Revenue Split Matrix</CardTitle>
             <CardDescription className="text-xs leading-relaxed">
               $680k YTD combined revenue ledger - closed quarters vs. in-flight month requiring workbook cleanup.
             </CardDescription>
@@ -94,7 +94,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
         </div>
       </CardHeader>
       <CardContent className={dashSectionCardContentClass}>
-        <ChartContainer config={chartConfig} className="aspect-auto h-56 w-full overflow-hidden md:h-72">
+        <ChartContainer config={chartConfig} className="aspect-auto h-52 w-full overflow-hidden md:h-60">
           <BarChart data={data} margin={{ top: 8, right: 4, left: -8 }}>
             <CartesianGrid vertical={false} className="stroke-border" />
             <XAxis

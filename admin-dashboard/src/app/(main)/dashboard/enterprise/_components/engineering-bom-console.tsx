@@ -47,13 +47,13 @@ export function EngineeringBomConsole() {
     setLogs([]);
     const timestamp = () => new Date().toLocaleTimeString();
 
-    toast.message("BOM cross-check started", { description: `Analyzing OpenSolar CAD for ${projectName}…` });
+    toast.message("BOM cross-check started", { description: `Analyzing OpenSolar CAD for ${projectName}...` });
 
     setTimeout(() => {
       setLogs((prev) => [
         ...prev,
         {
-          text: `Analyzing OpenSolar CAD blueprint vectors for '${projectName}'…`,
+          text: `Analyzing OpenSolar CAD blueprint vectors for '${projectName}'...`,
           type: "info",
           time: timestamp(),
         },
@@ -64,7 +64,7 @@ export function EngineeringBomConsole() {
       setLogs((prev) => [
         ...prev,
         {
-          text: "Cross-checking electrical BOM arrays with 2SK Wylie warehouse inventory…",
+          text: "Cross-checking electrical BOM arrays with 2SK Wylie warehouse inventory...",
           type: "info",
           time: timestamp(),
         },
@@ -100,7 +100,7 @@ export function EngineeringBomConsole() {
   }
 
   return (
-    <Card className={dashSurfaceCardClass}>
+    <Card className={cn(dashSurfaceCardClass, entityBrandStyles.solar2sk.accentBar)}>
       <CardHeader className={dashCardHeaderClass}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
@@ -121,7 +121,7 @@ export function EngineeringBomConsole() {
             {status === "running" ? (
               <>
                 <Loader2 className="animate-spin" data-icon="inline-start" />
-                Parsing matrices…
+                Parsing matrices...
               </>
             ) : (
               <>
@@ -133,45 +133,49 @@ export function EngineeringBomConsole() {
         </div>
       </CardHeader>
       <CardContent className={dashCardContentClass}>
-        <div className="flex h-48 flex-col justify-end overflow-y-auto rounded-lg border border-border bg-slate-50 p-4 font-mono text-xs shadow-inner">
-          {logs.length === 0 ? (
-            <div className="py-10 text-center text-muted-foreground">
-              Console listener idle. Click blueprint cross-check to initiate supply array validation.
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {logs.map((log) => (
-                <div key={`${log.time}-${log.text}`} className="flex items-start gap-2">
-                  <span className="select-none text-muted-foreground">[{log.time}]</span>
-                  <span
-                    className={cn(
-                      log.type === "success" && cn("font-semibold", entityBrandStyles.solar2sk.text),
-                      log.type === "warn" && "font-medium text-[var(--status-warning-text)]",
-                      log.type === "info" && "text-foreground",
-                    )}
-                  >
-                    {log.text}
-                  </span>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <div className="flex h-full min-h-64 flex-col justify-end overflow-y-auto rounded-lg border border-border bg-muted/40 p-3 font-mono text-xs shadow-inner">
+              {logs.length === 0 ? (
+                <div className="py-10 text-center text-muted-foreground">
+                  Console listener idle. Click blueprint cross-check to initiate supply array validation.
                 </div>
-              ))}
+              ) : (
+                <div className="space-y-2">
+                  {logs.map((log) => (
+                    <div key={`${log.time}-${log.text}`} className="flex items-start gap-2">
+                      <span className="select-none text-muted-foreground">[{log.time}]</span>
+                      <span
+                        className={cn(
+                          log.type === "success" && cn("font-semibold", entityBrandStyles.solar2sk.text),
+                          log.type === "warn" && "font-medium text-[var(--status-warning-text)]",
+                          log.type === "info" && "text-foreground",
+                        )}
+                      >
+                        {log.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <div className="mt-3 rounded-md border border-border bg-muted/40 p-3">
-          <p className={dashProseClass}>
-            <strong>BOM Parser Script Contract:</strong> Production wiring would export or retrieve OpenSolar
-            project/system component rows, normalize manufacturer/model/SKU strings, compare required quantities against
-            the 2SK inventory workbook tab, reserve matching units, and append an audit row for every allocation
-            decision.
-          </p>
-          <p className={cn("mt-2", dashProseClass)}>
-            <strong>Normalization note:</strong> <span className="font-mono">normalizeSku()</span> handles lowercase
-            strings, spacing differences, punctuation, and vendor suffix codes before validating against the normalized
-            PostgreSQL inventory schema.
-          </p>
-          <pre className={cn("mt-2", dashCodeBlockSmClass)}>
-            <code>{BOM_PARSER_CONTRACT}</code>
-          </pre>
+          </div>
+          <div className="rounded-md border border-border bg-muted/40 p-3 lg:col-span-7">
+            <p className={dashProseClass}>
+              <strong>BOM Parser Script Contract:</strong> Production wiring would export or retrieve OpenSolar
+              project/system component rows, normalize manufacturer/model/SKU strings, compare required quantities
+              against the 2SK inventory workbook tab, reserve matching units, and append an audit row for every
+              allocation decision.
+            </p>
+            <p className={cn("mt-2", dashProseClass)}>
+              <strong>Normalization note:</strong> <span className="font-mono">normalizeSku()</span> handles lowercase
+              strings, spacing differences, punctuation, and vendor suffix codes before validating against the normalized
+              PostgreSQL inventory schema.
+            </p>
+            <pre className={cn("mt-2 max-h-[300px] overflow-y-auto", dashCodeBlockSmClass)}>
+              <code>{BOM_PARSER_CONTRACT}</code>
+            </pre>
+          </div>
         </div>
         {status === "complete" ? (
           <div className={cn("mt-3 flex items-center gap-2 p-2.5 text-xs", statusStyles.live)}>

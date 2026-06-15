@@ -54,7 +54,7 @@ export const websiteHealthData: WebsiteHealth[] = [
     hosting: "Vercel",
     sslValid: true,
     sslStatus: "OPERATIONAL - active SSL binding",
-    lastChecked: "2026-06-13",
+    lastChecked: "2026-09-13",
   },
   {
     id: "web-004",
@@ -65,7 +65,7 @@ export const websiteHealthData: WebsiteHealth[] = [
     hosting: "Vercel",
     sslValid: true,
     sslStatus: "OPERATIONAL - active SSL binding",
-    lastChecked: "2026-06-11",
+    lastChecked: "2026-09-11",
   },
 ];
 

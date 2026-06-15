@@ -71,7 +71,7 @@ export function GlobalEventsFeed({
             </Badge>
           ) : null}
         </div>
-        <CardDescription>
+        <CardDescription className="text-xs leading-relaxed">
           Workbook and API sync log - failures surface here for triage before they hit the operating dashboard.
           {lastSyncedAt ? (
             <>
@@ -102,8 +102,8 @@ export function GlobalEventsFeed({
                     eventRowStyles[event.status],
                   )}
                 >
-                  <div className="mb-1 flex items-center justify-between gap-2">
-                    <div className="flex min-w-0 items-center gap-2">
+                  <div className="mb-1 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+                    <div className="flex min-w-0 flex-wrap items-center gap-1.5">
                       <StatusIcon
                         className={cn(
                           "size-3.5 shrink-0",
@@ -141,7 +141,7 @@ export function GlobalEventsFeed({
                       </span>
                     )}
                   </div>
-                  <p className="line-clamp-2 text-foreground text-sm leading-relaxed">{event.message}</p>
+                  <p className="line-clamp-2 text-foreground text-xs leading-relaxed">{event.message}</p>
                 </div>
               );
             })}

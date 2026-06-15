@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Briefcase, FileWarning, Gauge, Sigma } from "lucide-react";
+import { AlertTriangle, Briefcase, Building2, FileWarning, Gauge, Sigma } from "lucide-react";
 
 import { AIEscalationButton } from "@/components/ai-escalation-button";
 import { EntityBrandBadge } from "@/components/dashboard/entity-brand-badge";
@@ -9,12 +9,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { PipelineProject } from "@/data/demo/pipeline";
 import {
-  dashCardClass,
   dashCardContentClass,
   dashCardHeaderClass,
-  dashKpiGrid3Class,
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
+  dashPlatformCardClass,
   dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
@@ -103,52 +102,62 @@ function PipelineKpiStrip({
     .reduce((sum, project) => sum + project.projectValue, 0);
   const underConstruction = projects.filter(isUnderConstruction).reduce((sum, project) => sum + project.projectValue, 0);
   const alerts = projects.filter((project, index) => staleDays(project, index) >= 31).length;
+  const kpis = [
+    {
+      label: "Open Pipeline",
+      value: formatCurrency(openPipelineBalance),
+      icon: Sigma,
+      className: entityBrandStyles.solar3k.accentBar,
+    },
+    {
+      label: "Bids Pending",
+      value: formatCurrency(bidValue),
+      icon: Briefcase,
+      className: entityBrandStyles.solar3k.accentBar,
+    },
+    {
+      label: "Under Construction",
+      value: formatCurrency(underConstruction),
+      icon: Building2,
+      className: entityBrandStyles.solar3k.accentBar,
+    },
+    {
+      label: "Consulting Capacity",
+      value: `${activeCapacityMw(projects).toFixed(2)} MW`,
+      icon: Gauge,
+      className: entityBrandStyles.solar3k.accentBar,
+    },
+    {
+      label: "SLA Alerts",
+      value: String(alerts),
+      icon: FileWarning,
+      className: entityBrandStyles.yellowStar.accentBar,
+    },
+  ];
 
   return (
-    <div className={cn(dashKpiGrid3Class, "grid-cols-1 gap-3 md:grid-cols-3")}>
-      <Card size="sm" className={dashSurfaceCardClass}>
-        <CardHeader className={dashCardHeaderClass}>
-          <CardDescription className="flex items-center gap-2 text-xs">
-            <Sigma className={cn("size-4", entityBrandStyles.solar3k.icon)} />
-            Open B2B Pipeline Value
-          </CardDescription>
-          <CardTitle className={dashKpiValueClass}>{formatCurrency(openPipelineBalance)}</CardTitle>
-        </CardHeader>
-        <CardContent className={cn("grid gap-1.5 text-xs", dashCardContentClass)}>
-          <div className="flex justify-between gap-3">
-            <span className="text-muted-foreground">Bids Pending</span>
-            <span className="font-medium font-mono">{formatCurrency(bidValue)}</span>
-          </div>
-          <div className="flex justify-between gap-3">
-            <span className="text-muted-foreground">Contracts Under Construction</span>
-            <span className="font-medium font-mono">{formatCurrency(underConstruction)}</span>
-          </div>
-        </CardContent>
-      </Card>
-      <Card size="sm" className={dashSurfaceCardClass}>
-        <CardHeader className={dashCardHeaderClass}>
-          <CardDescription className="flex items-center gap-2 text-xs">
-            <Gauge className={cn("size-4", entityBrandStyles.solar3k.icon)} />
-            Active Consulting MW Capacity
-          </CardDescription>
-          <CardTitle className={dashKpiValueClass}>{activeCapacityMw(projects).toFixed(2)} MW</CardTitle>
-        </CardHeader>
-        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
-          {activeProjects} active 3SK commercial and utility engineering workstreams.
-        </CardContent>
-      </Card>
-      <Card size="sm" className={dashSurfaceCardClass}>
-        <CardHeader className={dashCardHeaderClass}>
-          <CardDescription className="flex items-center gap-2 text-xs">
-            <FileWarning className={cn("size-4", entityBrandStyles.yellowStar.icon)} />
-            SLA Milestone Alerts
-          </CardDescription>
-          <CardTitle className={dashKpiValueClass}>{alerts}</CardTitle>
-        </CardHeader>
-        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
-          Architectural, utility, or municipal checks requiring owner-visible follow-up.
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      {kpis.map((kpi) => {
+        const Icon = kpi.icon;
+        return (
+          <Card key={kpi.label} size="sm" className={cn(dashSurfaceCardClass, kpi.className)}>
+            <CardHeader className={cn(dashCardHeaderClass, "px-3 pt-3")}>
+              <CardDescription className="flex items-center gap-2 text-[10px] uppercase tracking-wide">
+                <Icon className={cn("size-3.5", entityBrandStyles.solar3k.icon)} />
+                {kpi.label}
+              </CardDescription>
+              <CardTitle className={cn(dashKpiValueClass, "text-xl leading-none")}>{kpi.value}</CardTitle>
+            </CardHeader>
+            <CardContent className={cn("text-[11px] text-muted-foreground", dashCardContentClass)}>
+              {kpi.label === "Consulting Capacity"
+                ? `${activeProjects} active workstreams`
+                : kpi.label === "SLA Alerts"
+                  ? "Owner-visible follow-up"
+                  : "3SK commercial ledger"}
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }
@@ -170,7 +179,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
     <div className="flex flex-col gap-3">
       <PipelineKpiStrip openPipelineBalance={openPipelineBalance} activeProjects={activeProjects} projects={projects} />
 
-      <Card size="sm" className={dashSurfaceCardClass}>
+      <Card size="sm" className={dashPlatformCardClass}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle className="flex items-center gap-2">
             <Briefcase className="size-5" />
@@ -183,17 +192,17 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
           <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-border">
-            <Table className="min-w-[1120px]">
+            <Table className="min-w-[1180px] text-[11px]">
               <TableHeader>
                 <TableRow className="h-9 hover:bg-transparent">
-                  <TableHead className="font-semibold text-foreground">Project Asset</TableHead>
-                  <TableHead className="font-semibold text-foreground">Brand</TableHead>
-                  <TableHead className="text-right font-semibold text-foreground">Capacity</TableHead>
-                  <TableHead className="font-semibold text-foreground">Phase</TableHead>
-                  <TableHead className="text-right font-semibold text-foreground">Contract Value</TableHead>
-                  <TableHead className="font-semibold text-foreground">Tracking</TableHead>
-                  <TableHead className="font-semibold text-foreground">Next Critical Path</TableHead>
-                  <TableHead className="text-right font-semibold text-foreground">Automated Actions</TableHead>
+                  <TableHead className="w-[260px] font-semibold text-foreground">Project Asset</TableHead>
+                  <TableHead className="w-[110px] font-semibold text-foreground">Brand</TableHead>
+                  <TableHead className="w-[90px] text-right font-semibold text-foreground">Capacity</TableHead>
+                  <TableHead className="w-[160px] font-semibold text-foreground">Phase</TableHead>
+                  <TableHead className="w-[130px] text-right font-semibold text-foreground">Contract Value</TableHead>
+                  <TableHead className="w-[120px] font-semibold text-foreground">Tracking</TableHead>
+                  <TableHead className="w-[260px] font-semibold text-foreground">Next Critical Path</TableHead>
+                  <TableHead className="w-[190px] text-right font-semibold text-foreground">Automated Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -206,8 +215,8 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                       key={project.id}
                       className={cn("h-11", entityAccentBarForLabel(escalationBrand(project)))}
                     >
-                      <TableCell className="max-w-xs whitespace-normal py-2 font-medium">
-                        <div>{formatProjectAssetLabel(project)}</div>
+                      <TableCell className="max-w-[260px] py-2 font-medium leading-snug">
+                        <div className="line-clamp-2">{formatProjectAssetLabel(project)}</div>
                         <div className="mt-1 font-mono text-[11px] text-muted-foreground">{project.id}</div>
                       </TableCell>
                       <TableCell className="py-2">
@@ -216,7 +225,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                       <TableCell className="py-2 text-right font-mono tabular-nums">
                         {project.systemSizeKw} kW
                       </TableCell>
-                      <TableCell className="py-2">
+                      <TableCell className="whitespace-nowrap py-2">
                         <Badge variant="outline" className={cn("h-6", phaseBadgeClass(project))}>
                           {project.pipelinePhase}
                         </Badge>
@@ -230,15 +239,15 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                           <span className="text-muted-foreground">{daysStale}d stale</span>
                         </div>
                       </TableCell>
-                      <TableCell className="max-w-sm whitespace-normal py-2">
-                        <span className="flex items-start gap-2 text-sm">
+                      <TableCell className="max-w-[260px] py-2">
+                        <span className="flex items-start gap-2 text-[11px] leading-snug">
                           {daysStale >= 31 ? (
                             <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-[var(--status-warning-text)]" />
                           ) : null}
-                          {project.nextCriticalPath}
+                          <span className="line-clamp-2">{project.nextCriticalPath}</span>
                         </span>
                       </TableCell>
-                      <TableCell className="py-2 text-right">
+                      <TableCell className="whitespace-nowrap py-2 text-right">
                         {shouldShowEscalation(project) ? (
                           <AIEscalationButton
                             projectName={project.clientName}
@@ -246,6 +255,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
                             utilityAuthority={authority}
                             permitNumber={permit}
                             daysStale={daysStale}
+                            className="h-7 px-2 text-[11px]"
                           />
                         ) : null}
                       </TableCell>
@@ -258,7 +268,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
         </CardContent>
       </Card>
 
-      <Card size="sm" className={dashSurfaceCardClass}>
+      <Card size="sm" className={dashPlatformCardClass}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle>OpenSolar / Proposal Sync Automation</CardTitle>
           <CardDescription>
@@ -267,7 +277,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
           </CardDescription>
         </CardHeader>
         <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
-          <div className="rounded-md border border-border bg-slate-50 p-3">
+          <div className="rounded-md border border-border bg-muted/40 p-3">
             <p className={dashProseClass}>
               <strong>Legitimate integration path:</strong> OpenSolar supports API access for projects, systems, pricing,
               workflows, and webhooks, while project lists can also be exported for CSV-based reporting. A deployed
@@ -277,7 +287,7 @@ export function CommercialPipelineTab({ projects, openPipelineBalance, activePro
           </div>
           <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
             {syncSteps.map((step, index) => (
-              <div key={step} className="rounded-lg border border-border bg-slate-50 p-3">
+              <div key={step} className="rounded-lg border border-border bg-muted/40 p-3">
                 <p className="mb-2 font-mono text-muted-foreground text-xs">0{index + 1}</p>
                 <p className="text-muted-foreground text-xs leading-relaxed">{step}</p>
               </div>

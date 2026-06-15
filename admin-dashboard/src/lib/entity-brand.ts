@@ -1,5 +1,6 @@
 import type { EntityBrand } from "@/data/demo/types";
 import { formatCompany } from "@/data/demo/types";
+import { cn } from "@/lib/utils";
 
 export function inferEntityBrand(text: string): EntityBrand {
   const lower = text.toLowerCase();
@@ -107,6 +108,14 @@ export function entityBadgeClassForLabel(label: string) {
   return "border-border bg-muted/30 text-muted-foreground";
 }
 
-export function entityAccentBarForLabel(_label: string) {
+export function entityAccentBarForLabel(label: string) {
+  const lower = label.toLowerCase();
+  if (lower.includes("yellow") || lower.includes("ysp")) return entityBrandStyles.yellowStar.accentBar;
+  if (lower.includes("3sk") || lower.includes("3k")) return entityBrandStyles.solar3k.accentBar;
+  if (lower.includes("2sk")) return entityBrandStyles.solar2sk.accentBar;
   return "";
+}
+
+export function entityCardClassForLabel(label: string) {
+  return cn("border border-border bg-card shadow-sm", entityAccentBarForLabel(label));
 }

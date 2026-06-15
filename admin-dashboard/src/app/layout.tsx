@@ -22,7 +22,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html
       lang="en"
-      style={{ colorScheme: theme_mode }}
+      style={{ colorScheme: "light" }}
       data-theme-mode={theme_mode}
       data-theme-preset={theme_preset}
       data-content-layout="full-width"

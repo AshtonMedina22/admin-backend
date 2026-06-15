@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
-  dashCardClass,
   dashCardContentClass,
   dashCardHeaderClass,
   dashKpiGrid3Class,
@@ -16,13 +15,13 @@ import {
   dashInfoBannerClass,
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
+  dashPlatformCardClass,
   dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
   dashCodeBlockClass,
   dashCodeBlockSmClass,
   dashKpiValueClass,
-  dashProseClass,
   entityAccentBarForLabel,
   entityBadgeClassForLabel,
   entityBrandStyles,
@@ -84,27 +83,72 @@ const CONDITIONAL_FORMATTING_RULES = [
   "MONITOR → neutral fill + continue normal review cadence.",
 ];
 
-const PERMIT_ALERT_SCRIPT = `function onPermitStatusEdit(e) {
-  const sheet = e.range.getSheet();
-  if (sheet.getName() !== 'Permitting Queue') return;
+const PERMIT_ALERT_SCRIPT = `// Bind this to the spreadsheet as an explicit INSTALLABLE edit trigger.
+// Simple triggers cannot call authorized services such as UrlFetchApp/MailApp.
+function handlePermitStatusEscalation(e) {
+  try {
+    const sheet = e.range.getSheet();
+    if (sheet.getName() !== 'Permitting Queue') return;
 
-  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-  const col = (name) => headers.indexOf(name) + 1;
-  const statusCol = col('Permit Status');
-  if (e.range.getRow() === 1 || e.range.getColumn() !== statusCol) return;
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(String);
+    const col = (name) => headers.indexOf(name) + 1;
+    const required = ['Asset', 'Brand', 'Authority', 'Permit ID', 'Days Stale', 'Permit Status'];
+    if (required.some((name) => col(name) === 0)) throw new Error('Missing required permitting headers');
 
-  const nextStatus = String(e.value || '').toLowerCase();
-  if (!/(blocked|stale|rejected|correction|overdue)/.test(nextStatus)) return;
+    const statusCol = col('Permit Status');
+    if (e.range.getRow() === 1 || e.range.getColumn() !== statusCol) return;
 
-  const row = e.range.getRow();
-  const asset = sheet.getRange(row, col('Asset')).getDisplayValue();
-  const ahj = sheet.getRange(row, col('Authority')).getDisplayValue();
-  const permitId = sheet.getRange(row, col('Permit ID')).getDisplayValue();
+    const currentStatus = String(e.value || '').toUpperCase();
+    if (currentStatus !== 'ESCALATE') return;
 
-  MailApp.sendEmail({
-    to: 'ops-alerts@demo-ops.local',
-    subject: 'Permit alert: ' + asset + ' / ' + permitId,
-    htmlBody: '<b>' + asset + '</b> changed to ' + e.value + '<br>AHJ: ' + ahj + '<br>Permit: ' + permitId,
+    const row = e.range.getRow();
+    const payload = {
+      assetName: sheet.getRange(row, col('Asset')).getDisplayValue(),
+      brand: sheet.getRange(row, col('Brand')).getDisplayValue(),
+      authority: sheet.getRange(row, col('Authority')).getDisplayValue(),
+      permitId: sheet.getRange(row, col('Permit ID')).getDisplayValue(),
+      daysStale: Number(sheet.getRange(row, col('Days Stale')).getDisplayValue() || 0),
+    };
+
+    const scriptProperties = PropertiesService.getScriptProperties();
+    const backendUrl = scriptProperties.getProperty('PERMIT_ESCALATION_ENDPOINT');
+    const token = scriptProperties.getProperty('PERMIT_ESCALATION_TOKEN');
+    if (!backendUrl || !token) throw new Error('Missing permit escalation backend configuration');
+
+    const response = UrlFetchApp.fetch(backendUrl, {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload),
+      headers: { 'x-escalation-token': token },
+      muteHttpExceptions: true,
+    });
+
+    console.log('Permit escalation backend status: ' + response.getResponseCode());
+  } catch (error) {
+    console.error('Permit Automation Hook Failed: ' + error.toString());
+  }
+}`;
+
+const NEXT_ESCALATION_ROUTE = `// src/app/api/escalate-permit/route.ts
+export const runtime = "edge";
+
+export async function POST(request: Request) {
+  const token = request.headers.get("x-escalation-token");
+  if (token !== process.env.PERMIT_ESCALATION_TOKEN) {
+    return Response.json({ error: "Unauthorized escalation hook" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const { assetName, brand, authority, permitId, daysStale } = body;
+
+  const generatedPrompt =
+    \`Draft an executive operational escalation letter for \${brand} regarding \${assetName} (Permit: \${permitId}). It has been stalled at \${authority} for \${daysStale} days.\`;
+
+  // Completion provider call and persistence happen server-side only.
+  return Response.json({
+    ok: true,
+    status: "QUEUED_FOR_REVIEW",
+    promptPreview: generatedPrompt,
   });
 }`;
 
@@ -145,34 +189,43 @@ function PermitStatusFormulaCard() {
 
 function AppsScriptPermitAlertCard() {
   return (
-    <Card size="sm" className={dashSurfaceCardClass}>
+    <Card size="sm" className={dashPlatformCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <CardTitle className="flex items-center gap-2">
           <FileCheck className={cn("size-5", entityBrandStyles.solar3k.icon)} />
           Google Apps Script Permit Alert Trigger
         </CardTitle>
         <CardDescription>
-          Production wiring example: install this as an Apps Script spreadsheet{" "}
-          <span className="font-mono">On edit</span>
-          trigger so permit status changes in the workbook immediately create an email alert.
+          Production wiring example: install this as an explicit Apps Script spreadsheet{" "}
+          <span className="font-mono">On edit</span> trigger so permit status changes can post structured metadata to a
+          secure Next.js route for AI draft compilation.
         </CardDescription>
       </CardHeader>
       <CardContent className={cn("space-y-3", dashSectionCardContentClass)}>
         <div className={cn(dashCodeBlockSmClass, "grid gap-2 text-xs leading-relaxed")}>
           <p>
-            <strong className="text-foreground">Configuration:</strong> Apps Script trigger → Event source:{" "}
-            <span className="font-mono text-foreground">From spreadsheet</span> → Event type:{" "}
-            <span className="font-mono text-foreground">On edit</span> → Handler:{" "}
-            <span className="font-mono text-foreground">onPermitStatusEdit</span>.
+            <strong className="text-foreground">Configuration:</strong> Apps Script trigger -&gt; Event source:{" "}
+            <span className="font-mono text-foreground">From spreadsheet</span> -&gt; Event type:{" "}
+            <span className="font-mono text-foreground">On edit</span> -&gt; Handler:{" "}
+            <span className="font-mono text-foreground">handlePermitStatusEscalation</span>.
           </p>
           <p>
-            The handler checks the edited column, detects blocked/stale/rejected permit states, pulls the
-            asset/AHJ/permit fields from the same row, and sends a targeted operations alert via{" "}
-            <span className="font-mono text-foreground">MailApp</span>.
+            This must be an installable trigger, not a simple <span className="font-mono text-foreground">onEdit</span>
+            trigger, because the handler calls authorized services. It validates headers, detects{" "}
+            <span className="font-mono text-foreground">ESCALATE</span> status changes, and forwards only structured
+            metadata to the backend.
           </p>
         </div>
         <pre className={cn(dashCodeBlockClass, "max-h-80 text-[11px]")}>
           <code>{PERMIT_ALERT_SCRIPT}</code>
+        </pre>
+        <div className={cn(dashInfoBannerClass, "text-xs leading-relaxed")}>
+          <strong className="text-foreground">Next.js secure route:</strong> The browser never receives AI provider keys.
+          The Apps Script hook signs the request with a shared server token, and the route compiles prompt context before
+          queuing a human-reviewed escalation draft.
+        </div>
+        <pre className={cn(dashCodeBlockClass, "max-h-80 text-[11px]")}>
+          <code>{NEXT_ESCALATION_ROUTE}</code>
         </pre>
       </CardContent>
     </Card>
@@ -219,7 +272,7 @@ export function PermittingQueue() {
         </Card>
       </div>
 
-      <Card size="sm" className={dashSurfaceCardClass}>
+      <Card size="sm" className={dashPlatformCardClass}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle className="flex items-center gap-2">
             <FileCheck className="size-5" />

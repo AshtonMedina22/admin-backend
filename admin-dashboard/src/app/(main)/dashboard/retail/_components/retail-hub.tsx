@@ -30,7 +30,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const retailTabTriggerClass =
-  "gap-2 border border-transparent px-3 py-2 text-muted-foreground transition-all hover:border-border hover:bg-muted/40 hover:text-foreground data-[state=active]:border-[color-mix(in_oklab,var(--brand-2sk)_30%,transparent)] data-[state=active]:bg-muted/40 data-[state=active]:font-semibold data-[state=active]:text-[var(--brand-2sk-text)]";
+  "gap-2 rounded-md border border-transparent px-3 py-1.5 text-xs text-muted-foreground transition-all hover:border-border hover:bg-muted/40 hover:text-foreground data-[state=active]:border-[color-mix(in_oklab,var(--brand-2sk)_30%,transparent)] data-[state=active]:bg-card data-[state=active]:font-semibold data-[state=active]:text-[var(--brand-2sk-text)] data-[state=active]:shadow-sm";
 
 export type RetailLogisticsOrder = {
   orderId: string;
@@ -147,9 +147,11 @@ function KpiStrip({
   pendingBatteryShipments,
 }: Pick<RetailHubProps, "orders" | "totalBacklogUnits" | "pendingBatteryShipments">) {
   const stats = fulfillmentStats(orders);
+  const cardClass = cn(dashSurfaceCardClass, entityBrandStyles.solar2sk.accentBar, "min-h-[7.25rem]");
+  const contentClass = cn("line-clamp-2 text-muted-foreground text-[11px] leading-snug", dashCardContentClass);
   return (
-    <div className={cn(dashKpiGridClass, "grid-cols-1 md:grid-cols-2 lg:grid-cols-4")}>
-      <Card size="sm" className={dashSurfaceCardClass}>
+    <div className={cn(dashKpiGridClass, "grid-cols-2 gap-3 lg:grid-cols-4")}>
+      <Card size="sm" className={cardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <Package className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -157,11 +159,11 @@ function KpiStrip({
           </CardDescription>
           <CardTitle className={dashKpiValueClass}>{Math.max(45, totalBacklogUnits)}</CardTitle>
         </CardHeader>
-        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+        <CardContent className={contentClass}>
           Active WooCommerce orders across 2SK hardware fulfillment.
         </CardContent>
       </Card>
-      <Card size="sm" className={dashSurfaceCardClass}>
+      <Card size="sm" className={cardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <PackageCheck className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -169,11 +171,11 @@ function KpiStrip({
           </CardDescription>
           <CardTitle className={dashKpiValueClass}>{stats.awaitingPull}</CardTitle>
         </CardHeader>
-        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+        <CardContent className={contentClass}>
           Wylie warehouse pull queue for inverter and kit SKUs.
         </CardContent>
       </Card>
-      <Card size="sm" className={dashSurfaceCardClass}>
+      <Card size="sm" className={cardClass}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <BatteryCharging className={cn("size-4", entityBrandStyles.solar2sk.icon)} />
@@ -181,11 +183,11 @@ function KpiStrip({
           </CardDescription>
           <CardTitle className={dashKpiValueClass}>{Math.max(8, pendingBatteryShipments)}</CardTitle>
         </CardHeader>
-        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+        <CardContent className={contentClass}>
           48V LiFePO4 battery blocks pending freight reconciliation.
         </CardContent>
       </Card>
-      <Card size="sm" className={dashSurfaceCardClass}>
+      <Card size="sm" className={cn(dashSurfaceCardClass, "min-h-[7.25rem]")}>
         <CardHeader className={dashCardHeaderClass}>
           <CardDescription className="flex items-center gap-2 text-xs">
             <ClockAlert className={cn("size-4", entityBrandStyles.yellowStar.icon)} />
@@ -193,7 +195,7 @@ function KpiStrip({
           </CardDescription>
           <CardTitle className={dashKpiValueClass}>{stats.transitDelay}</CardTitle>
         </CardHeader>
-        <CardContent className={cn("text-muted-foreground text-xs", dashCardContentClass)}>
+        <CardContent className={contentClass}>
           Orders blocked by pallet weight, LTL timing, or inventory hold.
         </CardContent>
       </Card>
@@ -215,30 +217,68 @@ function FulfillmentBadge({ stage }: { stage: string }) {
   );
 }
 
-function ZapierFulfillmentZapCard() {
+function ZapierWorkflowCard() {
   return (
-    <Card size="sm" className={dashSurfaceCardClass}>
+    <Card size="sm" className={cn("h-full", dashSurfaceCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
-        <CardTitle>Zapier → Apps Script Fulfillment Zap</CardTitle>
+        <CardTitle>Zapier Ingestion Workflow</CardTitle>
         <CardDescription>
           Legitimate Zap pattern for routing WooCommerce orders into a Google Sheets-backed 2SK fulfillment queue.
         </CardDescription>
       </CardHeader>
-      <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
-        <div className="grid gap-2">
+      <CardContent className={dashSectionCardContentClass}>
+        <div className="grid max-h-[460px] gap-2 overflow-y-auto pr-1">
           {fulfillmentZapSteps.map((step, index) => (
-            <div key={step} className="rounded-lg border border-border bg-muted/40 p-3">
+            <div key={step} className="rounded-lg border border-border bg-muted/40 p-2.5">
               <p className={cn("font-mono text-[10px]", entityBrandStyles.solar2sk.text)}>STEP {index + 1}</p>
               <p className={cn("mt-1 text-xs", dashProseClass)}>{step}</p>
             </div>
           ))}
         </div>
-        <div className={cn(dashCodeBlockSmClass, "text-xs leading-relaxed")}>
+        <div className={cn(dashCodeBlockSmClass, "mt-3 text-xs leading-relaxed")}>
           <strong className="text-foreground">Accuracy note:</strong> WooCommerce can trigger Zapier on order-created
           events, Zapier can filter/format fields, and Webhooks by Zapier can POST a JSON payload into an Apps Script
           web app endpoint. The Apps Script then owns Sheet writes, dedupe policy, and optional Gmail/MailApp alerts.
         </div>
-        <pre className={cn(dashCodeBlockSmClass, "max-h-80")}>
+      </CardContent>
+    </Card>
+  );
+}
+
+function WebhookPayloadCard() {
+  return (
+    <Card size="sm" className={dashSurfaceCardClass}>
+      <CardHeader className={dashSectionCardHeaderClass}>
+        <CardTitle>Order Webhook Payload Monitor</CardTitle>
+        <CardDescription>
+          WooCommerce-style order webhook -&gt; Zapier middleware -&gt; workbook row payload.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className={dashSectionCardContentClass}>
+        <div className="mb-3 rounded-lg border border-border bg-muted/40 p-3 text-xs">
+          <span className="block font-bold text-foreground">Webhook Ingestion Protocol</span>
+          <p className={cn("mt-1 line-clamp-3 font-mono leading-relaxed", dashProseClass)}>
+            Middleware validates customer/SKU/shipping fields, rejects duplicate order IDs and malformed rows, then
+            appends sanitized fulfillment records to the operations workbook.
+          </p>
+        </div>
+        <pre className={cn(dashCodeBlockSmClass, "max-h-48 overflow-y-auto md:text-xs")}>
+          {JSON.stringify(webhookPayload, null, 2)}
+        </pre>
+      </CardContent>
+    </Card>
+  );
+}
+
+function AppsScriptContractCard() {
+  return (
+    <Card size="sm" className={dashSurfaceCardClass}>
+      <CardHeader className={dashSectionCardHeaderClass}>
+        <CardTitle>Fulfillment API Script</CardTitle>
+        <CardDescription>Apps Script endpoint with dedupe, freight alerting, and JSON responses.</CardDescription>
+      </CardHeader>
+      <CardContent className={dashSectionCardContentClass}>
+        <pre className={cn(dashCodeBlockSmClass, "max-h-[260px] overflow-y-auto text-[11px]")}>
           <code>{FULFILLMENT_APPS_SCRIPT}</code>
         </pre>
       </CardContent>
@@ -248,8 +288,8 @@ function ZapierFulfillmentZapCard() {
 
 function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
   return (
-    <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
-      <Card size="sm" className={cn("xl:col-span-8", dashSurfaceCardClass)}>
+    <div className="grid grid-cols-1 gap-4">
+      <Card size="sm" className={dashSurfaceCardClass}>
         <CardHeader className={dashSectionCardHeaderClass}>
           <CardTitle>2SK Fulfillment Matrix</CardTitle>
           <CardDescription>
@@ -258,14 +298,14 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
           <div className="block w-full overflow-x-auto rounded-md border border-border">
-            <Table className="min-w-[640px]">
+            <Table className="min-w-[920px] table-fixed text-[11px]">
               <TableHeader>
                 <TableRow className="h-9 border-border/60">
-                  <TableHead>Order ID</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Hardware Allocated</TableHead>
-                  <TableHead className="text-right">Package Weight</TableHead>
-                  <TableHead>Fulfillment Status</TableHead>
+                  <TableHead className="w-[12%]">Order ID</TableHead>
+                  <TableHead className="w-[20%]">Customer</TableHead>
+                  <TableHead className="w-[33%]">Hardware Allocated</TableHead>
+                  <TableHead className="w-[15%] text-right">Package Weight</TableHead>
+                  <TableHead className="w-[20%]">Fulfillment Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -274,11 +314,13 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
                     key={order.orderId}
                     className={cn("h-11 border-border/60 hover:bg-muted/30", entityAccentBarForLabel("2SK"))}
                   >
-                    <TableCell className={cn("py-2 font-medium font-mono tabular-nums", entityBrandStyles.solar2sk.text)}>
+                    <TableCell
+                      className={cn("py-2 font-medium font-mono tabular-nums", entityBrandStyles.solar2sk.text)}
+                    >
                       {order.orderId}
                     </TableCell>
-                    <TableCell className="max-w-[10rem] whitespace-normal py-2">{order.customerName}</TableCell>
-                    <TableCell className="max-w-[14rem] whitespace-normal py-2">{order.hardwareAllocated}</TableCell>
+                    <TableCell className="truncate py-2 font-medium">{order.customerName}</TableCell>
+                    <TableCell className="truncate py-2 text-muted-foreground">{order.hardwareAllocated}</TableCell>
                     <TableCell className="py-2 text-right font-mono tabular-nums">
                       {order.shipmentWeight || "84 lbs"}
                     </TableCell>
@@ -293,31 +335,14 @@ function OrderManagement({ orders }: { orders: RetailLogisticsOrder[] }) {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 xl:col-span-4">
-        <Card size="sm" className={dashSurfaceCardClass}>
-          <CardHeader className={dashSectionCardHeaderClass}>
-            <CardTitle>Order Webhook Payload Monitor</CardTitle>
-            <CardDescription>
-              WooCommerce-style order webhook → Zapier middleware → workbook row payload used by the 2SK fulfillment
-              table.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className={dashSectionCardContentClass}>
-            <div className="mb-3 space-y-1 rounded-xl border border-border bg-muted/40 p-4 text-xs">
-              <span className="block font-bold text-foreground">Webhook Ingestion Protocol</span>
-              <p className={cn("font-mono leading-relaxed", dashProseClass)}>
-                Production wiring would receive WooCommerce order.created webhook payloads through middleware, validate
-                customer/SKU/shipping fields, reject duplicate order IDs and malformed rows, then append sanitized
-                fulfillment records to the Google Sheets operations workbook through an Apps Script execution endpoint.
-              </p>
-            </div>
-            <pre className={cn(dashCodeBlockSmClass, "max-h-64 md:text-xs")}>
-              {JSON.stringify(webhookPayload, null, 2)}
-            </pre>
-          </CardContent>
-        </Card>
-
-        <ZapierFulfillmentZapCard />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div className="lg:col-span-5">
+          <ZapierWorkflowCard />
+        </div>
+        <div className="grid gap-4 lg:col-span-7">
+          <WebhookPayloadCard />
+          <AppsScriptContractCard />
+        </div>
       </div>
     </div>
   );
@@ -327,7 +352,7 @@ function SupportTickets({ tickets }: { tickets: SupportTicket[] }) {
   return (
     <div className="grid gap-4">
       {tickets.map((ticket) => (
-        <Card key={ticket.id} className={dashCardClass}>
+        <Card key={ticket.id} className={cn(dashSurfaceCardClass, entityBrandStyles.solar2sk.accentBar)}>
           <CardHeader className={dashCardHeaderClass}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="grid gap-1">
