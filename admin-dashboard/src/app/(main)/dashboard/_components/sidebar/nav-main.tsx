@@ -25,12 +25,35 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { filterSidebarByRole } from "@/lib/rbac/filter-sidebar";
+import { cn } from "@/lib/utils";
 import type { NavGroup, NavMainItem } from "@/navigation/sidebar/sidebar-items";
 import { useDashboardRole } from "@/stores/rbac/dashboard-role-provider";
 
 interface NavMainProps {
   readonly items: readonly NavGroup[];
 }
+
+const navItemClass =
+  "h-auto min-h-11 items-start py-2 text-zinc-500 transition-colors hover:bg-zinc-900/80 hover:text-zinc-200 data-active:border-cyan-400 data-active:border-r-2 data-active:bg-cyan-500/10 data-active:text-cyan-400";
+const navSubItemClass =
+  "text-zinc-500 transition-colors hover:bg-zinc-900/80 hover:text-zinc-200 data-active:bg-cyan-500/10 data-active:text-cyan-400";
+
+const NavSkillChips = ({ skills }: { skills?: string[] }) => {
+  if (!skills?.length) return null;
+
+  return (
+    <span className="mt-1 flex flex-wrap gap-1">
+      {skills.map((skill) => (
+        <span
+          key={skill}
+          className="rounded-full border border-zinc-800 bg-zinc-950/80 px-1.5 py-0.5 font-mono text-[9px] text-zinc-500 leading-none group-data-[active=true]/menu-button:border-cyan-500/30 group-data-[active=true]/menu-button:text-cyan-300"
+        >
+          {skill}
+        </span>
+      ))}
+    </span>
+  );
+};
 
 const IsComingSoon = () => (
   <span className="ml-auto rounded-md bg-gray-200 px-2 py-1 text-xs dark:text-gray-800">Soon</span>
@@ -54,9 +77,13 @@ const NavItemExpanded = ({
               disabled={item.comingSoon}
               isActive={isActive(item.url, item.subItems)}
               tooltip={item.title}
+              className={navItemClass}
             >
-              {item.icon && <item.icon />}
-              <span>{item.title}</span>
+              {item.icon && <item.icon className="mt-0.5" />}
+              <span className="min-w-0 flex-1">
+                <span className="block truncate">{item.title}</span>
+                <NavSkillChips skills={item.skills} />
+              </span>
               {item.comingSoon && <IsComingSoon />}
               <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
@@ -66,10 +93,14 @@ const NavItemExpanded = ({
               aria-disabled={item.comingSoon}
               isActive={isActive(item.url)}
               tooltip={item.title}
+              className={navItemClass}
             >
               <Link prefetch={false} href={item.url} target={item.newTab ? "_blank" : undefined}>
-                {item.icon && <item.icon />}
-                <span>{item.title}</span>
+                {item.icon && <item.icon className="mt-0.5" />}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate">{item.title}</span>
+                  <NavSkillChips skills={item.skills} />
+                </span>
                 {item.comingSoon && <IsComingSoon />}
               </Link>
             </SidebarMenuButton>
@@ -80,7 +111,12 @@ const NavItemExpanded = ({
             <SidebarMenuSub>
               {item.subItems.map((subItem) => (
                 <SidebarMenuSubItem key={subItem.title}>
-                  <SidebarMenuSubButton aria-disabled={subItem.comingSoon} isActive={isActive(subItem.url)} asChild>
+                  <SidebarMenuSubButton
+                    aria-disabled={subItem.comingSoon}
+                    isActive={isActive(subItem.url)}
+                    asChild
+                    className={navSubItemClass}
+                  >
                     <Link prefetch={false} href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
                       {subItem.icon && <subItem.icon />}
                       <span>{subItem.title}</span>
@@ -124,7 +160,7 @@ const NavItemCollapsed = ({
               <SidebarMenuSubButton
                 key={subItem.title}
                 asChild
-                className="focus-visible:ring-0"
+                className={cn("focus-visible:ring-0", navSubItemClass)}
                 aria-disabled={subItem.comingSoon}
                 isActive={isActive(subItem.url)}
               >
@@ -165,7 +201,7 @@ export function NavMain({ items }: NavMainProps) {
         <SidebarGroup key={group.id}>
           {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
           <SidebarGroupContent className="flex flex-col gap-2">
-            <SidebarMenu>
+            <SidebarMenu className="gap-1.5">
               {group.items.map((item) => {
                 if (state === "collapsed" && !isMobile) {
                   // If no subItems, just render the button as a link
@@ -177,6 +213,7 @@ export function NavMain({ items }: NavMainProps) {
                           aria-disabled={item.comingSoon}
                           tooltip={item.title}
                           isActive={isItemActive(item.url)}
+                          className={navItemClass}
                         >
                           <Link prefetch={false} href={item.url} target={item.newTab ? "_blank" : undefined}>
                             {item.icon && <item.icon />}
