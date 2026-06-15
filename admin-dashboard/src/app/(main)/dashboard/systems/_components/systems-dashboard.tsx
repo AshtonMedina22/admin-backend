@@ -453,7 +453,7 @@ function GoogleWorkspaceArchitectureSpec() {
   ];
 
   return (
-    <section className="mt-6 space-y-4 border-border border-t pt-6">
+    <section className="space-y-3 border-border border-t pt-4">
       <div>
         <h2 className="font-semibold text-base text-foreground">
           Google Workspace Production Data Architecture & System Guardrails
@@ -463,14 +463,14 @@ function GoogleWorkspaceArchitectureSpec() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {specs.map((spec) => (
           <div
             key={spec.title}
-            className="space-y-2 rounded-xl border border-border bg-muted/40 p-5"
+            className="space-y-1.5 rounded-lg border border-border bg-muted/40 p-3"
           >
             <h3 className={cn("text-xs", dashSectionTitleClass)}>{spec.title}</h3>
-            <p className={cn("font-mono text-xs leading-relaxed", dashProseClass)}>{spec.body}</p>
+            <p className={cn("line-clamp-6 font-mono text-[11px] leading-snug", dashProseClass)}>{spec.body}</p>
           </div>
         ))}
       </div>

@@ -220,7 +220,7 @@ export function TelemetryTab() {
             </p>
           </div>
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-            <div className={cn("max-h-[360px] overflow-y-auto rounded-lg border border-border bg-muted/40 p-3", dashCodeBlockClass)}>
+            <div className={cn("max-h-[300px] overflow-y-auto rounded-lg border border-border bg-muted/40 p-3", dashCodeBlockClass)}>
               <div className="mb-2 font-semibold text-[10px] text-muted-foreground uppercase tracking-wide">
                 src/types/telemetry.ts
               </div>
@@ -228,7 +228,7 @@ export function TelemetryTab() {
                 <code>{SOLAREDGE_TELEMETRY_CODE}</code>
               </pre>
             </div>
-            <div className={cn("max-h-[360px] overflow-y-auto rounded-lg border border-border bg-muted/40 p-3", dashCodeBlockClass)}>
+            <div className={cn("max-h-[300px] overflow-y-auto rounded-lg border border-border bg-muted/40 p-3", dashCodeBlockClass)}>
               <div className="mb-2 font-semibold text-[10px] text-muted-foreground uppercase tracking-wide">
                 Server API Route Fetch Handler
               </div>
@@ -256,7 +256,7 @@ export function TelemetryTab() {
           <div className="grid gap-3 lg:grid-cols-2">
             {activeTelemetryAssets.map((asset) => (
               <div key={asset.inverterId} className="rounded-lg border border-border bg-muted/40 p-3">
-                <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+                <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="font-semibold text-foreground text-sm">{asset.associatedAsset}</p>
                     <p className="font-mono text-muted-foreground text-xs">
@@ -270,7 +270,7 @@ export function TelemetryTab() {
                     {asset.entityCompany}
                   </Badge>
                 </div>
-                <div className="grid gap-2 font-mono text-xs">
+                <div className="grid gap-1.5 font-mono text-[11px]">
                   {[
                     ["PV generation", `${asset.currentPowerFlowKw.pvGeneration.toFixed(1)} kW`],
                     ["Facility load", `${asset.currentPowerFlowKw.consumptionLoad.toFixed(1)} kW`],
@@ -280,7 +280,7 @@ export function TelemetryTab() {
                   ].map(([label, value]) => (
                     <div
                       key={label}
-                      className="flex items-center justify-between gap-4 rounded-md border border-border bg-card px-3 py-2"
+                      className="flex items-center justify-between gap-4 rounded-md border border-border bg-card px-2.5 py-1.5"
                     >
                       <span className="text-muted-foreground">{label}</span>
                       <span className={cn(dashKpiValueClass, "text-sm")}>{value}</span>

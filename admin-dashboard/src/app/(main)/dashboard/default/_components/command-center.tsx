@@ -394,7 +394,7 @@ export function CommandCenter({ data }: CommandCenterProps) {
   }
 
   return (
-    <div className={cn(dashPageClass, "mx-auto w-full max-w-[1600px] gap-4 p-3 md:gap-6 md:p-5 xl:p-6")}>
+    <div className={cn(dashPageClass, "mx-auto w-full max-w-[1600px] gap-4 md:gap-5")}>
       <div className={cn(dashPageHeaderClass, "gap-3 pb-4 lg:flex-row lg:items-end lg:justify-between")}>
         <div className="grid gap-1">
           <div className="flex flex-wrap items-center gap-2">

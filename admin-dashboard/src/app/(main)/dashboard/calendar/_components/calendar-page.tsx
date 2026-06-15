@@ -144,7 +144,7 @@ const actionItems = [
 function TasksHeader() {
   return (
     <Card className={dashSurfaceCardClass}>
-      <CardContent className="grid gap-2 p-5 md:p-6">
+      <CardContent className="grid gap-2 p-3 md:p-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full border border-border bg-slate-50 px-2.5 py-1 font-mono text-[11px] text-muted-foreground uppercase tracking-[0.18em]">
             Task Management

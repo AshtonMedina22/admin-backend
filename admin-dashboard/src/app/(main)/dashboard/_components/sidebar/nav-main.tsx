@@ -36,7 +36,7 @@ interface NavMainProps {
 }
 
 const navItemClass =
-  "h-9 min-h-0 items-center gap-2 rounded-lg px-2 py-0 text-[13px] text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground data-[active=true]:border-l-2 data-[active=true]:border-[var(--brand-3sk)] data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-[var(--brand-3sk-text)]";
+  "h-8 min-h-0 items-center gap-2 rounded-lg px-2 py-0 text-[12px] text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground data-[active=true]:border-l-2 data-[active=true]:border-[var(--brand-3sk)] data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-[var(--brand-3sk-text)]";
 const navSubItemClass =
   "text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-[var(--brand-3sk-text)]";
 
@@ -82,7 +82,7 @@ const NavItemExpanded = ({
               tooltip={navItemTooltip(item)}
               className={cn(navItemClass, isRestricted && "opacity-90")}
             >
-              {item.icon && <item.icon className="size-4 shrink-0" />}
+              {item.icon && <item.icon className="size-3.5 shrink-0" />}
               <span className="min-w-0 flex-1 truncate">{item.title}</span>
               {isRestricted ? <NavRestrictedBadge /> : null}
               {item.comingSoon && <IsComingSoon />}
@@ -97,7 +97,7 @@ const NavItemExpanded = ({
               className={cn(navItemClass, isRestricted && "opacity-90")}
             >
               <Link prefetch={false} href={item.url} target={item.newTab ? "_blank" : undefined}>
-                {item.icon && <item.icon className="size-4 shrink-0" />}
+                {item.icon && <item.icon className="size-3.5 shrink-0" />}
                 <span className="flex min-w-0 flex-1 items-center gap-1.5 truncate">
                   {isRestricted ? <Lock className="size-3 shrink-0 text-[var(--status-critical)]" /> : null}
                   <span className="truncate">{item.title}</span>
@@ -150,6 +150,7 @@ const NavItemCollapsed = ({
             disabled={item.comingSoon}
             tooltip={item.title}
             isActive={isActive(item.url, item.subItems)}
+            className={navItemClass}
           >
             {item.icon && <item.icon />}
             <span>{item.title}</span>
@@ -206,7 +207,9 @@ export function NavMain({ items }: NavMainProps) {
       {visibleItems.map((group) => (
         <SidebarGroup key={group.id} className="py-0">
           {group.label && (
-            <SidebarGroupLabel className="h-7 px-2 py-0 text-[10px] uppercase tracking-widest">{group.label}</SidebarGroupLabel>
+            <SidebarGroupLabel className="h-5 px-2 py-0 text-[9px] uppercase tracking-widest">
+              {group.label}
+            </SidebarGroupLabel>
           )}
           <SidebarGroupContent className="flex flex-col gap-0 px-0">
             <SidebarMenu className="gap-0.5">

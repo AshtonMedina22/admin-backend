@@ -156,16 +156,16 @@ export async function POST(request: Request) {
 
 function PermitStatusFormulaCard() {
   return (
-    <Card size="sm" className={dashSurfaceCardClass}>
-      <CardHeader className={dashSectionCardHeaderClass}>
+    <Card size="sm" className={cn("h-full", dashSurfaceCardClass)}>
+      <CardHeader className={cn("border-border border-b", dashSectionCardHeaderClass)}>
         <CardTitle>Permit Status Formula / Conditional Formatting Rule</CardTitle>
         <CardDescription>
           Google Sheets application example for classifying AHJ review age before Apps Script or AI escalation runs.
         </CardDescription>
       </CardHeader>
-      <CardContent className={cn("grid gap-4 md:grid-cols-[1fr_1.15fr]", dashSectionCardContentClass)}>
-        <div className="space-y-3">
-          <div className={cn(dashCodeBlockSmClass, "text-xs leading-relaxed")}>
+      <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
+        <div className="space-y-2.5">
+          <div className={cn(dashCodeBlockSmClass, "text-[11px] leading-snug")}>
             <p>
               <strong className="text-foreground">Workbook setup:</strong> calculate{" "}
               <span className="font-mono text-foreground">DaysStale</span> from
@@ -173,15 +173,15 @@ function PermitStatusFormulaCard() {
               column for conditional formatting, filters, and Apps Script escalation checks.
             </p>
           </div>
-          <ul className="space-y-2 text-muted-foreground text-xs leading-relaxed">
+          <ul className="space-y-1.5 text-muted-foreground text-[11px] leading-snug">
             {CONDITIONAL_FORMATTING_RULES.map((rule) => (
-              <li key={rule} className="rounded-lg border border-border bg-muted/40 px-3 py-2">
+              <li key={rule} className="rounded-lg border border-border bg-muted/40 px-2.5 py-1.5">
                 {rule}
               </li>
             ))}
           </ul>
         </div>
-        <pre className={cn(dashCodeBlockClass, "text-[11px]")}>
+        <pre className={cn(dashCodeBlockClass, "max-h-40 text-[11px]")}>
           <code>{PERMIT_STATUS_FORMULA}</code>
         </pre>
       </CardContent>
@@ -191,8 +191,8 @@ function PermitStatusFormulaCard() {
 
 function AppsScriptPermitAlertCard() {
   return (
-    <Card size="sm" className={dashPlatformCardClass}>
-      <CardHeader className={dashSectionCardHeaderClass}>
+    <Card size="sm" className={cn("h-full", dashPlatformCardClass)}>
+      <CardHeader className={cn("border-border border-b", dashSectionCardHeaderClass)}>
         <CardTitle className="flex items-center gap-2">
           <FileCheck className={cn("size-5", entityBrandStyles.solar3k.icon)} />
           {implementationLabels.permitEscalation.title}
@@ -204,7 +204,7 @@ function AppsScriptPermitAlertCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className={cn("space-y-3", dashSectionCardContentClass)}>
-        <div className={cn(dashCodeBlockSmClass, "grid gap-2 text-xs leading-relaxed")}>
+        <div className={cn(dashCodeBlockSmClass, "grid gap-2 text-[11px] leading-snug")}>
           <p>
             <strong className="text-foreground">Configuration:</strong> Apps Script trigger -&gt; Event source:{" "}
             <span className="font-mono text-foreground">From spreadsheet</span> -&gt; Event type:{" "}
@@ -218,15 +218,15 @@ function AppsScriptPermitAlertCard() {
             metadata to the backend.
           </p>
         </div>
-        <pre className={cn(dashCodeBlockClass, "max-h-80 text-[11px]")}>
+        <pre className={cn(dashCodeBlockClass, "max-h-[260px] text-[10px]")}>
           <code>{PERMIT_ALERT_SCRIPT}</code>
         </pre>
-        <div className={cn(dashInfoBannerClass, "text-xs leading-relaxed")}>
+        <div className={cn(dashInfoBannerClass, "px-3 py-2 text-xs leading-snug")}>
           <strong className="text-foreground">Next.js secure route:</strong> The browser never receives AI provider keys.
           The Apps Script hook signs the request with a shared server token, and the route compiles prompt context before
           queuing a human-reviewed escalation draft.
         </div>
-        <pre className={cn(dashCodeBlockClass, "max-h-80 text-[11px]")}>
+        <pre className={cn(dashCodeBlockClass, "max-h-44 text-[10px]")}>
           <code>{NEXT_ESCALATION_ROUTE}</code>
         </pre>
       </CardContent>
@@ -234,9 +234,22 @@ function AppsScriptPermitAlertCard() {
   );
 }
 
+function PermittingAutomationGrid() {
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <div className="lg:col-span-5">
+        <PermitStatusFormulaCard />
+      </div>
+      <div className="lg:col-span-7">
+        <AppsScriptPermitAlertCard />
+      </div>
+    </div>
+  );
+}
+
 export function PermittingQueue() {
   return (
-    <div className={cn(dashPageClass, "p-3 md:p-6")}>
+    <div className={dashPageClass}>
       <div className={dashPageHeaderClass}>
         <h1 className="font-semibold text-2xl tracking-tight">Permitting & AHJ Queue</h1>
         <p className="max-w-3xl text-muted-foreground text-sm">
@@ -286,34 +299,34 @@ export function PermittingQueue() {
           </CardDescription>
         </CardHeader>
         <CardContent className={dashSectionCardContentClass}>
-          <div className={cn(dashInfoBannerClass, "mb-3 text-xs leading-relaxed")}>
+          <div className={cn(dashInfoBannerClass, "mb-3 px-3 py-2 text-xs leading-snug")}>
             <strong className="text-foreground">AI Automation Layer:</strong> Production wiring would pass AHJ name,
             permit number, days delayed, missing requirements, and brand context into a controlled prompt/template
             service, generate a professional escalation draft, and keep a human approval step before sending through
             email or CRM automation.
           </div>
           <div className="scrollbar-none block w-full overflow-x-auto rounded-md border border-border">
-            <Table className="min-w-[720px]">
+            <Table className="min-w-[900px] table-fixed text-[11px]">
               <TableHeader>
                 <TableRow className="h-9">
-                  <TableHead>Asset</TableHead>
-                  <TableHead>Brand</TableHead>
-                  <TableHead>Authority (AHJ)</TableHead>
-                  <TableHead>Permit ID</TableHead>
-                  <TableHead className="text-right">Days Stale</TableHead>
-                  <TableHead className="text-right">Automated Action</TableHead>
+                  <TableHead className="w-[24%]">Asset</TableHead>
+                  <TableHead className="w-[10%]">Brand</TableHead>
+                  <TableHead className="w-[25%]">Authority (AHJ)</TableHead>
+                  <TableHead className="w-[16%]">Permit ID</TableHead>
+                  <TableHead className="w-[10%] text-right">Days Stale</TableHead>
+                  <TableHead className="w-[15%] text-right">Automated Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {PERMITTING_QUEUE.map((row) => (
-                  <TableRow key={row.permit} className={cn("h-11 hover:bg-muted/30", entityAccentBarForLabel(row.brand))}>
-                    <TableCell className="max-w-[12rem] whitespace-normal py-2 font-medium">{row.asset}</TableCell>
+                  <TableRow key={row.permit} className={cn("h-10 hover:bg-muted/30", entityAccentBarForLabel(row.brand))}>
+                    <TableCell className="truncate py-2 font-medium">{row.asset}</TableCell>
                     <TableCell className="py-2">
                       <Badge variant="outline" className={cn("h-6", entityBadgeClassForLabel(row.brand))}>
                         {row.brand}
                       </Badge>
                     </TableCell>
-                    <TableCell className="max-w-xs py-2 text-xs">{row.authority}</TableCell>
+                    <TableCell className="truncate py-2 text-xs">{row.authority}</TableCell>
                     <TableCell className="py-2 font-mono text-[11px]">{row.permit}</TableCell>
                     <TableCell className="py-2 text-right">
                       <span
@@ -342,9 +355,7 @@ export function PermittingQueue() {
         </CardContent>
       </Card>
 
-      <PermitStatusFormulaCard />
-
-      <AppsScriptPermitAlertCard />
+      <PermittingAutomationGrid />
     </div>
   );
 }
