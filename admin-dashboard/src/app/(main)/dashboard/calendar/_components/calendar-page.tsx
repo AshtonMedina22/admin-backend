@@ -164,20 +164,20 @@ function TasksHeader() {
 
 function TaskAndDocumentDeck() {
   return (
-    <div className="mb-2 grid grid-cols-1 gap-5 lg:grid-cols-2">
-      <Card className={dashSurfaceCardClass}>
-        <CardHeader className={dashSectionCardHeaderClass}>
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <Card className={cn("h-full", dashSurfaceCardClass)}>
+        <CardHeader className={cn("border-border border-b", dashSectionCardHeaderClass)}>
           <CardTitle>Operational Action Items</CardTitle>
           <CardDescription>
             Current administrative and system priorities sorted by business entity handle.
           </CardDescription>
         </CardHeader>
-        <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
+        <CardContent className={cn("grid gap-2.5", dashSectionCardContentClass)}>
           {actionItems.map((item) => (
             <div
               key={item.text}
               className={cn(
-                "rounded-lg border border-border bg-muted/40 p-3",
+                "rounded-lg border border-border bg-muted/40 px-3 py-2.5",
                 entityAccentBarForLabel(item.brand),
               )}
             >
@@ -197,24 +197,24 @@ function TaskAndDocumentDeck() {
         </CardContent>
       </Card>
 
-      <Card className={dashSurfaceCardClass}>
-        <CardHeader className={dashSectionCardHeaderClass}>
+      <Card className={cn("h-full", dashSurfaceCardClass)}>
+        <CardHeader className={cn("border-border border-b", dashSectionCardHeaderClass)}>
           <CardTitle>Automated Document Tracking</CardTitle>
           <CardDescription>
             Active status of spreadsheet-driven document generation and template workflows.
           </CardDescription>
         </CardHeader>
-        <CardContent className={cn("grid gap-4", dashSectionCardContentClass)}>
-          <div className="rounded-lg border border-border bg-muted/40 p-4">
+        <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
+          <div className="rounded-lg border border-border bg-muted/40 p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="font-semibold text-foreground text-sm">Project Charter & Agreement Automation</h3>
               <span className={cn("rounded-full px-2 py-0.5 font-mono text-[10px]", statusStyles.live)}>
                 Active Listener
               </span>
             </div>
-            <p className={cn("mt-2 font-mono text-xs", dashProseClass)}>
-              Production wiring: DocuSign Connect completion event ➔ Google Apps Script handler ➔ formatted PDF compile
-              ➔ shared Google Drive asset folder upload.
+            <p className={cn("mt-2 font-mono text-xs leading-relaxed", dashProseClass)}>
+              Production wiring: DocuSign Connect completion event to Google Apps Script handler to formatted PDF compile
+              to shared Google Drive asset folder upload.
             </p>
             <div className={cn("mt-2 border-border border-t pt-2 font-mono text-xs", dashProseClass)}>
               <strong className="text-foreground">Document Assembly Engineering:</strong> Production wiring would parse
@@ -223,8 +223,8 @@ function TaskAndDocumentDeck() {
               entity, project, and document type.
             </div>
           </div>
-          <Button className="w-full rounded-md border border-border bg-slate-50 px-3 py-2 font-mono text-foreground text-xs transition-all hover:bg-muted/40 active:scale-[0.98]">
-            📄 Re-Generate System Manifest PDF
+          <Button className="h-9 w-full rounded-md border border-border bg-slate-50 px-3 font-mono text-foreground text-xs transition-all hover:bg-muted/40 active:scale-[0.98]">
+            Re-Generate System Manifest PDF
           </Button>
         </CardContent>
       </Card>
@@ -234,8 +234,8 @@ function TaskAndDocumentDeck() {
 
 function CalendarApiSyncCard() {
   return (
-    <Card className={dashPlatformCardClass}>
-      <CardHeader className={dashSectionCardHeaderClass}>
+    <Card className={cn("h-full", dashPlatformCardClass)}>
+      <CardHeader className={cn("border-border border-b", dashSectionCardHeaderClass)}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
             <CardTitle>Google Calendar API Sync</CardTitle>
@@ -249,14 +249,14 @@ function CalendarApiSyncCard() {
           </span>
         </div>
       </CardHeader>
-      <CardContent className={cn("grid gap-4 lg:grid-cols-[0.85fr_1.25fr]", dashSectionCardContentClass)}>
-        <div className="space-y-3">
+      <CardContent className={cn("grid gap-4 lg:grid-cols-12", dashSectionCardContentClass)}>
+        <div className="space-y-3 lg:col-span-4">
           <div className="rounded-lg border border-border bg-muted/40 p-3">
             <p className={cn("font-mono text-[11px] uppercase tracking-[0.18em]", entityBrandStyles.solar3k.text)}>
               Scheduling contract
             </p>
-            <ol className="mt-3 space-y-2 text-muted-foreground text-xs leading-relaxed">
-              {calendarSyncSteps.map((step, index) => (
+            <ol className="mt-3 space-y-2 text-muted-foreground text-xs leading-snug">
+              {calendarSyncSteps.slice(0, 4).map((step, index) => (
                 <li key={step} className="flex gap-2">
                   <span className={cn("font-mono tabular-nums", entityBrandStyles.solar3k.text)}>{index + 1}.</span>
                   <span>{step}</span>
@@ -277,11 +277,11 @@ function CalendarApiSyncCard() {
             meeting date, vendor/AHJ, project, and next action for human review before sending.
           </div>
         </div>
-        <div className="grid gap-3">
-          <pre className={cn(dashCodeBlockClass, "max-h-80 text-[10px]")}>
+        <div className="grid gap-3 lg:col-span-8">
+          <pre className={cn(dashCodeBlockClass, "max-h-[260px] text-[10px]")}>
             <code>{GOOGLE_CALENDAR_SYNC_SCRIPT}</code>
           </pre>
-          <pre className={cn(dashCodeBlockClass, "max-h-52 text-[10px]")}>
+          <pre className={cn(dashCodeBlockClass, "max-h-32 text-[10px]")}>
             <code>{GMAIL_REMINDER_DRAFT_SCRIPT}</code>
           </pre>
         </div>
@@ -292,7 +292,7 @@ function CalendarApiSyncCard() {
 
 function AgendaFeed({ events }: { events: Array<CalendarEvent & { day: number }> }) {
   return (
-    <Card size="sm" className={dashSurfaceCardClass}>
+    <Card size="sm" className={cn("h-full", dashSurfaceCardClass)}>
       <CardHeader className={cn("border-border border-b", dashSectionCardHeaderClass)}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -307,26 +307,26 @@ function AgendaFeed({ events }: { events: Array<CalendarEvent & { day: number }>
         </div>
       </CardHeader>
       <CardContent className={dashSectionCardContentClass}>
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        <div className="grid max-h-[420px] grid-cols-1 gap-2 overflow-y-auto pr-1">
           {events.map((event) => (
             <div
               key={`${event.day}-${event.brand}-${event.event || event.text}`}
               className={cn(
-                "min-w-0 rounded-xl border border-border bg-slate-50 p-3",
+                "min-w-0 rounded-lg border border-border bg-slate-50 p-2.5",
                 eventAccentClass(event.brand),
               )}
             >
               <div className="flex min-w-0 items-start gap-3">
-                <div className="grid w-16 shrink-0 justify-items-center rounded-lg border border-border bg-muted/40 px-2 py-2 text-center">
+                <div className="grid w-14 shrink-0 justify-items-center rounded-lg border border-border bg-muted/40 px-2 py-1.5 text-center">
                   <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.2em]">Jun</span>
-                  <span className={cn(dashKpiValueClass, "text-2xl leading-none")}>{event.day}</span>
+                  <span className={cn(dashKpiValueClass, "text-xl leading-none")}>{event.day}</span>
                   {event.time ? (
                     <span className="mt-1 font-mono text-[10px] text-muted-foreground tabular-nums">{event.time}</span>
                   ) : null}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                  <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
                     <EntityBrandBadge brand={event.brand} className="h-5 px-1.5 text-[10px]" />
                     {event.type ? (
                       <span className="rounded-full border border-border bg-muted/40 px-2 py-0.5 font-medium text-[10px] text-muted-foreground">
@@ -335,7 +335,7 @@ function AgendaFeed({ events }: { events: Array<CalendarEvent & { day: number }>
                     ) : null}
                   </div>
                   <h3 className="text-balance font-semibold text-sm leading-snug">{event.event || event.text}</h3>
-                  <p className="mt-1 line-clamp-2 text-muted-foreground text-xs leading-relaxed">
+                  <p className="mt-1 line-clamp-2 text-muted-foreground text-xs leading-snug">
                     {event.notes || event.text}
                   </p>
                 </div>
@@ -345,6 +345,79 @@ function AgendaFeed({ events }: { events: Array<CalendarEvent & { day: number }>
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function MonthViewReference({ calendarEvents }: { calendarEvents: Record<number, CalendarEvent[]> }) {
+  return (
+    <Card size="sm" className={cn("h-full", dashSurfaceCardClass)}>
+      <CardHeader className={cn("border-border border-b", dashSectionCardHeaderClass)}>
+        <CardTitle>Month View Reference</CardTitle>
+        <CardDescription>Compact 7-column planning reference for desktop review.</CardDescription>
+      </CardHeader>
+      <CardContent className={dashSectionCardContentClass}>
+        <div className="grid grid-cols-7 border-border border-t border-l text-sm">
+          {weekdays.map((weekday) => (
+            <div
+              key={weekday}
+              className="border-border border-r border-b bg-muted/30 px-2 py-1 font-medium text-muted-foreground text-[11px]"
+            >
+              {weekday}
+            </div>
+          ))}
+          {monthCells.map((cell) => (
+            <div
+              key={cell.key}
+              className="min-h-16 overflow-hidden border-border border-r border-b bg-card p-1 empty:bg-muted/15"
+            >
+              {cell.day && (
+                <div className="grid gap-1">
+                  <div className="font-medium font-mono text-[11px] tabular-nums">{cell.day}</div>
+                  {calendarEvents[cell.day]?.slice(0, 1).map((event) => (
+                    <div
+                      key={`${cell.day}-${event.brand}-${event.event || event.text}`}
+                      className={cn("rounded-md border border-l-4 bg-muted/40 p-1", eventAccentClass(event.brand))}
+                    >
+                      <div className="mb-1 flex flex-wrap items-center gap-1">
+                        <EntityBrandBadge brand={event.brand} className="h-5 px-1.5 text-[10px]" />
+                        {event.time ? (
+                          <span className="font-mono text-[10px] text-muted-foreground tabular-nums">{event.time}</span>
+                        ) : null}
+                      </div>
+                      <div className="line-clamp-2 font-medium text-[11px] leading-snug">
+                        {event.event || event.text}
+                      </div>
+                    </div>
+                  ))}
+                  {(calendarEvents[cell.day]?.length ?? 0) > 1 ? (
+                    <span className="font-mono text-[10px] text-muted-foreground">
+                      +{(calendarEvents[cell.day]?.length ?? 1) - 1} more
+                    </span>
+                  ) : null}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function CalendarAndApiGrid({
+  calendarEvents,
+}: {
+  calendarEvents: Record<number, CalendarEvent[]>;
+}) {
+  return (
+    <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
+      <div className="hidden md:block xl:col-span-5">
+        <MonthViewReference calendarEvents={calendarEvents} />
+      </div>
+      <div className="xl:col-span-7">
+        <CalendarApiSyncCard />
+      </div>
+    </div>
   );
 }
 
@@ -361,65 +434,9 @@ export function CalendarPage({
 
       <TaskAndDocumentDeck />
 
-      <CalendarApiSyncCard />
+      <CalendarAndApiGrid calendarEvents={calendarEvents} />
 
       <AgendaFeed events={agendaEvents} />
-
-      <div className="hidden md:block">
-        <Card size="sm" className={dashSurfaceCardClass}>
-          <CardHeader className={cn("border-border border-b", dashSectionCardHeaderClass)}>
-            <CardTitle>Month View Reference</CardTitle>
-            <CardDescription>Compact 7-column planning reference for desktop review.</CardDescription>
-          </CardHeader>
-          <CardContent className={dashSectionCardContentClass}>
-            <div className="mx-auto w-full max-w-5xl">
-              <div className="grid grid-cols-7 border-border border-t border-l text-sm">
-                {weekdays.map((weekday) => (
-                  <div
-                    key={weekday}
-                    className="border-border border-r border-b bg-muted/30 px-2 py-2 font-medium text-muted-foreground text-xs"
-                  >
-                    {weekday}
-                  </div>
-                ))}
-                {monthCells.map((cell) => (
-                  <div
-                    key={cell.key}
-                    className="max-h-[120px] min-h-24 overflow-hidden border-border border-r border-b bg-card p-1.5 empty:bg-muted/15"
-                  >
-                    {cell.day && (
-                      <div className="grid gap-1.5">
-                        <div className="font-medium font-mono text-sm tabular-nums">{cell.day}</div>
-                        {calendarEvents[cell.day]?.map((event) => (
-                          <div
-                            key={`${cell.day}-${event.brand}-${event.event || event.text}`}
-                            className={cn(
-                              "rounded-md border border-l-4 bg-muted/40 p-1.5",
-                              eventAccentClass(event.brand),
-                            )}
-                          >
-                            <div className="mb-1 flex flex-wrap items-center gap-1">
-                              <EntityBrandBadge brand={event.brand} className="h-5 px-1.5 text-[10px]" />
-                              {event.time ? (
-                                <span className="font-mono text-[10px] text-muted-foreground tabular-nums">
-                                  {event.time}
-                                </span>
-                              ) : null}
-                            </div>
-                            <div className="line-clamp-2 font-medium text-[11px] leading-snug">
-                              {event.event || event.text}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }
