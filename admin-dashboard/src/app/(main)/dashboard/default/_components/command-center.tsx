@@ -33,6 +33,9 @@ import {
   dashSectionCardContentClass,
   dashSectionCardHeaderClass,
   dashPlatformCardClass,
+  dashSplitAsideClass,
+  dashSplitMainClass,
+  dashSplitRowClass,
   dashSurfaceCardClass,
 } from "@/lib/dashboard-ui";
 import {
@@ -149,7 +152,7 @@ function TelemetryMatrixCard() {
   const telemetry = useTelemetrySimulation();
 
   return (
-    <Card size="sm" className={cn("h-full", dashSurfaceCardClass, entityBrandStyles.yellowStar.accentBar)}>
+    <Card size="sm" className={cn(dashSurfaceCardClass, entityBrandStyles.yellowStar.accentBar)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -167,7 +170,7 @@ function TelemetryMatrixCard() {
           onSimulatingChange={telemetry.setIsSimulating}
           liveYield={telemetry.liveYield}
         />
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <div className="rounded-md border border-border bg-muted/40 p-2.5">
             <p className="text-[11px] text-muted-foreground uppercase">Generation</p>
             <p className={cn(dashKpiValueClass, "text-lg")}>{telemetry.liveYield.toFixed(1)} kW</p>
@@ -210,14 +213,16 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
     <Card size="sm" className={dashPlatformCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="grid gap-1">
-            <DashImplementationLabel variant={implementationLabels.commandCenterSync.variant}>
-              {implementationLabels.commandCenterSync.title}
-            </DashImplementationLabel>
-            <CardTitle className="flex items-center gap-2">
-              <DatabaseZap className={cn("size-5", entityBrandStyles.solar3k.icon)} />
-              Workbook Sync Contract
-            </CardTitle>
+          <div className="grid min-w-0 flex-1 gap-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <DashImplementationLabel variant={implementationLabels.commandCenterSync.variant} inline>
+                {implementationLabels.commandCenterSync.title}
+              </DashImplementationLabel>
+              <CardTitle className="flex min-w-0 items-center gap-2 text-base">
+                <DatabaseZap className={cn("size-4 shrink-0", entityBrandStyles.solar3k.icon)} />
+                <span className="truncate">Workbook Sync Contract</span>
+              </CardTitle>
+            </div>
             <CardDescription>
               Literal backend path for turning workbook rows into the executive dashboard.
             </CardDescription>
@@ -235,23 +240,20 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
       </CardHeader>
       <CardContent className={cn("grid gap-3", dashSectionCardContentClass)}>
         <div className={cn("grid gap-2 text-[11px] leading-relaxed", dashCodeBlockClass)}>
-          <p>
+          <p className="line-clamp-3">
             <strong className="text-foreground">Production flow:</strong>{" "}
-            <span className="font-mono text-foreground">server cache</span> -&gt;{" "}
-            <span className="font-mono text-foreground">Google Sheets API</span> -&gt;{" "}
-            <span className="font-mono text-foreground">Apps Script JSON fallback</span> -&gt;{" "}
-            <span className="font-mono text-foreground">published workbook snapshot</span> -&gt; typed KPI cards +
-            event stream.
+            <span className="font-mono text-foreground">server cache</span> →{" "}
+            <span className="font-mono text-foreground">Google Sheets API</span> →{" "}
+            <span className="font-mono text-foreground">Apps Script JSON</span> →{" "}
+            <span className="font-mono text-foreground">published snapshot</span> → KPI cards + event stream.
           </p>
-          <p>
-            <strong className="text-foreground">Current repository path:</strong>{" "}
-            <span className="font-mono text-foreground">fetchWorkbookCommandCenter()</span> checks a short
-            in-memory cache, calls <span className="font-mono text-foreground">fetchDashboardSummary()</span> via
-            the Sheets API, falls through to Apps Script / published workbook providers when needed, and preserves the
-            dashboard with local demo data if every live provider fails.
+          <p className="line-clamp-2">
+            <strong className="text-foreground">Repository path:</strong>{" "}
+            <span className="font-mono text-foreground">fetchWorkbookCommandCenter()</span> →{" "}
+            <span className="font-mono text-foreground">fetchDashboardSummary()</span> with workbook fallbacks.
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1">
+        <div className="grid grid-cols-2 gap-2">
           {syncSteps.map((step, index) => (
             <div key={step.label} className="rounded-lg border border-border bg-muted/40 p-2.5">
               <div className="mb-2 flex items-center gap-2">
@@ -276,7 +278,7 @@ function WorkbookSyncContractCard({ workbookConnected }: { workbookConnected: bo
 
 function ActiveProjectsMatrix({ projects }: { projects: CommandCenterData["projects"] }) {
   return (
-    <Card size="sm" className={dashPlatformCardClass}>
+    <Card size="sm" className={dashSurfaceCardClass}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -494,24 +496,24 @@ export function CommandCenter({ data }: CommandCenterProps) {
         })}
       </div>
 
-      <div className="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-12">
-        <div className="xl:col-span-4">
+      <div className={dashSplitRowClass}>
+        <div className={dashSplitAsideClass}>
           <WorkbookSyncContractCard workbookConnected={data.source === "workbook"} />
         </div>
-        <div className="xl:col-span-8">
+        <div className={dashSplitMainClass}>
           <RevenueSplitChart data={data.revenueSplit} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-12">
-        <div className="xl:col-span-4">
+      <div className={dashSplitRowClass}>
+        <div className={dashSplitAsideClass}>
           <GlobalEventsFeed
             events={data.events}
             lastSyncedAt={data.updatedAt}
             workbookConnected={data.source === "workbook"}
           />
         </div>
-        <div className="xl:col-span-8">
+        <div className={dashSplitMainClass}>
           <TelemetryMatrixCard />
         </div>
       </div>

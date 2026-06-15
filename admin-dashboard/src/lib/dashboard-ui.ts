@@ -22,3 +22,7 @@ export const dashPlatformCardClass = cn(
   dashCardClass,
   "border border-border bg-card shadow-sm border-l-4 border-l-[var(--brand-3sk)]",
 );
+/** Two-column command-center rows — top-align; never stretch empty space inside cards */
+export const dashSplitRowClass = "grid grid-cols-1 items-start gap-4 lg:grid-cols-12 lg:gap-5";
+export const dashSplitAsideClass = "min-w-0 lg:col-span-5";
+export const dashSplitMainClass = "min-w-0 lg:col-span-7";

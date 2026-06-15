@@ -6,7 +6,6 @@ import { EntityBrandBadge } from "@/components/dashboard/entity-brand-badge";
 import { RelativeTime } from "@/components/dashboard/relative-time";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import type { GlobalEvent, GlobalEventStatus } from "@/data/demo/global-events";
 import { globalEventsData } from "@/data/demo/global-events";
 import {
@@ -58,7 +57,7 @@ export function GlobalEventsFeed({
   const openIssues = events.filter((e) => e.status === "critical" || e.status === "warning").length;
 
   return (
-    <Card size="sm" className={cn("flex h-full flex-col", dashSurfaceCardClass)}>
+    <Card size="sm" className={cn("min-w-0", dashSurfaceCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <CardTitle className="flex items-center gap-2 leading-none">
@@ -81,15 +80,13 @@ export function GlobalEventsFeed({
           ) : null}
         </CardDescription>
         {workbookConnected ? (
-          <div className={cn(dashInfoBannerClass, "text-sm")}>
-            Live workbook pull - event timestamps use each row&apos;s Logged At column when present, otherwise the sync
-            pull time.
+          <div className={cn(dashInfoBannerClass, "text-xs leading-relaxed")}>
+            Live workbook pull — event timestamps use each row&apos;s Logged At column when present.
           </div>
         ) : null}
       </CardHeader>
-      <CardContent className={cn("min-h-0 flex-1", dashSectionCardContentClass)}>
-        <ScrollArea className="h-72 pr-3">
-          <div className="grid gap-2">
+      <CardContent className={dashSectionCardContentClass}>
+        <div className="grid max-h-80 gap-2 overflow-y-auto pr-1">
             {events.map((event) => {
               const StatusIcon = statusIcons[event.status];
               const isIsoTimestamp = !/ago|just now/i.test(event.timestamp);
@@ -145,8 +142,7 @@ export function GlobalEventsFeed({
                 </div>
               );
             })}
-          </div>
-        </ScrollArea>
+        </div>
       </CardContent>
     </Card>
   );

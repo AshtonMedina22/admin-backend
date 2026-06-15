@@ -37,7 +37,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
   const pendingCount = data.filter((row) => row.status === "pending_reconciliation").length;
 
   return (
-    <Card size="sm" className={cn("@container/card", dashPlatformCardClass)}>
+    <Card size="sm" className={cn("min-w-0", "@container/card", dashPlatformCardClass)}>
       <CardHeader className={dashSectionCardHeaderClass}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -59,7 +59,7 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
             </Badge>
           )}
         </div>
-        <div className="flex flex-wrap gap-1.5 pt-2">
+        <div className="flex flex-wrap gap-1.5 pt-1">
           <Badge variant="outline" className={cn("whitespace-nowrap", entityBrandStyles.solar2sk.badge)}>
             2SK
           </Badge>
@@ -94,8 +94,8 @@ export function RevenueSplitChart({ data = revenueSplitData }: { data?: RevenueS
         </div>
       </CardHeader>
       <CardContent className={dashSectionCardContentClass}>
-        <ChartContainer config={chartConfig} className="aspect-auto h-52 w-full overflow-hidden md:h-60">
-          <BarChart data={data} margin={{ top: 8, right: 4, left: -8 }}>
+        <ChartContainer config={chartConfig} className="aspect-auto h-48 w-full max-w-full overflow-hidden md:h-56">
+          <BarChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
             <CartesianGrid vertical={false} className="stroke-border" />
             <XAxis
               dataKey="month"
