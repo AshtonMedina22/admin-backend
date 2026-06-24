@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
